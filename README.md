@@ -35,7 +35,7 @@ Manual installation: copy `custom_components/sonos_follow_me` to your HA `config
 
 *Preview with simulated room data.*
 
-The integration ships and automatically loads **Sonos Follow Me**, a custom dashboard card. Update in HACS, restart Home Assistant, then fully reload the browser/app. Choose **Edit dashboard → Add card → Sonos Follow Me**. No separate frontend repository or resource registration is required.
+The integration ships and automatically loads **Sonos Follow Me**, a custom dashboard card. Since v0.3.1, its header includes the project logo, served locally with the integration. Update in HACS, restart Home Assistant, then fully reload the browser/app. Choose **Edit dashboard → Add card → Sonos Follow Me**. No separate frontend repository or resource registration is required.
 
 ```yaml
 type: custom:sonos-follow-me-card
@@ -48,7 +48,7 @@ The card shows occupancy, speakers, remembered volume, cooldown status (updated 
 
 Controls use standard Home Assistant `switch`, `number` and `select` entities and normal entity permissions, so they also work in other cards and automations. Public settings persist through config-entry options and apply live without losing playback ownership. Device/sensor/source assignments and room names remain in the integration's Configure dialog; changing those still reloads the room.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.1`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 

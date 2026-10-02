@@ -4,7 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
-from custom_components.sonos_follow_me import CARD_URL, async_reload, async_setup
+from custom_components.sonos_follow_me import CARD_URL, LOGO_URL, async_reload, async_setup
 from custom_components.sonos_follow_me.binary_sensor import RoomOccupancy
 from custom_components.sonos_follow_me.number import SETTINGS, RoomNumber
 from custom_components.sonos_follow_me.select import SensorMode
@@ -19,7 +19,11 @@ async def test_card_registration():
         assert path.url_path == CARD_URL
         assert Path(path.path).is_file()
         assert not path.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.3.0")
+        logo = hass.http.async_register_static_paths.call_args.args[0][1]
+        assert logo.url_path == LOGO_URL
+        assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+        assert not logo.cache_headers
+        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.3.1")
 
 
 async def test_entities_expose_stable_room_metadata(room):

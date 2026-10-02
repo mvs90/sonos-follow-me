@@ -11,6 +11,7 @@ from .room import Room
 
 PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SELECT]
 CARD_URL = "/sonos_follow_me/sonos-follow-me-card.js"
+LOGO_URL = "/sonos_follow_me/follow-me-logo.png"
 
 
 async def async_setup(hass, config):
@@ -19,10 +20,13 @@ async def async_setup(hass, config):
         [
             StaticPathConfig(
                 CARD_URL, str(Path(__file__).parent / "frontend" / "sonos-follow-me-card.js"), False
-            )
+            ),
+            StaticPathConfig(
+                LOGO_URL, str(Path(__file__).parent / "frontend" / "follow-me-logo.png"), False
+            ),
         ]
     )
-    add_extra_js_url(hass, f"{CARD_URL}?v=0.3.0")
+    add_extra_js_url(hass, f"{CARD_URL}?v=0.3.1")
     return True
 
 

@@ -4,8 +4,18 @@ const cardScript = path.resolve(
   "custom_components/sonos_follow_me/frontend/sonos-follow-me-card.js",
 );
 async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
+  await page.route(
+    "http://follow-me.test/sonos_follow_me/follow-me-logo.png*",
+    (route) =>
+      route.fulfill({
+        path: path.resolve(
+          "custom_components/sonos_follow_me/frontend/follow-me-logo.png",
+        ),
+        contentType: "image/png",
+      }),
+  );
   await page.setContent(
-    "<style>body{margin:20px;background:#eef1f5;font-family:system-ui}sonos-follow-me-card{max-width:460px;--primary-color:#087f83;--primary-text-color:#182c33;--secondary-text-color:#62777c;--divider-color:#dce5e6}</style>",
+    "<base href='http://follow-me.test/'><style>body{margin:20px;background:#eef1f5;font-family:system-ui}sonos-follow-me-card{max-width:460px;--primary-color:#087f83;--primary-text-color:#182c33;--secondary-text-color:#62777c;--divider-color:#dce5e6}</style>",
   );
   await page.addScriptTag({ path: cardScript });
   await page.evaluate((config) => {
@@ -172,7 +182,10 @@ test("safe names, mobile layout and live updates preserve typed inputs", async (
   await expect(
     page.getByText("<img src=x onerror=alert(1)>", { exact: true }),
   ).toBeVisible();
-  expect(await page.locator("img").count()).toBe(0);
+  expect(await page.locator("img").count()).toBe(1);
+  expect(
+    await page.locator("img.logo").evaluate((image) => image.naturalWidth),
+  ).toBeGreaterThan(0);
   const input = page.getByLabel("Abkühlzeit", { exact: true });
   await input.fill("45");
   await page.evaluate(() => {
