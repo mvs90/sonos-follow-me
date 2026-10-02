@@ -40,6 +40,15 @@ def schema(values):
         "volume": selector.NumberSelector(
             selector.NumberSelectorConfig(min=0, max=1, step=0.01, mode="box")
         ),
+        "volume_reset": selector.BooleanSelector(),
+        "default_volume": selector.NumberSelector(
+            selector.NumberSelectorConfig(min=0, max=1, step=0.01, mode="box")
+        ),
+        "volume_cooldown": selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0, max=10080, step=1, unit_of_measurement="min", mode="box"
+            )
+        ),
     }.items():
         marker = vol.Required(key, default=values[key]) if key in values else vol.Required(key)
         fields[marker] = select

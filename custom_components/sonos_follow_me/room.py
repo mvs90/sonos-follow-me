@@ -2,13 +2,14 @@
 
 import asyncio
 import logging
+from time import time
 
 from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event
 from homeassistant.helpers.storage import Store
 
-from .const import DOMAIN
+from .const import DEFAULTS, DOMAIN
 from .presence import Presence
 
 _LOGGER = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ class Room:
     def __init__(self, hass, entry):
         self.hass = hass
         self.entry = entry
-        self.config = dict(entry.options or entry.data)
+        self.config = {**DEFAULTS, **(entry.options or entry.data)}
         self.player = self.config["player"]
         self.sensors = [self.config["primary"], *self.config["secondary"]]
         self.presence = Presence(self.config["mode"])
@@ -34,11 +35,13 @@ class Room:
         self._task = None
         self._fading = False
         self._stopped = False
+        self._vacant_since = None
 
     async def async_start(self):
         saved = await self._store.async_load() or {}
         self.volume = saved.get("volume", self.volume)
         self.enabled = saved.get("enabled", True)
+        self._vacant_since = saved.get("vacant_since")
         # Playback ownership deliberately does not survive restart.
         self._unsub = async_track_state_change_event(
             self.hass,
@@ -47,8 +50,27 @@ class Room:
         )
         self.evaluate()
 
+    def _stored_state(self):
+        return {"volume": self.volume, "enabled": self.enabled, "vacant_since": self._vacant_since}
+
     def _save(self):
-        self._store.async_delay_save(lambda: {"volume": self.volume, "enabled": self.enabled}, 1)
+        self._store.async_delay_save(self._stored_state, 1)
+
+    def _resume_volume(self):
+        """Choose the next visit's target without touching an idle speaker.
+
+        A timestamp rather than a timer preserves elapsed cooldown across restarts.
+        Valid occupancy cancels it even when no source is currently playing.
+        """
+        if self._vacant_since is None:
+            return
+        if (
+            self.config["volume_reset"]
+            and time() - self._vacant_since >= self.config["volume_cooldown"] * 60
+        ):
+            self.volume = self.config["default_volume"]
+        self._vacant_since = None
+        self._save()
 
     def notify(self):
         for listener in list(self.listeners):
@@ -81,6 +103,8 @@ class Room:
         if self._stopped or not self.enabled:
             return
         status = self.status()
+        if status == "occupied":
+            self._resume_volume()
         if status == "clear":
             if self._timer is None:
                 self._timer = async_call_later(self.hass, self.config["off_delay"], self._expired)
@@ -105,6 +129,8 @@ class Room:
         if not self.enabled or self.status() != "clear":
             return
         self.presence.expire()
+        self._vacant_since = time()
+        self._save()
         self.notify()
         self._launch(self._leave)
 
@@ -220,4 +246,4 @@ class Room:
         if self._task:
             self._task.cancel()
             await asyncio.gather(self._task, return_exceptions=True)
-        await self._store.async_save({"volume": self.volume, "enabled": self.enabled})
+        await self._store.async_save(self._stored_state())

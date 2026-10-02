@@ -10,6 +10,7 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 - **Primary mode:** PIR starts occupancy. Radar and any additional sensors only hold occupancy after the PIR has detected someone. Radar alone cannot start music.
 - **Equal mode:** any configured sensor can start or maintain occupancy.
 - Departure only after **all** sensors remain `off` throughout the configured delay. Renewed presence cancels departure, including during fading.
+- Optional default volume after an absence cooldown (including immediate reset for the next visit).
 - Room enable switch and occupancy entity. Smooth configurable fades; remembered volume and enable state, without external helpers.
 - UI setup and options in English and German. Uses the official Sonos integration locally.
 
@@ -39,8 +40,19 @@ Manual installation: copy `custom_components/sonos_follow_me` to your HA `config
 | Clear delay | 0–3600 seconds; default 15 |
 | Fade duration | 0–30 seconds per fade; default 3; 0 disables fading |
 | Initial volume | 0–1; default 0.3; afterwards the remembered volume is used |
+| Reset volume after absence | Optional, disabled by default (including existing rooms) |
+| Default volume | Next visit’s target after cooldown, 0–1; default 0.3 |
+| Volume cooldown | 0–10080 minutes; default 30; 0 means the next visit uses the default immediately |
 
 Edit a room through its integration **Configure** button. Switch entities allow a dashboard toggle or a separate automation to enable/disable several rooms together.
+
+### Optional volume cooldown
+
+Enable **Reset volume after absence**, choose a **Default volume**, and set **Volume cooldown** (for example 30 minutes). The cooldown starts when the room becomes vacant **after the clear delay**. It does not change the speaker volume while the room is empty or interrupt ongoing playback.
+
+Example: last volume 60%, default 25%, cooldown 30 minutes. Return after 10 minutes and music fades to 60%. That return cancels the old cooldown; the next departure starts a fresh 30 minutes. Return after 30 minutes or longer and music fades to 25%. With 0 minutes, each new visit after the room has cleared uses 25%.
+
+Only valid occupancy counts: radar alone in primary mode cannot cancel the cooldown. A valid return resets it even if no music source is playing. An already-started cooldown survives a restart/reload, including time offline. Changing the cooldown setting applies the new duration to the saved vacancy time. Disabling Follow Me does not itself start a cooldown; existing cooldown timestamps remain saved. The existing restart/playback ownership behavior below still applies.
 
 ### Bathroom example
 

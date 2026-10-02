@@ -13,7 +13,15 @@
           "mode": "Sensor mode",
           "off_delay": "Clear delay",
           "fade_seconds": "Fade duration",
-          "volume": "Initial volume (0\u20131)"
+          "volume": "Initial volume (0–1)",
+          "volume_reset": "Reset volume after absence",
+          "default_volume": "Default volume (0–1)",
+          "volume_cooldown": "Volume cooldown (minutes, 0 = immediately)"
+        },
+        "data_description": {
+          "volume_reset": "Optional. Changes the next visit’s fade target, not ongoing playback.",
+          "default_volume": "Target after cooldown, e.g. 0.3 for 30%.",
+          "volume_cooldown": "Starts when the room clears after the clear delay. Returning within this time keeps the last volume; the full cooldown starts again on the next departure."
         }
       }
     },
@@ -38,7 +46,15 @@
           "mode": "Sensor mode",
           "off_delay": "Clear delay",
           "fade_seconds": "Fade duration",
-          "volume": "Initial volume (0\u20131)"
+          "volume": "Initial volume (0–1)",
+          "volume_reset": "Reset volume after absence",
+          "default_volume": "Default volume (0–1)",
+          "volume_cooldown": "Volume cooldown (minutes, 0 = immediately)"
+        },
+        "data_description": {
+          "volume_reset": "Optional. Changes the next visit’s fade target, not ongoing playback.",
+          "default_volume": "Target after cooldown, e.g. 0.3 for 30%.",
+          "volume_cooldown": "Starts when the room clears after the clear delay. Returning within this time keeps the last volume; the full cooldown starts again on the next departure."
         }
       }
     },

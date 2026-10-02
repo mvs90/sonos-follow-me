@@ -34,6 +34,20 @@ Nicht verfügbare oder unbekannte Sensoren gelten nicht als „frei“. Neue Anw
 - **Anfangslautstärke:** 0–1, Standard 0,3. Danach wird die im normalen Betrieb geänderte Lautstärke gespeichert.
 - Pro Raum entstehen ein **Follow-Me-Schalter** und ein **Belegungssensor**. Mehrere Schalter können gemeinsam über Dashboard oder Automation bedient werden.
 
+## Optionale Standardlautstärke mit Abkühlzeit
+
+Unter **Konfigurieren** gibt es drei neue Einstellungen:
+
+- **Standardlautstärke nach Abwesenheit verwenden:** aktiviert die Funktion. Bei bestehenden und neuen Räumen zunächst ausgeschaltet.
+- **Standardlautstärke (0–1):** beispielsweise 0,25 für 25 %.
+- **Abkühlzeit:** in Minuten, beispielsweise 30. Mit **0** gilt die Standardlautstärke sofort für den nächsten Besuch, nachdem der Raum als frei erkannt wurde.
+
+Die Zeit beginnt, sobald der Raum **nach der Ausschaltverzögerung** frei ist. Beispiel: letzte Lautstärke 60 %, Standard 25 %, Abkühlzeit 30 Minuten. Bei Rückkehr nach 10 Minuten wird wieder auf 60 % eingeblendet. Die alte Abkühlzeit wird verworfen; beim nächsten Verlassen starten erneut volle 30 Minuten. Bei Rückkehr nach mindestens 30 Minuten wird auf 25 % eingeblendet.
+
+Die Funktion ändert die Ziel-Lautstärke beim nächsten Betreten. Während der Abwesenheit wird kein zusätzlicher Lautstärkebefehl gesendet; laufende Musik wird durch den Ablauf nicht verändert. Ein Radar-Fehlalarm alleine setzt die Abkühlzeit im PIR-Modus nicht zurück. Gültige Anwesenheit setzt sie auch dann zurück, wenn gerade keine Musikquelle spielt.
+
+Eine begonnene Abkühlzeit übersteht Neustarts und Neuladen; die Zeit während des Neustarts zählt mit. Eine Änderung der Abkühlzeit verwendet die neue Dauer ab dem gespeicherten Zeitpunkt des Freiwerdens. Das Ausschalten von Follow Me startet selbst keine Abkühlzeit; ein vorhandener Zeitpunkt bleibt gespeichert. Die unten beschriebenen Grenzen der Wiedergabekontrolle nach Neustarts gelten weiterhin.
+
 ## Verhalten und Grenzen
 
 Musik zunächst auf einer Quelle starten. Die Integration wählt keine Playlists und startet keine stumme Quelle. Sie übernimmt nur Lautsprecher, die sie selbst einer spielenden Gruppe hinzugefügt hat; bereits manuell laufende Musik und vorhandene Gruppen werden nicht übernommen. Beim Verlassen blendet sie aus, trennt den verwalteten Lautsprecher ab, pausiert ihn und stellt die gespeicherte Lautstärke wieder her. Wird er zwischenzeitlich Gruppenkoordinator für andere Lautsprecher, gibt die Integration die Kontrolle ab, statt die Gruppe zu zerlegen.

@@ -225,3 +225,117 @@ async def test_two_rooms_are_independent(room):
     assert room.presence.occupied
     assert not other.presence.occupied
     other.service.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("enabled", "minutes", "elapsed", "expected"),
+    [
+        (False, 30, 2000, 0.7),
+        (True, 30, 1799, 0.7),
+        (True, 30, 1800, 0.2),
+        (True, 30, 2500, 0.2),
+        (True, 0, 0, 0.2),
+    ],
+)
+async def test_cooldown_selects_next_fade_target(room, enabled, minutes, elapsed, expected):
+    room.config.update(volume_reset=enabled, default_volume=0.2, volume_cooldown=minutes)
+    room.volume = 0.7
+    room.presence.occupied = True
+    with patch("custom_components.sonos_follow_me.room.time", return_value=1000):
+        room._expired(None)
+    await settle(room)
+    # Expiry alone must not change the idle speaker's volume or saved target.
+    assert room.volume == 0.7
+    room.service.assert_not_called()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=1000 + elapsed):
+        room.evaluate()
+    await settle(room)
+    assert room.volume == expected
+    assert room._vacant_since is None
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == expected
+
+
+async def test_return_restarts_full_cooldown_on_next_departure(room):
+    room.config.update(volume_reset=True, default_volume=0.2, volume_cooldown=30)
+    room.volume = 0.7
+    room._vacant_since = 1000
+    # No source is necessary for movement to reset the cooldown.
+    room.config["sources"] = []
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=2000):
+        room.evaluate()
+    await settle(room)
+    assert room._vacant_since is None
+    assert room.volume == 0.7
+    room.hass.states.async_set("binary_sensor.pir", "off")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=2100):
+        room._expired(None)
+    await settle(room)
+    assert room._vacant_since == 2100
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=3000):
+        room.evaluate()
+    await settle(room)
+    # Original cooldown would have expired at 2800, renewed cooldown ends at 3900.
+    assert room.volume == 0.7
+
+
+@pytest.mark.parametrize("mode,reset", [("primary", False), ("equal", True)])
+async def test_radar_only_respects_sensor_mode_for_cooldown(room, mode, reset):
+    room.config.update(volume_reset=True, default_volume=0.2, volume_cooldown=30)
+    room.presence.mode = mode
+    room.volume = 0.7
+    room._vacant_since = 1000
+    room.hass.states.async_set("binary_sensor.radar", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=4000):
+        room.evaluate()
+    await settle(room)
+    assert room._vacant_since == (None if reset else 1000)
+    assert room.volume == (0.2 if reset else 0.7)
+
+
+async def test_cooldown_survives_reload_and_elapsed_time(room):
+    room.config.update(volume_reset=True, default_volume=0.2, volume_cooldown=30)
+    room._store.async_load.return_value = {"volume": 0.7, "enabled": True, "vacant_since": 1000}
+    with patch("custom_components.sonos_follow_me.room.time", return_value=2000):
+        await room.async_start()
+    assert room._vacant_since == 1000
+    assert room.volume == 0.7
+    await room.async_stop()
+    room._store.async_save.assert_awaited_with(
+        {"volume": 0.7, "enabled": True, "vacant_since": 1000}
+    )
+    room._stopped = False
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=3000):
+        await room.async_start()
+    await settle(room)
+    assert room.volume == 0.2
+    assert room._vacant_since is None
+
+
+async def test_legacy_storage_keeps_volume(room):
+    room._store.async_load.return_value = {"volume": 0.6, "enabled": True}
+    await room.async_start()
+    assert not room.config["volume_reset"]
+    assert room.volume == 0.6
+    assert room._vacant_since is None
+
+
+async def test_held_presence_does_not_start_cooldown(room):
+    room.config["volume_reset"] = True
+    room.presence.occupied = True
+    room.hass.states.async_set("binary_sensor.radar", "on")
+    room._expired(None)
+    assert room._vacant_since is None
+
+
+async def test_zero_default_volume_is_valid(room):
+    room.config.update(volume_reset=True, default_volume=0, volume_cooldown=0)
+    room._vacant_since = 1000
+    room.volume = 0.7
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    room.evaluate()
+    await settle(room)
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == 0
