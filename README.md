@@ -1,5 +1,7 @@
 # Sonos Follow Me
 
+<p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
+
 Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, installable through HACS as a custom repository. MIT licensed; independent community project, not affiliated with Sonos.
 
 **[Deutsche Anleitung](README.de.md)**

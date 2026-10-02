@@ -1,5 +1,7 @@
 # Sonos Follow Me – deutsche Anleitung
 
+<p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
+
 Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautsprecher, mindestens zwei Sensoren, eigene Musikquellen und Zeitwerte. Die Einrichtung erfolgt vollständig in Home Assistant; zusätzliche `input_boolean`- oder `input_number`-Helfer sind nicht nötig.
 
 ## Installation
