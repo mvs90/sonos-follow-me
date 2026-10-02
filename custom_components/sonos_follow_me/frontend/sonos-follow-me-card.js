@@ -15,6 +15,9 @@ const words = {
     remembered: "Letzte Lautstärke",
     default_volume: "Standardlautstärke",
     volume_cooldown: "Abkühlzeit",
+    tv_volume_offset: "TV-Offset",
+    tv_active: "TV-Lautstärke aktiv",
+    tv_hint: "TV-Offset in Prozentpunkten zur Standardlautstärke; 0 = aus.",
     off_delay: "Ausschaltverzögerung",
     fade_seconds: "Überblenddauer",
     volume_reset: "Standardlautstärke verwenden",
@@ -49,6 +52,10 @@ const words = {
     remembered: "Remembered volume",
     default_volume: "Default volume",
     volume_cooldown: "Volume cooldown",
+    tv_volume_offset: "TV offset",
+    tv_active: "TV volume active",
+    tv_hint:
+      "TV offset in percentage points relative to default volume; 0 = off.",
     off_delay: "Clear delay",
     fade_seconds: "Fade duration",
     volume_reset: "Use default volume",
@@ -215,7 +222,7 @@ class SonosFollowMeCard extends HTMLElement {
       header = node("header");
     const brand = node("div", undefined, "brand");
     const logo = node("img", undefined, "logo");
-    logo.src = "/sonos_follow_me/follow-me-logo.png?v=0.3.1";
+    logo.src = "/sonos_follow_me/follow-me-logo.png?v=0.4.0";
     logo.alt = "";
     logo.width = 48;
     logo.height = 48;
@@ -280,9 +287,22 @@ class SonosFollowMeCard extends HTMLElement {
       );
       this._toggle(settings.volume_reset, t.volume_reset, room);
       const grid = node("div", undefined, "grid");
-      for (const key of ["default_volume", "volume_cooldown"])
+      for (const key of [
+        "default_volume",
+        "volume_cooldown",
+        "tv_volume_offset",
+      ])
         this._number(settings[key], key, grid, t);
       room.append(grid);
+      room.append(node("div", t.tv_hint, "hint"));
+      if (a.tv_volume_active)
+        room.append(
+          node(
+            "div",
+            `${t.tv_active}: ${Math.round(a.playback_target_volume * 100)} %`,
+            "badge occupied",
+          ),
+        );
       if (
         settings.volume_reset?.state === "on" &&
         a.vacant_since != null &&

@@ -16,12 +16,14 @@
           "volume": "Anfangslautstärke (0–1)",
           "volume_reset": "Standardlautstärke nach Abwesenheit verwenden",
           "default_volume": "Standardlautstärke (0–1)",
-          "volume_cooldown": "Abkühlzeit (Minuten, 0 = sofort)"
+          "volume_cooldown": "Abkühlzeit (Minuten, 0 = sofort)",
+          "tv_volume_offset": "TV-Lautstärkeoffset"
         },
         "data_description": {
           "volume_reset": "Optional. Betrifft die Ziel-Lautstärke beim nächsten Betreten, nicht die laufende Wiedergabe.",
           "default_volume": "Ziel nach der Abkühlzeit, z. B. 0,3 für 30 %.",
-          "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut."
+          "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut.",
+          "tv_volume_offset": "Prozentpunkte relativ zur Standardlautstärke beim Beitritt zu einer TV-Gruppe. 30 % und −10 ergeben 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert."
         }
       }
     },
@@ -49,12 +51,14 @@
           "volume": "Anfangslautstärke (0–1)",
           "volume_reset": "Standardlautstärke nach Abwesenheit verwenden",
           "default_volume": "Standardlautstärke (0–1)",
-          "volume_cooldown": "Abkühlzeit (Minuten, 0 = sofort)"
+          "volume_cooldown": "Abkühlzeit (Minuten, 0 = sofort)",
+          "tv_volume_offset": "TV-Lautstärkeoffset"
         },
         "data_description": {
           "volume_reset": "Optional. Betrifft die Ziel-Lautstärke beim nächsten Betreten, nicht die laufende Wiedergabe.",
           "default_volume": "Ziel nach der Abkühlzeit, z. B. 0,3 für 30 %.",
-          "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut."
+          "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut.",
+          "tv_volume_offset": "Prozentpunkte relativ zur Standardlautstärke beim Beitritt zu einer TV-Gruppe. 30 % und −10 ergeben 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert."
         }
       }
     },
@@ -99,6 +103,9 @@
       },
       "fade_seconds": {
         "name": "Überblenddauer"
+      },
+      "tv_volume_offset": {
+        "name": "TV-Lautstärkeoffset"
       }
     },
     "select": {

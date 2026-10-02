@@ -10,6 +10,7 @@ SETTINGS = (
     ("volume_cooldown", 0, 10080, 1, "min", 1),
     ("off_delay", 0, 3600, 1, "s", 1),
     ("fade_seconds", 0, 30, 0.5, "s", 1),
+    ("tv_volume_offset", -100, 100, 1, "pp", 1),
 )
 
 

@@ -35,6 +35,7 @@ class Room:
         self._task = None
         self._fading = False
         self._stopped = False
+        self._tv_volume = None
         self._vacant_since = None
 
     async def async_start(self):
@@ -111,8 +112,11 @@ class Room:
                 and state.state == "playing"
                 and isinstance(volume := state.attributes.get("volume_level"), (float, int))
             ):
-                self.volume = max(0, min(1, volume))
-                self._save()
+                if self._tv_volume is not None:
+                    self._tv_volume = max(0, min(1, volume))
+                else:
+                    self.volume = max(0, min(1, volume))
+                    self._save()
         self.evaluate()
 
     @callback
@@ -182,13 +186,27 @@ class Room:
                     return members[0]
         return None
 
+    def source_is_tv(self, entity):
+        """Inspect the selected group coordinator, not soundbar model or media type."""
+        state = self.hass.states.get(entity)
+        if state is None or state.state != "playing":
+            return False
+        return str(state.attributes.get("source", "")).casefold() == "tv" or str(
+            state.attributes.get("media_content_id", "")
+        ).startswith("x-sonos-htastream:")
+
+    @property
+    def playback_volume(self):
+        """TV volume is visit-local; music memory never includes the TV correction."""
+        return self.volume if self._tv_volume is None else self._tv_volume
+
     async def _fade(self, start, end, leaving=False):
         self._fading = True
         try:
             steps = 12 if self.config["fade_seconds"] else 1
             for step in range(1, steps + 1):
                 if leaving and (not self.enabled or self.status() != "idle"):
-                    await self.service("volume_set", volume_level=self.volume)
+                    await self.service("volume_set", volume_level=self.playback_volume)
                     return False
                 x = step / steps
                 await self.service(
@@ -204,15 +222,23 @@ class Room:
         source = self.source()
         if not source or self.state(self.player) in ("playing", "unavailable", "unknown"):
             return
+        offset = self.config["tv_volume_offset"]
+        self._tv_volume = (
+            max(0, min(1, self.config["default_volume"] + offset / 100))
+            if offset and self.source_is_tv(source)
+            else None
+        )
         self._fading = True
         try:
             await self.service("volume_set", volume_level=0)
             await self.service("join", entity=source, group_members=[self.player])
             self.managed = True
-            await self._fade(0, self.volume)
+            await self._fade(0, self.playback_volume)
         except (HomeAssistantError, asyncio.CancelledError):
-            # Do not leave a player muted after a failed/cancelled join.
-            await self.service("volume_set", volume_level=self.volume)
+            # Restore the correct target on failure or interrupted entry.
+            if not self.managed:
+                self._tv_volume = None
+            await self.service("volume_set", volume_level=self.playback_volume)
             raise
         finally:
             self._fading = False
@@ -227,10 +253,11 @@ class Room:
         if members and members[0] == self.player and len(members) > 1:
             # Never dismantle a group if this speaker became its coordinator.
             self.managed = False
+            self._tv_volume = None
             return
         try:
             if not await self._fade(
-                state.attributes.get("volume_level", self.volume), 0, leaving=True
+                state.attributes.get("volume_level", self.playback_volume), 0, leaving=True
             ):
                 return
             # Recheck after the final fade sleep, before changing group membership.
@@ -239,8 +266,9 @@ class Room:
             await self.service("unjoin")
             await self.service("media_pause")
             self.managed = False
+            self._tv_volume = None
         finally:
-            await self.service("volume_set", volume_level=self.volume)
+            await self.service("volume_set", volume_level=self.playback_volume)
 
     async def async_enable(self, enabled):
         self.enabled = enabled
@@ -249,7 +277,7 @@ class Room:
             self._task.cancel()
             await asyncio.gather(self._task, return_exceptions=True)
             if self.managed:
-                await self.service("volume_set", volume_level=self.volume)
+                await self.service("volume_set", volume_level=self.playback_volume)
         self.presence.expire()
         self._save()
         self.evaluate()

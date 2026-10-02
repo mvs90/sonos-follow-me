@@ -23,7 +23,7 @@ async def test_card_registration():
         assert logo.url_path == LOGO_URL
         assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
         assert not logo.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.3.1")
+        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.4.0")
 
 
 async def test_entities_expose_stable_room_metadata(room):
@@ -34,7 +34,7 @@ async def test_entities_expose_stable_room_metadata(room):
         SensorMode(room),
     ]
     entities += [RoomNumber(room, setting) for setting in SETTINGS]
-    assert len({entity.unique_id for entity in entities}) == 8
+    assert len({entity.unique_id for entity in entities}) == 9
     for entity in entities:
         assert entity.extra_state_attributes["sonos_follow_me_room"] == room.entry.entry_id
         assert entity.extra_state_attributes["setting"] == entity.key

@@ -9,4 +9,5 @@ DEFAULTS = {
     "volume_reset": False,
     "default_volume": 0.3,
     "volume_cooldown": 30,
+    "tv_volume_offset": 0,
 }

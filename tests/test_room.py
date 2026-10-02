@@ -339,3 +339,101 @@ async def test_zero_default_volume_is_valid(room):
     room.evaluate()
     await settle(room)
     assert room.service.call_args_list[-1].kwargs["volume_level"] == 0
+
+
+@pytest.mark.parametrize(
+    "attrs,is_tv",
+    [
+        ({"source": "TV"}, True),
+        ({"media_content_id": "x-sonos-htastream:RINCON_TEST:spdif"}, True),
+        ({"source": "AirPlay", "media_content_type": "music"}, False),
+        ({"source": "Line-in"}, False),
+        ({"media_title": "TV", "media_content_type": "music"}, False),
+        ({}, False),
+    ],
+)
+async def test_tv_detection_uses_actual_input_not_title(room, attrs, is_tv):
+    room.hass.states.async_set("media_player.living", "playing", attrs)
+    assert room.source_is_tv("media_player.living") is is_tv
+    assert not room.source_is_tv("media_player.missing")
+
+
+@pytest.mark.parametrize("offset,target", [(-10, 0.2), (10, 0.4), (-100, 0), (100, 1), (0, 0.7)])
+async def test_tv_fade_uses_default_plus_offset_and_clamps(room, offset, target):
+    room.config.update(tv_volume_offset=offset, default_volume=0.3)
+    room.volume = 0.7
+    room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
+    await room._enter()
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == pytest.approx(target)
+    assert room.volume == 0.7
+
+
+async def test_music_keeps_remembered_volume_with_tv_offset(room):
+    room.config.update(tv_volume_offset=-10, default_volume=0.3)
+    room.volume = 0.6
+    room.hass.states.async_set("media_player.living", "playing", {"source": "AirPlay"})
+    await room._enter()
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == 0.6
+    assert room._tv_volume is None
+
+
+async def test_tv_detection_uses_group_coordinator(room):
+    room.config.update(tv_volume_offset=-10, default_volume=0.3, sources=["media_player.kitchen"])
+    room.hass.states.async_set(
+        "media_player.kitchen",
+        "playing",
+        {"group_members": ["media_player.living", "media_player.kitchen"]},
+    )
+    room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
+    await room._enter()
+    room.service.assert_any_await("join", entity="media_player.living", group_members=[room.player])
+    assert room.playback_volume == pytest.approx(0.2)
+
+
+async def test_manual_tv_volume_and_repeat_join_do_not_accumulate_offset(room):
+    room.config.update(tv_volume_offset=-10, default_volume=0.3)
+    room.volume = 0.6
+    room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
+    await room._enter()
+    room.hass.states.async_set(room.player, "playing", {"volume_level": 0.15})
+    room._changed(
+        SimpleNamespace(
+            data={"entity_id": room.player, "new_state": room.hass.states.get(room.player)}
+        )
+    )
+    assert room.volume == 0.6
+    assert room.playback_volume == 0.15
+    await room._leave()
+    assert room._tv_volume is None
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == 0.6
+    room.hass.states.async_set(room.player, "paused", {"volume_level": 0.6})
+    await room._enter()
+    assert room.playback_volume == pytest.approx(0.2)
+    assert room._stored_state()["volume"] == 0.6
+
+
+async def test_failed_tv_join_restores_music_target(room):
+    room.config.update(tv_volume_offset=-10, default_volume=0.3)
+    room.volume = 0.6
+    room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
+
+    async def action(name, **kwargs):
+        if name == "join":
+            raise HomeAssistantError("offline")
+
+    room.service.side_effect = action
+    with pytest.raises(HomeAssistantError):
+        await room._enter()
+    assert room._tv_volume is None
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == 0.6
+
+
+async def test_return_during_tv_departure_restores_tv_target(room):
+    room.managed = True
+    room._tv_volume = 0.2
+    room.volume = 0.6
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room._leave()
+    assert room.managed
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == 0.2
+    assert all(call.args[0] != "unjoin" for call in room.service.call_args_list)

@@ -23,6 +23,8 @@ class FollowMeSwitch(RoomEntity, SwitchEntity):
             "secondary": self.room.sensors[1:],
             "sources": self.room.config["sources"],
             "remembered_volume": self.room.volume,
+            "tv_volume_active": self.room._tv_volume is not None,
+            "playback_target_volume": self.room.playback_volume,
             "vacant_since": self.room._vacant_since,
         }
 

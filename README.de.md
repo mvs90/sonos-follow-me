@@ -49,7 +49,7 @@ Die Karte zeigt Belegung, Lautsprecher, gespeicherte Lautstärke, Sensorzuständ
 
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.1` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 
@@ -90,6 +90,20 @@ Die Zeit beginnt, sobald der Raum **nach der Ausschaltverzögerung** frei ist. B
 Die Funktion ändert die Ziel-Lautstärke beim nächsten Betreten. Während der Abwesenheit wird kein zusätzlicher Lautstärkebefehl gesendet; laufende Musik wird durch den Ablauf nicht verändert. Ein Radar-Fehlalarm alleine setzt die Abkühlzeit im PIR-Modus nicht zurück. Gültige Anwesenheit setzt sie auch dann zurück, wenn gerade keine Musikquelle spielt.
 
 Eine begonnene Abkühlzeit übersteht Neustarts und Neuladen; die Zeit während des Neustarts zählt mit. Eine Änderung der Abkühlzeit verwendet die neue Dauer ab dem gespeicherten Zeitpunkt des Freiwerdens. Das Ausschalten von Follow Me startet selbst keine Abkühlzeit; ein vorhandener Zeitpunkt bleibt gespeichert. Die unten beschriebenen Grenzen der Wiedergabekontrolle nach Neustarts gelten weiterhin.
+
+## TV-Ton und Lautstärkeoffset (ab v0.4.0)
+
+Unter **Konfigurieren** und auf der Dashboard-Karte gibt es pro Raum **TV-Lautstärkeoffset / TV-Offset**. Der Wert wird in **Prozentpunkten** zur eingestellten Standardlautstärke gerechnet:
+
+- Standard 30 %, Offset **−10** → bei TV-Ton auf **20 %** einblenden.
+- Standard 30 %, Offset **+10** → bei TV-Ton auf **40 %** einblenden.
+- **0** deaktiviert die TV-Anpassung und erhält das bisherige Verhalten.
+
+Beim Beitritt wird der **Gruppenkoordinator** der gewählten Quelle geprüft. `source: TV` oder eine Sonos-TV-Stream-ID (`x-sonos-htastream:`) erkennt TV-Ton; der Medientitel, ein Soundbar-Modell oder `media_content_type: music` allein reichen nicht aus. Auch eine bereits gruppierte Box darf in der Quellenliste stehen: Entscheidend ist deren Koordinator.
+
+Bei erkanntem TV-Ton und einem Offset ungleich 0 gilt **Standardlautstärke + Offset**, unabhängig von der Musik-Abkühlzeit und dem Schalter „Standardlautstärke nach Abwesenheit verwenden“. Der Wert wird auf 0–100 % begrenzt. Für AirPlay, Musik und nicht erkannte Quellen gilt weiterhin die bisherige gespeicherte Lautstärke-/Abkühlzeitlogik.
+
+Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird erneut von der Standardlautstärke gerechnet. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Die Standardlautstärke und der Offset wirken auf den folgenden Beitritt; ein Quellenwechsel zwischen TV und Musik während einer bestehenden Gruppe löst keine automatische Lautstärkeänderung aus. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
 
 ## Verhalten und Grenzen
 

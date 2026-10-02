@@ -48,12 +48,13 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
       for (const [key, value, max, step, unit] of [
         ["default_volume", 25, 100, 1, "%"],
         ["volume_cooldown", 30, 10080, 1, "min"],
+        ["tv_volume_offset", -10, 100, 1, "pp"],
         ["off_delay", 15, 3600, 1, "s"],
         ["fade_seconds", 3, 30, 0.5, "s"],
       ])
         state(`number.${room}_${key}`, value, {
           ...attr(key),
-          min: 0,
+          min: key === "tv_volume_offset" ? -100 : 0,
           max,
           step,
           unit_of_measurement: unit,
@@ -224,4 +225,25 @@ test("card editor emits selected rooms and custom card is registered", async ({
   expect(await page.evaluate(() => window.customCards[0].type)).toBe(
     "sonos-follow-me-card",
   );
+});
+
+test("TV offset accepts negative values and shows active target", async ({
+  page,
+}) => {
+  await setup(page, { entities: ["switch.bath"] });
+  await page.evaluate(() => {
+    hass.states["switch.bath"].attributes.tv_volume_active = true;
+    hass.states["switch.bath"].attributes.playback_target_volume = 0.15;
+    card.hass = { ...hass };
+  });
+  await expect(page.getByText("TV-Lautstärke aktiv: 15 %")).toBeVisible();
+  await page.getByLabel("TV-Offset", { exact: true }).fill("-15");
+  await page.getByLabel("TV-Offset", { exact: true }).press("Tab");
+  await expect
+    .poll(() => page.evaluate(() => window.calls))
+    .toContainEqual([
+      "number",
+      "set_value",
+      { entity_id: "number.bath_tv_volume_offset", value: -15 },
+    ]);
 });

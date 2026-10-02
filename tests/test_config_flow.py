@@ -58,4 +58,4 @@ def test_cooldown_settings_and_legacy_defaults():
     assert legacy["default_volume"] == 0.3
     assert legacy["volume_cooldown"] == 30
     updated = {**CONFIG, "volume_reset": True, "default_volume": 0.25, "volume_cooldown": 0}
-    assert schema(updated)(updated) == updated
+    assert schema(updated)(updated) == {**DEFAULTS, **updated}
