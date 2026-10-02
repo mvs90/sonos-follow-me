@@ -52,6 +52,12 @@ If the card is missing, reload the frontend cache first. A manual fallback resou
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
+## Integration branding and HACS listing (v0.3.2+)
+
+Local `brand/icon.png`, `icon@2x.png`, `logo.png` and `logo@2x.png` assets ship inside the integration. Home Assistant can use these for its integration UI; update through HACS, restart Home Assistant and reload the frontend. The transparent images support the built-in dark-image fallbacks.
+
+The **HACS repository listing is separate**: [HACS issue #5171](https://github.com/hacs/integration/issues/5171) currently tracks missing local integration icons. This release supplies the required images but cannot force affected HACS versions to display them. New custom integrations use [local brand images](https://developers.home-assistant.io/docs/core/integration/brand_images/) rather than new submissions to the legacy central Brands directory.
+
 ## Room settings
 
 | Setting | Meaning |

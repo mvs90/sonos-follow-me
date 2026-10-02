@@ -51,6 +51,12 @@ Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlenti
 
 Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.1` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
+## Integrationslogo und HACS-Anzeige (ab v0.3.2)
+
+Das Projektlogo liegt zusätzlich unter `custom_components/sonos_follow_me/brand/` als Icon und Logo in normaler und hoher Auflösung. Home Assistant verwendet diese lokalen Bilder in seiner Integrationsoberfläche; nach dem HACS-Update Home Assistant neu starten und die Oberfläche neu laden.
+
+**Die HACS-Repository-Liste ist ein separater Fall:** Dort besteht derzeit ein [offener Fehler für lokale Integrationslogos](https://github.com/hacs/integration/issues/5171). Die benötigten Bilder werden mitgeliefert, aber das Modul kann deren Anzeige in einer betroffenen HACS-Version nicht erzwingen. Ein Eintrag ins frühere zentrale Brands-Verzeichnis ist für neue Custom-Integrationen nicht mehr der vorgesehene Weg. Siehe [Home-Assistant-Dokumentation](https://developers.home-assistant.io/docs/core/integration/brand_images/).
+
 ## Sensorlogik
 
 **Primär startet, weitere halten:** Der PIR muss zuerst Anwesenheit erkennen. Danach dürfen Radar und beliebig viele weitere Sensoren die Belegung halten. Ein Radar-Fehlalarm alleine startet keine Musik. Meldet ein Sensor bereits beim PIR-Ereignis Anwesenheit, hält er den Raum ebenfalls.
