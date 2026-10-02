@@ -11,6 +11,7 @@ class RoomEntity(Entity):
 
     def __init__(self, room, key):
         self.room = room
+        self.key = key
         self._attr_unique_id = f"{room.entry.entry_id}_{key}"
         self._attr_translation_key = key
         self._attr_device_info = DeviceInfo(
@@ -19,6 +20,10 @@ class RoomEntity(Entity):
             manufacturer="Sonos Follow Me",
             model="Virtual room",
         )
+
+    @property
+    def extra_state_attributes(self):
+        return {"sonos_follow_me_room": self.room.entry.entry_id, "setting": self.key}
 
     async def async_added_to_hass(self):
         self.room.listeners.add(self.async_write_ha_state)

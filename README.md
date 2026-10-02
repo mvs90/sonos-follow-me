@@ -27,6 +27,29 @@ This is a custom repository, **not an entry in the default HACS catalog**. Defau
 
 Manual installation: copy `custom_components/sonos_follow_me` to your HA `config/custom_components` directory and restart.
 
+## Bundled dashboard card (v0.3.0+)
+
+![Dashboard card with sample rooms](docs/dashboard-card.png)
+
+*Preview with simulated room data.*
+
+The integration ships and automatically loads **Sonos Follow Me**, a custom dashboard card. Update in HACS, restart Home Assistant, then fully reload the browser/app. Choose **Edit dashboard → Add card → Sonos Follow Me**. No separate frontend repository or resource registration is required.
+
+```yaml
+type: custom:sonos-follow-me-card
+title: Sonos Follow Me
+```
+
+All rooms are discovered automatically. The graphical editor supports a custom title and selection of specific rooms. Optional YAML `entities` accepts a list of your room's **Follow Me switch entity IDs**; an omitted or empty list shows all rooms.
+
+The card shows occupancy, speakers, remembered volume, cooldown status (updated approximately every 30 seconds), sensor states and source priority. Control Follow Me, volume reset, default volume **in percent**, cooldown, clear delay, fade duration and sensor mode directly. Additional settings/sensor details expand per room. It supports English/German, mobile layouts, theme colors and visible service errors.
+
+Controls use standard Home Assistant `switch`, `number` and `select` entities and normal entity permissions, so they also work in other cards and automations. Public settings persist through config-entry options and apply live without losing playback ownership. Device/sensor/source assignments and room names remain in the integration's Configure dialog; changing those still reloads the room.
+
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+
+Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
+
 ## Room settings
 
 | Setting | Meaning |

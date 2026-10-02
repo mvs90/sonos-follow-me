@@ -1,10 +1,29 @@
 """Sonos Follow Me integration."""
 
+from pathlib import Path
+
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import Platform
 
+from .const import DEFAULTS
 from .room import Room
 
-PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SELECT]
+CARD_URL = "/sonos_follow_me/sonos-follow-me-card.js"
+
+
+async def async_setup(hass, config):
+    """Serve and load the bundled card once per integration, including YAML dashboards."""
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                CARD_URL, str(Path(__file__).parent / "frontend" / "sonos-follow-me-card.js"), False
+            )
+        ]
+    )
+    add_extra_js_url(hass, f"{CARD_URL}?v=0.3.0")
+    return True
 
 
 async def async_setup_entry(hass, entry):
@@ -17,8 +36,16 @@ async def async_setup_entry(hass, entry):
 
 
 async def async_reload(hass, entry):
-    """Reload after editing options."""
-    await hass.config_entries.async_reload(entry.entry_id)
+    """Apply public settings live; reload only changed room wiring."""
+    config = {**DEFAULTS, **(entry.options or entry.data)}
+    room = entry.runtime_data
+    if any(
+        config[key] != room.config[key]
+        for key in ("name", "player", "primary", "secondary", "sources")
+    ):
+        await hass.config_entries.async_reload(entry.entry_id)
+    else:
+        room.apply_settings(config)
 
 
 async def async_unload_entry(hass, entry):

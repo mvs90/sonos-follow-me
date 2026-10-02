@@ -14,6 +14,41 @@ Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle 
 
 Das Repository ist über HACS als benutzerdefiniertes Repository installierbar. Es ist **nicht im HACS-Standardkatalog gelistet**. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
 
+## Eigene Dashboard-Karte (ab v0.3.0)
+
+![Dashboard-Karte mit Beispielräumen](docs/dashboard-card.png)
+
+*Vorschau mit simulierten Raumdaten.*
+
+Die Karte wird im selben HACS-Paket mitgeliefert und automatisch geladen. Kein zweites HACS-Repository und keine manuelle Ressource sind nötig.
+
+1. In HACS aktualisieren und Home Assistant neu starten.
+2. Den Browser bzw. die Companion-App vollständig neu laden.
+3. Dashboard bearbeiten → **Karte hinzufügen → Sonos Follow Me**.
+
+Alternativ eine manuelle Karte anlegen:
+
+```yaml
+type: custom:sonos-follow-me-card
+title: Sonos Follow Me
+```
+
+Ohne weitere Angaben erscheinen alle eingerichteten Räume. Im grafischen Karteneditor lassen sich Titel und einzelne Räume auswählen. Alternativ unter `entities` die Follow-Me-Schalter angeben (die tatsächlichen Entitäts-IDs aus deiner Installation verwenden):
+
+```yaml
+type: custom:sonos-follow-me-card
+title: Musik im Haus
+entities:
+  - switch.badezimmer_follow_me
+  - switch.arbeitszimmer_follow_me
+```
+
+Die Karte zeigt Belegung, Lautsprecher, gespeicherte Lautstärke, Sensorzustände, Quellenpriorität und eine laufende Abkühlzeit. Die Anzeige der verbleibenden Zeit aktualisiert sich etwa alle 30 Sekunden. **Follow Me**, **Standardlautstärke verwenden**, **Standardlautstärke in Prozent**, **Abkühlzeit**, **Ausschaltverzögerung**, **Überblenddauer** und **Sensorlogik** sind direkt bedienbar. Weitere Einstellungen sind pro Raum aufklappbar.
+
+Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
+
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.3.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+
 ## Sensorlogik
 
 **Primär startet, weitere halten:** Der PIR muss zuerst Anwesenheit erkennen. Danach dürfen Radar und beliebig viele weitere Sensoren die Belegung halten. Ein Radar-Fehlalarm alleine startet keine Musik. Meldet ein Sensor bereits beim PIR-Ereignis Anwesenheit, hält er den Raum ebenfalls.
@@ -52,7 +87,7 @@ Eine begonnene Abkühlzeit übersteht Neustarts und Neuladen; die Zeit während 
 
 Musik zunächst auf einer Quelle starten. Die Integration wählt keine Playlists und startet keine stumme Quelle. Sie übernimmt nur Lautsprecher, die sie selbst einer spielenden Gruppe hinzugefügt hat; bereits manuell laufende Musik und vorhandene Gruppen werden nicht übernommen. Beim Verlassen blendet sie aus, trennt den verwalteten Lautsprecher ab, pausiert ihn und stellt die gespeicherte Lautstärke wieder her. Wird er zwischenzeitlich Gruppenkoordinator für andere Lautsprecher, gibt die Integration die Kontrolle ab, statt die Gruppe zu zerlegen.
 
-Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lautstärke und Schalterzustand bleiben über Neustarts erhalten. Belegung und Wiedergabekontrolle werden beim Neustart oder Neuladen zurückgesetzt. Eine zuvor verbundene Wiedergabe wird dann nicht automatisch gestoppt; den Raum einmal manuell abtrennen/pausieren, um ihn beim nächsten Betreten wieder automatisch übernehmen zu lassen.
+Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lautstärke und Schalterzustand bleiben über Neustarts erhalten. Belegung und Wiedergabekontrolle werden beim Neustart oder Neuladen zurückgesetzt. Änderungen der öffentlichen Einstellungen laden den Raum ab v0.3.0 nicht mehr neu. Eine zuvor verbundene Wiedergabe wird dann nicht automatisch gestoppt; den Raum einmal manuell abtrennen/pausieren, um ihn beim nächsten Betreten wieder automatisch übernehmen zu lassen.
 
 Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Ein späteres Zustandsereignis kann einen neuen Beitrittsversuch auslösen.
 

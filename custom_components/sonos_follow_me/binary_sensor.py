@@ -21,4 +21,8 @@ class RoomOccupancy(RoomEntity, BinarySensorEntity):
 
     @property
     def extra_state_attributes(self):
-        return {"managed_playback": self.room.managed, "sensor_mode": self.room.config["mode"]}
+        return {
+            **super().extra_state_attributes,
+            "managed_playback": self.room.managed,
+            "sensor_mode": self.room.config["mode"],
+        }

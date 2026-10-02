@@ -77,11 +77,37 @@
     "switch": {
       "enabled": {
         "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Standardlautstärke verwenden"
       }
     },
     "binary_sensor": {
       "occupancy": {
         "name": "Belegung"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Standardlautstärke"
+      },
+      "volume_cooldown": {
+        "name": "Abkühlzeit"
+      },
+      "off_delay": {
+        "name": "Ausschaltverzögerung"
+      },
+      "fade_seconds": {
+        "name": "Überblenddauer"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Sensorlogik",
+        "state": {
+          "primary": "Primär startet, weitere halten",
+          "equal": "Alle Sensoren gleichberechtigt"
+        }
       }
     }
   }

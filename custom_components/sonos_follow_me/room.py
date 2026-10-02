@@ -50,6 +50,23 @@ class Room:
         )
         self.evaluate()
 
+    @callback
+    def update_settings(self, updates):
+        """Persist public settings through the same options used by the config flow."""
+        options = {**DEFAULTS, **(self.entry.options or self.entry.data), **updates}
+        self.hass.config_entries.async_update_entry(self.entry, options=options)
+
+    @callback
+    def apply_settings(self, config):
+        """Apply non-structural changes without losing playback ownership."""
+        previous = self.config
+        self.config = config
+        self.presence.mode = config["mode"]
+        if previous["off_delay"] != config["off_delay"]:
+            self._cancel_timer()
+        self.evaluate()
+        self.notify()
+
     def _stored_state(self):
         return {"volume": self.volume, "enabled": self.enabled, "vacant_since": self._vacant_since}
 

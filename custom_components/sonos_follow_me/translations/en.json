@@ -77,11 +77,37 @@
     "switch": {
       "enabled": {
         "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Use default volume"
       }
     },
     "binary_sensor": {
       "occupancy": {
         "name": "Occupancy"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Default volume"
+      },
+      "volume_cooldown": {
+        "name": "Volume cooldown"
+      },
+      "off_delay": {
+        "name": "Clear delay"
+      },
+      "fade_seconds": {
+        "name": "Fade duration"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Sensor mode",
+        "state": {
+          "primary": "Primary starts, additional sensors hold",
+          "equal": "All sensors equal"
+        }
       }
     }
   }
