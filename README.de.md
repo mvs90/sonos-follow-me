@@ -1,0 +1,47 @@
+# Sonos Follow Me – deutsche Anleitung
+
+Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautsprecher, mindestens zwei Sensoren, eigene Musikquellen und Zeitwerte. Die Einrichtung erfolgt vollständig in Home Assistant; zusätzliche `input_boolean`- oder `input_number`-Helfer sind nicht nötig.
+
+## Installation
+
+Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle **Sonos-Integration** und mindestens zwei binäre Sensoren pro Raum.
+
+1. In **HACS → Benutzerdefinierte Repositories** `https://github.com/mvs90/sonos-follow-me` als **Integration** hinzufügen.
+2. **Sonos Follow Me** herunterladen und Home Assistant neu starten.
+3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen.
+4. Raumname, Lautsprecher, primären Sensor, weitere Sensoren und Musikquellen auswählen.
+5. Für jeden weiteren Raum erneut einen Eintrag hinzufügen. Einstellungen später über **Konfigurieren** ändern.
+
+Das Repository ist über HACS als benutzerdefiniertes Repository installierbar. Es ist **nicht im HACS-Standardkatalog gelistet**. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
+
+## Sensorlogik
+
+**Primär startet, weitere halten:** Der PIR muss zuerst Anwesenheit erkennen. Danach dürfen Radar und beliebig viele weitere Sensoren die Belegung halten. Ein Radar-Fehlalarm alleine startet keine Musik. Meldet ein Sensor bereits beim PIR-Ereignis Anwesenheit, hält er den Raum ebenfalls.
+
+Beispiel Toilette: Der PIR erkennt das Betreten. Die Person sitzt still, der PIR meldet wieder „frei“, aber der Radar erkennt sie weiterhin. Die Musik bleibt an. Erst wenn **alle** Sensoren während der gesamten Ausschaltverzögerung „frei“ melden, endet die Belegung. Ein späterer Radar-Fehlalarm darf nicht neu starten.
+
+**Alle Sensoren gleichberechtigt:** Jeder Sensor darf Anwesenheit starten und halten. Frei wird der Raum auch hier erst, wenn alle Sensoren durchgehend aus sind.
+
+Nicht verfügbare oder unbekannte Sensoren gelten nicht als „frei“. Neue Anwesenheit während der Verzögerung oder beim Ausblenden bricht das Verlassen ab.
+
+## Einstellungen und Bedienung
+
+- **Ein Lautsprecher je Raum:** weitere Räume als weitere Einträge anlegen. Ein Sonos-Stereopaar kann als einzelne Sonos-Entität ausgewählt werden.
+- **Mindestens zwei Sensoren:** ein primärer und mindestens ein weiterer; zusätzliche Sensoren sind möglich.
+- **Musikquellen:** andere Sonos-Lautsprecher auswählen. Die erste spielende Quelle in der Auswahlreihenfolge gewinnt; es wird genau einer Gruppe beigetreten.
+- **Ausschaltverzögerung:** 0–3600 Sekunden, Standard 15.
+- **Überblenddauer:** 0–30 Sekunden, Standard 3. Mit 0 werden Überblendungen deaktiviert.
+- **Anfangslautstärke:** 0–1, Standard 0,3. Danach wird die im normalen Betrieb geänderte Lautstärke gespeichert.
+- Pro Raum entstehen ein **Follow-Me-Schalter** und ein **Belegungssensor**. Mehrere Schalter können gemeinsam über Dashboard oder Automation bedient werden.
+
+## Verhalten und Grenzen
+
+Musik zunächst auf einer Quelle starten. Die Integration wählt keine Playlists und startet keine stumme Quelle. Sie übernimmt nur Lautsprecher, die sie selbst einer spielenden Gruppe hinzugefügt hat; bereits manuell laufende Musik und vorhandene Gruppen werden nicht übernommen. Beim Verlassen blendet sie aus, trennt den verwalteten Lautsprecher ab, pausiert ihn und stellt die gespeicherte Lautstärke wieder her. Wird er zwischenzeitlich Gruppenkoordinator für andere Lautsprecher, gibt die Integration die Kontrolle ab, statt die Gruppe zu zerlegen.
+
+Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lautstärke und Schalterzustand bleiben über Neustarts erhalten. Belegung und Wiedergabekontrolle werden beim Neustart oder Neuladen zurückgesetzt. Eine zuvor verbundene Wiedergabe wird dann nicht automatisch gestoppt; den Raum einmal manuell abtrennen/pausieren, um ihn beim nächsten Betreten wieder automatisch übernehmen zu lassen.
+
+Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Ein späteres Zustandsereignis kann einen neuen Beitrittsversuch auslösen.
+
+Softwaretests laufen gegen **Home Assistant 2026.9.4**. Ein Praxistest mit echten Sonos-Geräten steht noch aus. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
+
+MIT-Lizenz, unabhängiges Community-Projekt. Weitere technische Hinweise und Entwicklungsbefehle stehen in der [englischen README](README.md).

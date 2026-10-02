@@ -1,0 +1,72 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Raum konfigurieren",
+        "description": "Primär: Nur Sensor 1 startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten. Mindestens einen weiteren Sensor wählen.",
+        "data": {
+          "name": "Raumname",
+          "player": "Sonos-Lautsprecher",
+          "primary": "Primärer Sensor (PIR)",
+          "secondary": "Weitere Sensoren (z. B. Radar)",
+          "sources": "Musikquellen (Reihenfolge = Priorität)",
+          "mode": "Sensorlogik",
+          "off_delay": "Ausschaltverzögerung",
+          "fade_seconds": "Überblenddauer",
+          "volume": "Anfangslautstärke (0–1)"
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Bitte einen Namen eingeben.",
+      "distinct_sensors": "Mindestens einen anderen Sensor als den primären wählen.",
+      "invalid_sources": "Mindestens einen anderen Sonos-Lautsprecher als Quelle wählen.",
+      "player_used": "Dieser Lautsprecher wird bereits in einem Raum verwaltet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Raum konfigurieren",
+        "description": "Primär: Nur Sensor 1 startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten. Mindestens einen weiteren Sensor wählen.",
+        "data": {
+          "name": "Raumname",
+          "player": "Sonos-Lautsprecher",
+          "primary": "Primärer Sensor (PIR)",
+          "secondary": "Weitere Sensoren (z. B. Radar)",
+          "sources": "Musikquellen (Reihenfolge = Priorität)",
+          "mode": "Sensorlogik",
+          "off_delay": "Ausschaltverzögerung",
+          "fade_seconds": "Überblenddauer",
+          "volume": "Anfangslautstärke (0–1)"
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Bitte einen Namen eingeben.",
+      "distinct_sensors": "Mindestens einen anderen Sensor als den primären wählen.",
+      "invalid_sources": "Mindestens einen anderen Sonos-Lautsprecher als Quelle wählen.",
+      "player_used": "Dieser Lautsprecher wird bereits in einem Raum verwaltet."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Primär startet, weitere halten",
+        "equal": "Alle Sensoren gleichberechtigt"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Belegung"
+      }
+    }
+  }
+}
