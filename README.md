@@ -107,6 +107,18 @@ When TV is detected and the offset is nonzero, the target is **configured defaul
 
 Detection and offset changes apply on the next join. Switching from TV to music or back within an already-joined group does not automatically change its volume. Restart/playback-ownership limitations below still apply. TV behavior was tested using simulated Sonos states/services, not a connected soundbar.
 
+## Silent startup / Sonos Move (v0.4.1+)
+
+Entry now waits up to 10 seconds for Home Assistant to report both the expected group and playing destination before unmuting that destination (positive targets only) and fading in. Source/coordinator mute and other members are not changed.
+
+After fading, volume/mute feedback gets up to 2 seconds to arrive. A still-zero or muted destination receives at most two additional unmute/fade attempts. An audible lower volume is respected. This is bounded startup recovery, not a continuous unmute watchdog; an intentional zero target is preserved. Disable, unload and occupancy expiry cancel the running start.
+
+Reports matching our own volume commands from the previous 5 seconds are excluded from volume memory, preventing late fade-to-zero feedback from becoming the next target. A manual change to exactly one of those values within the window may also be excluded from memory, but the device volume is not undone. Metadata-only state events no longer rewrite volume memory.
+
+Recovery attempts are logged under `custom_components.sonos_follow_me`; a failed start is also exposed as `startup_error` on the room's Follow Me switch and cleared at the next start. After a failure, new join attempts are held off for at least 30 seconds. For recurring problems, capture that error and the destination's `volume_level`, `is_volume_muted` and `group_members`.
+
+Regression tests reproduce pre-fix failures with simulated persistent mute, delayed topology, ignored volume writes and stale volume reports. No physical Move was connected; these tests do not prove the specific cause on a user's device. A previously persisted zero volume is deliberately not replaced with a louder value.
+
 ## Playback behavior and limitations
 
 - Start music on a source yourself. The integration copies an existing playing group; it does not select playlists or start a silent source. If a source starts while the room is occupied, its state change triggers joining.
@@ -115,7 +127,7 @@ Detection and offset changes apply on the next join. Switching from TV to music 
 - Disabling a room stops its automation and leaves playback in place. It does not pause the group. Sensor evaluation restarts on enable; radar alone cannot re-arm primary mode.
 - Volume changes during ordinary playback are remembered. Changes **during a fade** are not treated as a new target and may be overwritten; set fade duration to zero if immediate manual volume control is preferred.
 - Volume and enable state persist across restarts. Occupancy and playback ownership deliberately reset on restart/reload. Previously joined playback is left untouched; detach/pause that destination manually once if you want automatic ownership on the next visit.
-- Failed Sonos actions are logged. A later state event can retry joining; there is no continuous retry loop. Network outages can prevent cleanup or volume restoration.
+- Failed Sonos actions are logged. After the error cooldown, a later state event can retry joining; there is no continuous retry loop. Network outages can prevent cleanup or volume restoration.
 - Disable your old Follow Me blueprint automations for these same speakers to prevent conflicting actions. No changes to your Home Assistant instance are made by publishing/installing the repository alone.
 
 ## Development

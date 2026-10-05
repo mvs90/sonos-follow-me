@@ -2,7 +2,8 @@
 
 import asyncio
 import logging
-from time import time
+from collections import deque
+from time import monotonic, time
 
 from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
@@ -13,6 +14,11 @@ from .const import DEFAULTS, DOMAIN
 from .presence import Presence
 
 _LOGGER = logging.getLogger(__name__)
+JOIN_TIMEOUT = 10
+VOLUME_CONFIRM_TIMEOUT = 2
+STATE_POLL_INTERVAL = 0.1
+STARTUP_RECOVERY_ATTEMPTS = 2
+VOLUME_ECHO_WINDOW = 5
 
 
 class Room:
@@ -35,6 +41,9 @@ class Room:
         self._task = None
         self._fading = False
         self._stopped = False
+        self._volume_echoes = deque(maxlen=48)
+        self._retry_after = 0
+        self.startup_error = None
         self._tv_volume = None
         self._vacant_since = None
 
@@ -110,7 +119,13 @@ class Room:
             if (
                 state
                 and state.state == "playing"
+                and state.attributes.get("is_volume_muted") is not True
                 and isinstance(volume := state.attributes.get("volume_level"), (float, int))
+                and not self._is_volume_echo(volume)
+                and (
+                    (old := event.data.get("old_state")) is None
+                    or old.attributes.get("volume_level") != volume
+                )
             ):
                 if self._tv_volume is not None:
                     self._tv_volume = max(0, min(1, volume))
@@ -134,6 +149,7 @@ class Room:
             if (
                 status == "occupied"
                 and not self.managed
+                and monotonic() >= self._retry_after
                 and (self._task is None or self._task.done())
             ):
                 self._launch(self._enter)
@@ -177,6 +193,90 @@ class Room:
             "media_player", action, {"entity_id": entity or self.player, **data}, blocking=True
         )
 
+    def _is_volume_echo(self, volume):
+        """Do not store delayed reports of our own fade steps as manual volume."""
+        now = monotonic()
+        return any(
+            now - sent < VOLUME_ECHO_WINDOW and round(volume * 100) == value
+            for sent, value in self._volume_echoes
+        )
+
+    async def _set_volume(self, value):
+        self._volume_echoes.append((monotonic(), round(value * 100)))
+        await self.service("volume_set", volume_level=value)
+
+    async def _wait_until(self, predicate, timeout):
+        try:
+            async with asyncio.timeout(timeout):
+                while not predicate():
+                    await asyncio.sleep(STATE_POLL_INTERVAL)
+        except TimeoutError:
+            return False
+        return True
+
+    def _group_ready(self, source):
+        player = self.hass.states.get(self.player)
+        coordinator = self.hass.states.get(source)
+        if (
+            not player
+            or player.state != "playing"
+            or not coordinator
+            or coordinator.state != "playing"
+        ):
+            return False
+        for state in (player, coordinator):
+            members = state.attributes.get("group_members") or []
+            if members and members[0] == source and self.player in members:
+                return True
+        return False
+
+    def _volume_confirmed(self, target):
+        state = self.hass.states.get(self.player)
+        if not state or state.state != "playing":
+            return False
+        volume = state.attributes.get("volume_level")
+        return (
+            isinstance(volume, (int, float))
+            and abs(volume - target) <= 0.0051
+            and (target == 0 or state.attributes.get("is_volume_muted") is not True)
+        )
+
+    async def _confirm_startup(self, source, target):
+        """Recover only a silent start, with a bounded number of attempts."""
+        for attempt in range(STARTUP_RECOVERY_ATTEMPTS + 1):
+            if await self._wait_until(
+                lambda: self._volume_confirmed(target), VOLUME_CONFIRM_TIMEOUT
+            ):
+                return
+            if not self._group_ready(source):
+                raise HomeAssistantError("Sonos group changed during fade-in")
+            state = self.hass.states.get(self.player)
+            volume = state.attributes.get("volume_level")
+            muted = state.attributes.get("is_volume_muted")
+            # A nonzero, audible adjustment may be a user setting or device volume limit.
+            if target > 0 and isinstance(volume, (int, float)) and volume > 0 and muted is not True:
+                return
+            if (
+                attempt == STARTUP_RECOVERY_ATTEMPTS
+                or target == 0
+                or not isinstance(volume, (int, float))
+            ):
+                raise HomeAssistantError(
+                    f"Sonos startup remained silent/unconfirmed: volume={volume}, muted={muted}, target={target}"
+                )
+            _LOGGER.warning(
+                "Retrying silent Sonos start for %s (%s/%s): volume=%s, muted=%s, target=%s",
+                self.player,
+                attempt + 1,
+                STARTUP_RECOVERY_ATTEMPTS,
+                volume,
+                muted,
+                target,
+            )
+            await self._set_volume(0)
+            await self.service("volume_mute", is_volume_muted=False)
+            await self._fade(0, target)
+
     def source(self):
         for entity in self.config["sources"]:
             state = self.hass.states.get(entity)
@@ -201,22 +301,21 @@ class Room:
         return self.volume if self._tv_volume is None else self._tv_volume
 
     async def _fade(self, start, end, leaving=False):
+        previous_fading = self._fading
         self._fading = True
         try:
             steps = 12 if self.config["fade_seconds"] else 1
             for step in range(1, steps + 1):
                 if leaving and (not self.enabled or self.status() != "idle"):
-                    await self.service("volume_set", volume_level=self.playback_volume)
+                    await self._set_volume(self.playback_volume)
                     return False
                 x = step / steps
-                await self.service(
-                    "volume_set", volume_level=round(start + (end - start) * x * x * (3 - 2 * x), 4)
-                )
+                await self._set_volume(round(start + (end - start) * x * x * (3 - 2 * x), 4))
                 if steps > 1:
                     await asyncio.sleep(self.config["fade_seconds"] / steps)
             return True
         finally:
-            self._fading = False
+            self._fading = previous_fading
 
     async def _enter(self):
         source = self.source()
@@ -228,17 +327,29 @@ class Room:
             if offset and self.source_is_tv(source)
             else None
         )
+        target = self.playback_volume
+        self.startup_error = None
         self._fading = True
         try:
-            await self.service("volume_set", volume_level=0)
+            await self._set_volume(0)
             await self.service("join", entity=source, group_members=[self.player])
             self.managed = True
-            await self._fade(0, self.playback_volume)
-        except (HomeAssistantError, asyncio.CancelledError):
+            if not await self._wait_until(lambda: self._group_ready(source), JOIN_TIMEOUT):
+                raise HomeAssistantError("Sonos group join was not confirmed within 10 seconds")
+            if target > 0:
+                await self.service("volume_mute", is_volume_muted=False)
+            await self._fade(0, target)
+            await self._confirm_startup(source, target)
+        except (HomeAssistantError, asyncio.CancelledError) as error:
+            if isinstance(error, HomeAssistantError):
+                self.startup_error = str(error)
+                self._retry_after = monotonic() + 30
+                if not self._group_ready(source):
+                    self.managed = False
             # Restore the correct target on failure or interrupted entry.
             if not self.managed:
                 self._tv_volume = None
-            await self.service("volume_set", volume_level=self.playback_volume)
+            await self._set_volume(self.playback_volume)
             raise
         finally:
             self._fading = False
@@ -268,7 +379,7 @@ class Room:
             self.managed = False
             self._tv_volume = None
         finally:
-            await self.service("volume_set", volume_level=self.playback_volume)
+            await self._set_volume(self.playback_volume)
 
     async def async_enable(self, enabled):
         self.enabled = enabled
@@ -277,7 +388,7 @@ class Room:
             self._task.cancel()
             await asyncio.gather(self._task, return_exceptions=True)
             if self.managed:
-                await self.service("volume_set", volume_level=self.playback_volume)
+                await self._set_volume(self.playback_volume)
         self.presence.expire()
         self._save()
         self.evaluate()

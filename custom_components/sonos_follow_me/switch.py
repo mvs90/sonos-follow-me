@@ -26,6 +26,7 @@ class FollowMeSwitch(RoomEntity, SwitchEntity):
             "tv_volume_active": self.room._tv_volume is not None,
             "playback_target_volume": self.room.playback_volume,
             "vacant_since": self.room._vacant_since,
+            "startup_error": self.room.startup_error,
         }
 
     @property

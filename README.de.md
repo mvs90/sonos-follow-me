@@ -105,13 +105,25 @@ Bei erkanntem TV-Ton und einem Offset ungleich 0 gilt **Standardlautstärke + Of
 
 Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird erneut von der Standardlautstärke gerechnet. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Die Standardlautstärke und der Offset wirken auf den folgenden Beitritt; ein Quellenwechsel zwischen TV und Musik während einer bestehenden Gruppe löst keine automatische Lautstärkeänderung aus. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
 
+## Stummer Start / Sonos Move (ab v0.4.1)
+
+Beim Hinzufügen wartet Follow Me bis zu 10 Sekunden darauf, dass Home Assistant die richtige Gruppe und Wiedergabe am Raumlautsprecher meldet. Erst dann wird bei einem Zielwert über 0 dessen Mute aufgehoben und eingeblendet. Der Gruppenkoordinator und andere Lautsprecher werden nicht entstummt.
+
+Nach dem Fade werden Lautstärke und Mute-Rückmeldung geprüft. Bleibt der Lautsprecher bei 0 oder stumm, folgen höchstens zwei weitere Einblendversuche mit jeweils bis zu 2 Sekunden für die Rückmeldung. Eine hörbare niedrigere Lautstärke wird dabei respektiert. Das ist eine begrenzte Startprüfung, kein dauerhaftes automatisches Entstummen. Ein absichtlich eingestellter Zielwert 0 bleibt stumm. Deaktivieren/Entladen bzw. eine abgelaufene Raumbelegung bricht den laufenden Start ab.
+
+Eigene Lautstärkebefehle können verspätet gemeldet werden. Rückmeldungen, die einem eigenen Befehl der letzten 5 Sekunden entsprechen, werden deshalb nicht als neue manuelle Wunschlautstärke gespeichert. Echte manuelle Änderungen auf genau solche Werte können innerhalb dieses kurzen Fensters ebenfalls von der Speicherung ausgenommen sein; die Lautstärke am Gerät wird dadurch nicht zurückgesetzt.
+
+Wiederholungen stehen im Home-Assistant-Protokoll unter `custom_components.sonos_follow_me`. Ein fehlgeschlagener Start erscheint zusätzlich als Attribut `startup_error` am Follow-Me-Schalter; beim nächsten Start wird es zurückgesetzt. Nach einem Fehler werden neue Beitrittsversuche für mindestens 30 Sekunden zurückgehalten. Bei erneuten Problemen sind `startup_error`, `volume_level`, `is_volume_muted` und `group_members` des betroffenen Lautsprechers hilfreich.
+
+Die Fehlerfälle wurden mit verzögerten Gruppen-/Lautstärkerückmeldungen und gesetztem Mute simuliert und mit der alten Version reproduziert. Ein physischer Sonos Move war für diese Tests nicht verbunden; die konkrete Ursache am Gerät ist damit noch nicht bewiesen. Bereits früher gespeicherte Lautstärke 0 wird nicht automatisch durch einen höheren Wert ersetzt.
+
 ## Verhalten und Grenzen
 
 Musik zunächst auf einer Quelle starten. Die Integration wählt keine Playlists und startet keine stumme Quelle. Sie übernimmt nur Lautsprecher, die sie selbst einer spielenden Gruppe hinzugefügt hat; bereits manuell laufende Musik und vorhandene Gruppen werden nicht übernommen. Beim Verlassen blendet sie aus, trennt den verwalteten Lautsprecher ab, pausiert ihn und stellt die gespeicherte Lautstärke wieder her. Wird er zwischenzeitlich Gruppenkoordinator für andere Lautsprecher, gibt die Integration die Kontrolle ab, statt die Gruppe zu zerlegen.
 
 Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lautstärke und Schalterzustand bleiben über Neustarts erhalten. Belegung und Wiedergabekontrolle werden beim Neustart oder Neuladen zurückgesetzt. Änderungen der öffentlichen Einstellungen laden den Raum ab v0.3.0 nicht mehr neu. Eine zuvor verbundene Wiedergabe wird dann nicht automatisch gestoppt; den Raum einmal manuell abtrennen/pausieren, um ihn beim nächsten Betreten wieder automatisch übernehmen zu lassen.
 
-Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Ein späteres Zustandsereignis kann einen neuen Beitrittsversuch auslösen.
+Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Nach der Fehlersperre kann ein späteres Zustandsereignis einen neuen Beitrittsversuch auslösen.
 
 Softwaretests laufen gegen **Home Assistant 2026.9.4**. Ein Praxistest mit echten Sonos-Geräten steht noch aus. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
 

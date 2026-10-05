@@ -35,7 +35,25 @@ async def room(tmp_path):
         ("media_player.kitchen", "playing", {"group_members": ["media_player.kitchen"]}),
     ]:
         hass.states.async_set(entity, value, attrs)
-    room.service = AsyncMock()
+
+    async def simulate_service(action, entity=None, **data):
+        state = hass.states.get(room.player)
+        attrs = dict(state.attributes)
+        value = state.state
+        if action == "join":
+            value = "playing"
+            attrs["group_members"] = [entity, room.player]
+        elif action == "volume_set":
+            attrs["volume_level"] = round(data["volume_level"] * 100) / 100
+        elif action == "volume_mute":
+            attrs["is_volume_muted"] = data["is_volume_muted"]
+        elif action == "unjoin":
+            attrs["group_members"] = [room.player]
+        elif action == "media_pause":
+            value = "paused"
+        hass.states.async_set(room.player, value, attrs)
+
+    room.service = AsyncMock(side_effect=simulate_service)
     yield room
     await room.async_stop()
     await hass.async_stop()
@@ -166,10 +184,15 @@ async def test_listener_starts_on_primary_event(room):
 async def test_real_events_and_services_depart_after_delay(room):
     calls = []
 
+    simulate_service = room.service.side_effect
+
     async def record(call):
         calls.append((call.service, call.data))
+        data = dict(call.data)
+        entity = data.pop("entity_id")
+        await simulate_service(call.service, entity=entity, **data)
 
-    for name in ["join", "unjoin", "volume_set", "media_pause"]:
+    for name in ["join", "unjoin", "volume_set", "media_pause", "volume_mute"]:
         room.hass.services.async_register("media_player", name, record)
     room.service = Room.service.__get__(room)
     room.config["off_delay"] = 0.02
