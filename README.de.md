@@ -47,9 +47,11 @@ entities:
 
 Die Karte zeigt Belegung, Lautsprecher, gespeicherte Lautstärke, Sensorzustände, Quellenpriorität und eine laufende Abkühlzeit. Die Anzeige der verbleibenden Zeit aktualisiert sich etwa alle 30 Sekunden. **Follow Me**, **Standardlautstärke verwenden**, **Standardlautstärke in Prozent**, **Abkühlzeit**, **Ausschaltverzögerung**, **Überblenddauer** und **Sensorlogik** sind direkt bedienbar. Weitere Einstellungen sind pro Raum aufklappbar.
 
+Ab v0.4.2 lassen sich Standardlautstärke und TV-Offset per Slider einstellen. Die Karte zeigt den TV-Offset als vorzeichenbehafteten Prozentwert; die Berechnung bleibt additiv (30 % − 10 % = 20 %). Der Hinweis an der Abkühlzeit erklärt, dass bei der nächsten Bewegung nach Ablauf wieder auf die Standardlautstärke eingeblendet wird, sofern die Rücksetzung aktiviert ist.
+
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.2` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 

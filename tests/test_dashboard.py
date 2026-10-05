@@ -23,7 +23,7 @@ async def test_card_registration():
         assert logo.url_path == LOGO_URL
         assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
         assert not logo.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.4.0")
+        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.4.2")
 
 
 async def test_entities_expose_stable_room_metadata(room):

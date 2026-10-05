@@ -17,7 +17,10 @@ const words = {
     volume_cooldown: "Abkühlzeit",
     tv_volume_offset: "TV-Offset",
     tv_active: "TV-Lautstärke aktiv",
-    tv_hint: "TV-Offset in Prozentpunkten zur Standardlautstärke; 0 = aus.",
+    tv_hint:
+      "Zur Standardlautstärke addiert, z. B. 30 % − 10 % = 20 %. 0 % = aus.",
+    cooldown_hint:
+      "Nach Ablauf wird bei der nächsten Bewegung auf die Standardlautstärke eingeblendet, statt die zuletzt am Lautsprecher eingestellte Lautstärke zu übernehmen. Gilt bei aktivierter Option „Standardlautstärke verwenden“.",
     off_delay: "Ausschaltverzögerung",
     fade_seconds: "Überblenddauer",
     volume_reset: "Standardlautstärke verwenden",
@@ -54,8 +57,9 @@ const words = {
     volume_cooldown: "Volume cooldown",
     tv_volume_offset: "TV offset",
     tv_active: "TV volume active",
-    tv_hint:
-      "TV offset in percentage points relative to default volume; 0 = off.",
+    tv_hint: "Added to the default volume, e.g. 30 % − 10 % = 20 %. 0 % = off.",
+    cooldown_hint:
+      "After the cooldown, the next movement fades to the default volume instead of the last volume set on the speaker. Applies when “Use default volume” is enabled.",
     off_delay: "Clear delay",
     fade_seconds: "Fade duration",
     volume_reset: "Use default volume",
@@ -96,6 +100,13 @@ const css = `
 :host{display:block;color:var(--primary-text-color);font-family:var(--paper-font-body1_-_font-family,system-ui)}
 ha-card{display:block;overflow:hidden;background:var(--ha-card-background,var(--card-background-color,#fff));border-radius:var(--ha-card-border-radius,16px);border:1px solid var(--divider-color,#ddd)}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:48px;height:48px;object-fit:contain;flex-shrink:0}.count{white-space:nowrap;flex-shrink:0}header{gap:12px;padding:20px 20px 12px;display:flex;justify-content:space-between;align-items:center}h2{overflow-wrap:anywhere;font-size:21px;margin:0;font-weight:600}.count,.muted{color:var(--secondary-text-color,#666);font-size:13px}.rooms{padding:0 12px 12px;display:grid;gap:10px}.room{border:1px solid var(--divider-color,#ddd);border-radius:12px;padding:16px;min-width:0}.heading{display:flex;align-items:center;gap:10px;justify-content:space-between}.name{font-size:17px;font-weight:600;overflow-wrap:anywhere}.badge{display:inline-block;border-radius:20px;padding:4px 9px;font-size:12px;background:var(--secondary-background-color,#f3f4f5);margin-top:8px}.occupied{color:var(--primary-color,#007c83);background:color-mix(in srgb,var(--primary-color,#007c83) 12%,transparent)}.summary{white-space:pre-line;margin:12px 0;font-size:13px;line-height:1.7;overflow-wrap:anywhere}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-size:14px}input,select,button{font:inherit;color:inherit}input[type=checkbox]{width:22px;height:22px;accent-color:var(--primary-color,#007c83);cursor:pointer;flex-shrink:0}input[type=number],select{background:var(--secondary-background-color,#f6f7f8);border:1px solid var(--divider-color,#ccc);border-radius:8px;padding:9px;box-sizing:border-box;max-width:100%;min-width:0}input[type=number]{width:100%}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.field{display:grid;gap:6px;font-size:12px;color:var(--secondary-text-color,#666)}.field input{color:var(--primary-text-color)}details{border-top:1px solid var(--divider-color,#ddd);margin-top:14px;padding-top:12px}summary{cursor:pointer;font-size:14px;font-weight:500;padding:4px 0}select{width:100%;margin-top:6px}ul{padding-left:18px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}.error{padding:12px;color:var(--error-color,#b00020);overflow-wrap:anywhere}.empty{padding:20px}.hint{font-size:12px;line-height:1.5;color:var(--secondary-text-color,#666);margin-top:12px}a{color:var(--primary-color,#007c83);font-size:13px}input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color,#007c83);outline-offset:3px}:disabled{opacity:.5;cursor:not-allowed}
+`;
+const sliderCss = `
+.slider-field,.cooldown-field{grid-column:1/-1}
+.field-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.field-value{font-size:15px;font-weight:600;color:var(--primary-text-color);font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:var(--primary-color,#007c83);cursor:pointer}
+.field .hint{margin:0}.cooldown-field input{max-width:140px}
 `;
 
 class SonosFollowMeCard extends HTMLElement {
@@ -183,30 +194,91 @@ class SonosFollowMeCard extends HTMLElement {
   _number(state, key, parent, t) {
     if (!state) return;
     const label = node("label", undefined, "field");
-    const unit = state.attributes.unit_of_measurement || "";
-    label.append(node("span", `${t[key]} (${unit})`));
+    const slider = ["default_volume", "tv_volume_offset"].includes(key);
+    const unit = slider ? "%" : state.attributes.unit_of_measurement || "";
+    const heading = node("span", undefined, "field-heading");
+    heading.append(node("span", `${t[key]} (${unit})`));
+    label.append(heading);
     const input = node("input");
-    input.type = "number";
-    input.value = valid(state) ? state.state : "";
+    input.type = slider ? "range" : "number";
     input.min = state.attributes.min;
     input.max = state.attributes.max;
     input.step = state.attributes.step;
+    input.value = valid(state) ? state.state : slider ? "0" : "";
     input.setAttribute("aria-label", t[key]);
     input.disabled = !valid(state) || this._busy.has(state.entity_id);
-    input.addEventListener("change", () => {
-      if (input.value !== "" && input.reportValidity())
-        this._call(state, "set_value", { value: Number(input.value) });
+    if (slider) {
+      label.classList.add("slider-field");
+      input.dataset.sliderEntity = state.entity_id;
+      const value = node("span", undefined, "field-value");
+      const updateValue = () => {
+        const number = Number(input.value);
+        value.textContent = valid(this._hass.states[state.entity_id])
+          ? `${key === "tv_volume_offset" && number > 0 ? "+" : ""}${number} %`
+          : "—";
+        input.setAttribute("aria-valuetext", value.textContent);
+      };
+      updateValue();
+      input.addEventListener("input", updateValue);
+      input.addEventListener("pointerdown", () => {
+        this._sliding = true;
+        const released = () => {
+          this._sliding = false;
+          window.removeEventListener("pointerup", released);
+          window.removeEventListener("pointercancel", released);
+        };
+        window.addEventListener("pointerup", released);
+        window.addEventListener("pointercancel", released);
+      });
+      heading.append(value);
+    }
+    input.addEventListener("change", async () => {
+      if (input.value === "" || !input.reportValidity()) return;
+      // Keep keyboard adjustment usable after the state update rebuilds the card.
+      let restoreFocus = slider && this.shadowRoot.activeElement === input;
+      const focusMoved = () => {
+        restoreFocus = false;
+      };
+      document.addEventListener("focusin", focusMoved);
+      try {
+        await this._call(state, "set_value", { value: Number(input.value) });
+      } finally {
+        document.removeEventListener("focusin", focusMoved);
+        if (restoreFocus)
+          [...this.shadowRoot.querySelectorAll("input[type=range]")]
+            .find((element) => element.dataset.sliderEntity === state.entity_id)
+            ?.focus({ preventScroll: true });
+      }
     });
     label.append(input);
+    if (key === "volume_cooldown" || key === "tv_volume_offset") {
+      const hint = node(
+        "span",
+        t[key === "volume_cooldown" ? "cooldown_hint" : "tv_hint"],
+        "hint",
+      );
+      hint.id = `${state.entity_id}-hint`;
+      input.setAttribute("aria-describedby", hint.id);
+      label.append(hint);
+      if (key === "volume_cooldown") label.classList.add("cooldown-field");
+    }
     parent.append(label);
   }
   _render(force = false) {
-    if (
-      !this._hass ||
-      !this._config ||
-      (!force && this.shadowRoot.activeElement)
-    )
+    if (!this._hass || !this._config) return;
+    const active = this.shadowRoot.activeElement;
+    if (!force && active) {
+      const id = active.dataset.sliderEntity;
+      // HA may deliver the authoritative state after the service promise resolves.
+      // Refresh an idle focused slider without replacing it or interrupting a drag.
+      if (id && !this._sliding && !this._busy.has(id)) {
+        const current = this._hass.states[id];
+        active.value = valid(current) ? current.state : "0";
+        active.disabled = !valid(current);
+        active.dispatchEvent(new Event("input"));
+      }
       return;
+    }
     const hass = this._hass,
       t = lang(hass),
       states = Object.values(hass.states);
@@ -217,7 +289,7 @@ class SonosFollowMeCard extends HTMLElement {
             b.attributes.room_name || "",
           ),
         );
-    const style = node("style", css),
+    const style = node("style", css + sliderCss),
       card = node("ha-card"),
       header = node("header");
     const brand = node("div", undefined, "brand");
@@ -289,12 +361,11 @@ class SonosFollowMeCard extends HTMLElement {
       const grid = node("div", undefined, "grid");
       for (const key of [
         "default_volume",
-        "volume_cooldown",
         "tv_volume_offset",
+        "volume_cooldown",
       ])
         this._number(settings[key], key, grid, t);
       room.append(grid);
-      room.append(node("div", t.tv_hint, "hint"));
       if (a.tv_volume_active)
         room.append(
           node(

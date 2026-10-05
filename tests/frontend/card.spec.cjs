@@ -103,8 +103,17 @@ test("automatically discovers rooms, shows presence and settings", async ({
   await expect(page.getByText("Arbeitszimmer", { exact: true })).toBeVisible();
   await expect(page.getByText("Belegt", { exact: true })).toBeVisible();
   await expect(
-    page.getByLabel("Standardlautstärke", { exact: true }).first(),
+    page
+      .getByRole("slider", { name: "Standardlautstärke", exact: true })
+      .first(),
   ).toHaveValue("25");
+  await expect(page.getByText("TV-Offset (%)").first()).toBeVisible();
+  await expect(page.getByText("TV-Offset (pp)")).toHaveCount(0);
+  await expect(
+    page.getByLabel("Abkühlzeit", { exact: true }).first(),
+  ).toHaveAccessibleDescription(
+    /Nach Ablauf wird bei der nächsten Bewegung auf die Standardlautstärke eingeblendet/,
+  );
   await expect(page.getByText("Abkühlzeit läuft: 20 min")).toBeVisible();
   await page
     .locator("sonos-follow-me-card")
@@ -118,15 +127,22 @@ test("controls send standard Home Assistant service calls", async ({
     type: "custom:sonos-follow-me-card",
     entities: ["switch.bath"],
   });
-  await page.getByLabel("Standardlautstärke", { exact: true }).fill("35");
-  await page.getByLabel("Standardlautstärke", { exact: true }).press("Tab");
+  const volume = page.getByRole("slider", {
+    name: "Standardlautstärke",
+    exact: true,
+  });
+  await volume.press("ArrowRight");
   await expect
     .poll(() => page.evaluate(() => window.calls))
     .toContainEqual([
       "number",
       "set_value",
-      { entity_id: "number.bath_default_volume", value: 35 },
+      { entity_id: "number.bath_default_volume", value: 26 },
     ]);
+  await expect(volume).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(volume).toHaveValue("27");
+  await expect(page.getByText("27 %", { exact: true })).toBeVisible();
   await page.getByLabel("Follow Me", { exact: true }).uncheck();
   await expect
     .poll(() => page.evaluate(() => window.calls))
@@ -146,8 +162,8 @@ test("renders permission errors and rejects out of range input", async ({
   page,
 }) => {
   await setup(page, { entities: ["switch.bath"] });
-  await page.getByLabel("Standardlautstärke", { exact: true }).fill("101");
-  await page.getByLabel("Standardlautstärke", { exact: true }).press("Tab");
+  await page.getByLabel("Abkühlzeit", { exact: true }).fill("10081");
+  await page.getByLabel("Abkühlzeit", { exact: true }).press("Tab");
   expect(await page.evaluate(() => window.calls.length)).toBe(0);
   await page.evaluate(() => (window.fail = true));
   await page.getByLabel("Follow Me", { exact: true }).click();
@@ -237,13 +253,76 @@ test("TV offset accepts negative values and shows active target", async ({
     card.hass = { ...hass };
   });
   await expect(page.getByText("TV-Lautstärke aktiv: 15 %")).toBeVisible();
-  await page.getByLabel("TV-Offset", { exact: true }).fill("-15");
-  await page.getByLabel("TV-Offset", { exact: true }).press("Tab");
+  const offset = page.getByRole("slider", { name: "TV-Offset", exact: true });
+  await offset.press("ArrowLeft");
   await expect
     .poll(() => page.evaluate(() => window.calls))
     .toContainEqual([
       "number",
       "set_value",
-      { entity_id: "number.bath_tv_volume_offset", value: -15 },
+      { entity_id: "number.bath_tv_volume_offset", value: -11 },
     ]);
+  await expect(page.getByText("-11 %", { exact: true })).toBeVisible();
+  await offset.press("End");
+  await expect(offset).toHaveValue("100");
+  await expect(page.getByText("+100 %", { exact: true })).toBeVisible();
+  await offset.press("Home");
+  await expect(offset).toHaveValue("-100");
+});
+
+test("slider previews changes during drag and commits once on release", async ({
+  page,
+}) => {
+  await setup(page, { entities: ["switch.bath"] });
+  const slider = page.getByRole("slider", {
+    name: "Standardlautstärke",
+    exact: true,
+  });
+  const box = await slider.boundingBox();
+  await page.mouse.move(box.x + box.width * 0.25, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height / 2, {
+    steps: 8,
+  });
+  const preview = await slider.inputValue();
+  expect(Number(preview)).toBeGreaterThan(60);
+  await expect(page.getByText(`${preview} %`, { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.calls.length)).toBe(0);
+  await page.evaluate(() => {
+    card.hass = { ...hass };
+  });
+  await expect(slider).toHaveValue(preview);
+  await page.mouse.up();
+  await expect
+    .poll(() => page.evaluate(() => window.calls))
+    .toEqual([
+      [
+        "number",
+        "set_value",
+        { entity_id: "number.bath_default_volume", value: Number(preview) },
+      ],
+    ]);
+});
+
+test("focused slider receives delayed Home Assistant state confirmation", async ({
+  page,
+}) => {
+  await setup(page, { entities: ["switch.bath"] });
+  await page.evaluate(() => {
+    hass.callService = async (domain, action, data) => {
+      window.calls.push([domain, action, data]);
+      setTimeout(() => {
+        hass.states[data.entity_id] = {
+          ...hass.states[data.entity_id],
+          state: String(data.value),
+        };
+        card.hass = { ...hass };
+      }, 150);
+    };
+  });
+  const offset = page.getByRole("slider", { name: "TV-Offset", exact: true });
+  await offset.press("ArrowLeft");
+  await expect(offset).toBeFocused();
+  await expect(offset).toHaveValue("-11");
+  await expect(page.getByText("-11 %", { exact: true })).toBeVisible();
 });

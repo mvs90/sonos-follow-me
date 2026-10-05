@@ -48,7 +48,9 @@ The card shows occupancy, speakers, remembered volume, cooldown status (updated 
 
 Controls use standard Home Assistant `switch`, `number` and `select` entities and normal entity permissions, so they also work in other cards and automations. Public settings persist through config-entry options and apply live without losing playback ownership. Device/sensor/source assignments and room names remain in the integration's Configure dialog; changing those still reloads the room.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+From v0.4.2, default volume and TV offset use sliders with live value labels. The card displays the offset as a signed percentage; calculation remains additive (30% − 10% = 20%). Cooldown help explains that the next movement after expiry fades to the default volume when volume reset is enabled.
+
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.2`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
