@@ -115,7 +115,7 @@ Eigene Lautstärkebefehle können verspätet gemeldet werden. Rückmeldungen, di
 
 Wiederholungen stehen im Home-Assistant-Protokoll unter `custom_components.sonos_follow_me`. Ein fehlgeschlagener Start erscheint zusätzlich als Attribut `startup_error` am Follow-Me-Schalter; beim nächsten Start wird es zurückgesetzt. Nach einem Fehler werden neue Beitrittsversuche für mindestens 30 Sekunden zurückgehalten. Bei erneuten Problemen sind `startup_error`, `volume_level`, `is_volume_muted` und `group_members` des betroffenen Lautsprechers hilfreich.
 
-Die Fehlerfälle wurden mit verzögerten Gruppen-/Lautstärkerückmeldungen und gesetztem Mute simuliert und mit der alten Version reproduziert. Ein physischer Sonos Move war für diese Tests nicht verbunden; die konkrete Ursache am Gerät ist damit noch nicht bewiesen. Bereits früher gespeicherte Lautstärke 0 wird nicht automatisch durch einen höheren Wert ersetzt.
+Die Fehlerfälle wurden mit verzögerten Gruppen-/Lautstärkerückmeldungen und gesetztem Mute simuliert und mit der alten Version reproduziert. Am 05.10.2026 bestand v0.4.1 zusätzlich neun Prüfungen an einem echten Move über Home Assistant 2026.9.4, darunter Start aus Stummschaltung, wiederholte Gruppenbeitritte und PIR/Radar-Verhalten. Zehn isolierte Fehlerszenarien wurden ebenfalls in dieser laufenden HA-Instanz erfolgreich geprüft. Die konkrete Ursache des ursprünglich sporadischen Gerätefehlers ist damit noch nicht bewiesen. Bereits früher gespeicherte Lautstärke 0 wird nicht automatisch durch einen höheren Wert ersetzt.
 
 ## Verhalten und Grenzen
 
@@ -125,6 +125,6 @@ Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lau
 
 Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Nach der Fehlersperre kann ein späteres Zustandsereignis einen neuen Beitrittsversuch auslösen.
 
-Softwaretests laufen gegen **Home Assistant 2026.9.4**. Ein Praxistest mit echten Sonos-Geräten steht noch aus. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
+Software- und Praxistests laufen gegen **Home Assistant 2026.9.4**. Das [Testlabor](dev/README.md) beschreibt die Docker-Netzwerkanbindung, wiederholbare Fehlersimulationen und den optionalen Testlauf am echten Move. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
 
 MIT-Lizenz, unabhängiges Community-Projekt. Weitere technische Hinweise und Entwicklungsbefehle stehen in der [englischen README](README.md).

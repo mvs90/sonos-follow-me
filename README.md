@@ -117,7 +117,7 @@ Reports matching our own volume commands from the previous 5 seconds are exclude
 
 Recovery attempts are logged under `custom_components.sonos_follow_me`; a failed start is also exposed as `startup_error` on the room's Follow Me switch and cleared at the next start. After a failure, new join attempts are held off for at least 30 seconds. For recurring problems, capture that error and the destination's `volume_level`, `is_volume_muted` and `group_members`.
 
-Regression tests reproduce pre-fix failures with simulated persistent mute, delayed topology, ignored volume writes and stale volume reports. No physical Move was connected; these tests do not prove the specific cause on a user's device. A previously persisted zero volume is deliberately not replaced with a louder value.
+Regression tests reproduce pre-fix failures with simulated persistent mute, delayed topology, ignored volume writes and stale volume reports. On 2026-10-05, v0.4.1 also passed nine checks against a physical Move through Home Assistant 2026.9.4, including muted startup, repeated joins and PIR/Radar behavior, plus ten isolated failure scenarios in that running HA instance. These results do not prove the original intermittent fault's root cause. A previously persisted zero volume is deliberately not replaced with a louder value.
 
 ## Playback behavior and limitations
 
@@ -138,11 +138,13 @@ Python 3.14 and Home Assistant 2026.9.4:
 python -m venv .venv
 .venv/bin/pip install -r requirements-test.txt
 .venv/bin/pytest -q
-.venv/bin/ruff check custom_components tests
-.venv/bin/ruff format --check custom_components tests
+.venv/bin/ruff check custom_components tests dev
+.venv/bin/ruff format --check custom_components tests dev
 ```
 
 Tests cover the presence latch, UI validation, timer cancellation, source selection, playback ownership, service failures and interrupted departure. GitHub Actions runs these tests plus Hassfest and HACS validation (Brands check excluded while this remains a custom repository).
+
+The [running-HA test lab](dev/README.md) provides Docker Desktop Sonos networking instructions, reproducible failure injection through real HA services, and an opt-in physical Move test runner. Local credentials, backups and detailed reports stay outside Git in `.local/`.
 
 Based on the user-provided `Multiroom Sonos Follow Me (Universal)` automation, reimplemented as an event-driven integration. Bug reports and pull requests are welcome; include HA version, mode and a sanitized sequence of sensor states.
 

@@ -1,0 +1,55 @@
+configure:
+  name: Configure simulated Sonos failure
+  description: Controls only the in-memory lab players and sensors. Disable the simulated Follow Me room before resetting a scenario.
+  fields:
+    reset:
+      name: Reset simulator
+      selector:
+        boolean:
+    pir:
+      name: Simulated PIR
+      selector:
+        boolean:
+    radar:
+      name: Simulated radar
+      selector:
+        boolean:
+    muted:
+      name: Destination muted
+      selector:
+        boolean:
+    join_delay:
+      name: Group feedback delay
+      selector:
+        number:
+          min: 0
+          max: 30
+          step: 0.1
+          unit_of_measurement: s
+    never_join:
+      name: Missing group feedback
+      selector:
+        boolean:
+    drop_positive:
+      name: Positive volume commands to ignore
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+    always_zero:
+      name: Ignore all positive volume commands
+      selector:
+        boolean:
+    sticky_mute:
+      name: Ignore unmute commands
+      selector:
+        boolean:
+    tv:
+      name: Simulate TV source
+      selector:
+        boolean:
+    source_playing:
+      name: Simulated source playing
+      selector:
+        boolean:
