@@ -50,7 +50,7 @@ Controls use standard Home Assistant `switch`, `number` and `select` entities an
 
 From v0.4.2, default volume and TV offset use sliders with live value labels. The card displays the offset as a signed percentage; calculation remains additive (30% − 10% = 20%). Cooldown help explains that the next movement after expiry fades to the default volume when volume reset is enabled.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.2`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.3`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
@@ -101,11 +101,11 @@ An `unknown`, `unavailable` or missing sensor does **not** count as clear; it ho
 
 ## TV audio volume offset (v0.4.0+)
 
-Each room has a **TV volume offset** in its options and dashboard card, from -100 to +100 **percentage points**. Zero disables the adjustment and preserves existing behavior. For example, default volume 30% with -10 points fades to 20%; +10 points fades to 40%.
+Each room has a **TV volume offset** in its options and dashboard card, from -100 to +100 **percentage points**. Zero disables the adjustment. Since v0.4.3, the offset applies to the volume selected for this visit. For example, a selected target of 30% with -10 points fades to 20%; +10 points fades to 40%. The card displays a signed percentage.
 
 On joining, the integration checks the selected group's **coordinator** for `source: TV` or a Sonos TV stream ID beginning `x-sonos-htastream:`. A soundbar model, media title or `media_content_type: music` alone does not identify TV input. Selecting another member of the TV group as source still resolves its coordinator.
 
-When TV is detected and the offset is nonzero, the target is **configured default volume + offset**, clamped to 0–100%, regardless of the music cooldown/reset setting. AirPlay, music and unrecognized sources retain the existing remembered-volume/cooldown behavior. Manual volume changes during this adjusted TV visit affect that visit but do not overwrite music volume memory; subsequent TV joins calculate a fresh target from the default. The card indicates when TV volume is active.
+When TV is detected and the offset is nonzero, the target is **selected visit volume + offset**, clamped to 0–100%. With volume reset disabled, or when returning before cooldown expiry, the remembered volume is the base. Only after an enabled cooldown expires does the default volume become the base. Example: remembered 40%, default 25%, offset -10% gives 30% before expiry or with reset disabled, and 15% after expiry. AirPlay, music and unrecognized sources receive no TV offset. Manual volume changes during an adjusted TV visit affect that visit but do not overwrite music volume memory. Subsequent TV joins apply the offset once to the newly selected base; it does not accumulate across visits. The card indicates when TV volume is active.
 
 Detection and offset changes apply on the next join. Switching from TV to music or back within an already-joined group does not automatically change its volume. Restart/playback-ownership limitations below still apply. TV behavior was tested using simulated Sonos states/services, not a connected soundbar.
 

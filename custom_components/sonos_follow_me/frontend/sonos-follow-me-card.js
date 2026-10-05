@@ -18,7 +18,7 @@ const words = {
     tv_volume_offset: "TV-Offset",
     tv_active: "TV-Lautstärke aktiv",
     tv_hint:
-      "Zur Standardlautstärke addiert, z. B. 30 % − 10 % = 20 %. 0 % = aus.",
+      "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder Standard nach Abkühlzeit. Z. B. 30 % − 10 % = 20 %. 0 % = aus.",
     cooldown_hint:
       "Nach Ablauf wird bei der nächsten Bewegung auf die Standardlautstärke eingeblendet, statt die zuletzt am Lautsprecher eingestellte Lautstärke zu übernehmen. Gilt bei aktivierter Option „Standardlautstärke verwenden“.",
     off_delay: "Ausschaltverzögerung",
@@ -57,7 +57,8 @@ const words = {
     volume_cooldown: "Volume cooldown",
     tv_volume_offset: "TV offset",
     tv_active: "TV volume active",
-    tv_hint: "Added to the default volume, e.g. 30 % − 10 % = 20 %. 0 % = off.",
+    tv_hint:
+      "Added to the volume chosen on entry: remembered volume or default after cooldown. E.g. 30 % − 10 % = 20 %. 0 % = off.",
     cooldown_hint:
       "After the cooldown, the next movement fades to the default volume instead of the last volume set on the speaker. Applies when “Use default volume” is enabled.",
     off_delay: "Clear delay",

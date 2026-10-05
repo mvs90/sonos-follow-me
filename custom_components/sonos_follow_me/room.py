@@ -322,8 +322,9 @@ class Room:
         if not source or self.state(self.player) in ("playing", "unavailable", "unknown"):
             return
         offset = self.config["tv_volume_offset"]
+        # Presence has already selected the remembered or post-cooldown volume.
         self._tv_volume = (
-            max(0, min(1, self.config["default_volume"] + offset / 100))
+            max(0, min(1, self.volume + offset / 100))
             if offset and self.source_is_tv(source)
             else None
         )

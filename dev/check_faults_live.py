@@ -111,6 +111,34 @@ async def run(args):
                 None,
             ),
             ("tv_positive_offset", {"tv_volume_offset": 10}, {"tv": True}, 0.3, None),
+            (
+                "tv_negative_offset_without_reset",
+                {"volume_reset": False, "default_volume": 0.8, "tv_volume_offset": -5},
+                {"tv": True, "drop_positive": 1},
+                0.15,
+                None,
+            ),
+            (
+                "tv_positive_offset_without_reset",
+                {"volume_reset": False, "default_volume": 0.8, "tv_volume_offset": 5},
+                {"tv": True},
+                0.25,
+                None,
+            ),
+            (
+                "tv_offset_before_cooldown",
+                {"volume_cooldown": 30, "default_volume": 0.8, "tv_volume_offset": -5},
+                {"tv": True},
+                0.15,
+                None,
+            ),
+            (
+                "tv_offset_after_immediate_cooldown",
+                {"volume_cooldown": 0, "default_volume": 0.4, "tv_volume_offset": -5},
+                {"tv": True},
+                0.35,
+                None,
+            ),
             ("cancel_pending_join", {}, {"never_join": True}, None, None),
         ]
         try:
@@ -161,7 +189,9 @@ async def run(args):
                 if name == "intentional_zero_remains_muted":
                     assert not unmutes and player["attributes"]["is_volume_muted"], calls
                 if name.startswith("tv_"):
-                    assert switch["attributes"]["remembered_volume"] == 0.2
+                    assert switch["attributes"]["remembered_volume"] == (
+                        0.4 if name == "tv_offset_after_immediate_cooldown" else 0.2
+                    )
                 assert not any(
                     c["player"] == "source"
                     and c["action"] in ("volume_set", "volume_mute", "pause")

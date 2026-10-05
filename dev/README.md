@@ -78,7 +78,7 @@ for this dedicated test entry. Do not rename unrelated rooms to these lab names.
 
 Scenarios: muted start, delayed group feedback, first positive volume command
 ignored, persistent zero, persistent mute, missing group confirmation, intentional
-zero target, negative/positive TV offsets, and cancellation during group wait.
+zero target, negative/positive TV offsets, offsets with volume reset disabled, offsets before/after cooldown, and cancellation during group wait.
 Permanent failures must set `startup_error`; tests assert that unmute/retry calls
 remain bounded. Expected warnings/errors in the HA log are part of these cases.
 Results and service-call sequences are saved in `.local/fault-live-report.json`.

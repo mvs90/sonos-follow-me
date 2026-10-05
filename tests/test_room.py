@@ -381,14 +381,41 @@ async def test_tv_detection_uses_actual_input_not_title(room, attrs, is_tv):
     assert not room.source_is_tv("media_player.missing")
 
 
-@pytest.mark.parametrize("offset,target", [(-10, 0.2), (10, 0.4), (-100, 0), (100, 1), (0, 0.7)])
-async def test_tv_fade_uses_default_plus_offset_and_clamps(room, offset, target):
-    room.config.update(tv_volume_offset=offset, default_volume=0.3)
+@pytest.mark.parametrize("offset,target", [(-10, 0.6), (10, 0.8), (-100, 0), (100, 1), (0, 0.7)])
+async def test_tv_fade_uses_selected_volume_plus_offset_and_clamps(room, offset, target):
+    room.config.update(tv_volume_offset=offset, default_volume=0.3, volume_reset=False)
     room.volume = 0.7
     room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
     await room._enter()
     assert room.service.call_args_list[-1].kwargs["volume_level"] == pytest.approx(target)
     assert room.volume == 0.7
+
+
+@pytest.mark.parametrize(
+    "reset,cooldown,elapsed,base",
+    [
+        (False, 30, 3600, 0.65),
+        (True, 30, 60, 0.65),
+        (True, 30, 1800, 0.25),
+        (True, 0, 0, 0.25),
+        (True, 30, None, 0.65),
+    ],
+)
+async def test_tv_offset_follows_target_selected_on_motion(room, reset, cooldown, elapsed, base):
+    room.config.update(
+        volume_reset=reset, volume_cooldown=cooldown, default_volume=0.25, tv_volume_offset=-10
+    )
+    room.volume = 0.65
+    room._vacant_since = None if elapsed is None else 10000 - elapsed
+    room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    with patch("custom_components.sonos_follow_me.room.time", return_value=10000):
+        room.evaluate()
+        await settle(room)
+    assert room.playback_volume == pytest.approx(base - 0.1)
+    assert room.service.call_args_list[-1].kwargs["volume_level"] == pytest.approx(base - 0.1)
+    assert room.volume == base
+    assert room._stored_state()["volume"] == base
 
 
 async def test_music_keeps_remembered_volume_with_tv_offset(room):
@@ -418,6 +445,7 @@ async def test_manual_tv_volume_and_repeat_join_do_not_accumulate_offset(room):
     room.volume = 0.6
     room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
     await room._enter()
+    assert room.playback_volume == pytest.approx(0.5)
     room.hass.states.async_set(room.player, "playing", {"volume_level": 0.15})
     room._changed(
         SimpleNamespace(
@@ -431,7 +459,7 @@ async def test_manual_tv_volume_and_repeat_join_do_not_accumulate_offset(room):
     assert room.service.call_args_list[-1].kwargs["volume_level"] == 0.6
     room.hass.states.async_set(room.player, "paused", {"volume_level": 0.6})
     await room._enter()
-    assert room.playback_volume == pytest.approx(0.2)
+    assert room.playback_volume == pytest.approx(0.5)
     assert room._stored_state()["volume"] == 0.6
 
 

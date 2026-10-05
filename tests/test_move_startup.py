@@ -211,7 +211,7 @@ async def test_recovery_keeps_tv_offset_and_music_memory(room):
     room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
     move = SimulatedMove(room, muted=True, ignore_positive=1)
     await room._enter()
-    assert move.volume == 0.2
+    assert move.volume == 0.5
     assert not move.muted
     assert room.volume == 0.6
 

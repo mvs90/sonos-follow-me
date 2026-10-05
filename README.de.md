@@ -51,7 +51,7 @@ Ab v0.4.2 lassen sich Standardlautstärke und TV-Offset per Slider einstellen. D
 
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.2` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.3` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 
@@ -95,17 +95,17 @@ Eine begonnene Abkühlzeit übersteht Neustarts und Neuladen; die Zeit während 
 
 ## TV-Ton und Lautstärkeoffset (ab v0.4.0)
 
-Unter **Konfigurieren** und auf der Dashboard-Karte gibt es pro Raum **TV-Lautstärkeoffset / TV-Offset**. Der Wert wird in **Prozentpunkten** zur eingestellten Standardlautstärke gerechnet:
+Unter **Konfigurieren** und auf der Dashboard-Karte gibt es pro Raum **TV-Lautstärkeoffset / TV-Offset**. Ab v0.4.3 wird der Wert in **Prozentpunkten** auf die für diesen Besuch gewählte Lautstärke gerechnet. Die Karte zeigt den Offset als Prozentwert:
 
-- Standard 30 %, Offset **−10** → bei TV-Ton auf **20 %** einblenden.
-- Standard 30 %, Offset **+10** → bei TV-Ton auf **40 %** einblenden.
+- Angepeilte Lautstärke 30 %, Offset **−10** → bei TV-Ton auf **20 %** einblenden.
+- Angepeilte Lautstärke 30 %, Offset **+10** → bei TV-Ton auf **40 %** einblenden.
 - **0** deaktiviert die TV-Anpassung und erhält das bisherige Verhalten.
 
 Beim Beitritt wird der **Gruppenkoordinator** der gewählten Quelle geprüft. `source: TV` oder eine Sonos-TV-Stream-ID (`x-sonos-htastream:`) erkennt TV-Ton; der Medientitel, ein Soundbar-Modell oder `media_content_type: music` allein reichen nicht aus. Auch eine bereits gruppierte Box darf in der Quellenliste stehen: Entscheidend ist deren Koordinator.
 
-Bei erkanntem TV-Ton und einem Offset ungleich 0 gilt **Standardlautstärke + Offset**, unabhängig von der Musik-Abkühlzeit und dem Schalter „Standardlautstärke nach Abwesenheit verwenden“. Der Wert wird auf 0–100 % begrenzt. Für AirPlay, Musik und nicht erkannte Quellen gilt weiterhin die bisherige gespeicherte Lautstärke-/Abkühlzeitlogik.
+Bei erkanntem TV-Ton und einem Offset ungleich 0 gilt **gewählte Ziellautstärke + Offset**, begrenzt auf 0–100 %. Ohne aktivierte Standardlautstärke oder bei Rückkehr vor Ablauf der Abkühlzeit ist die gespeicherte Lautstärke die Basis. Erst wenn die aktivierte Abkühlzeit abgelaufen ist, wird die Standardlautstärke zur Basis. Beispiel: letzte Lautstärke 40 %, Standard 25 %, Offset −10 % → vor Ablauf oder bei ausgeschalteter Rücksetzung 30 %, nach Ablauf 15 %. Für AirPlay, Musik und nicht erkannte Quellen entfällt der TV-Offset.
 
-Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird erneut von der Standardlautstärke gerechnet. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Die Standardlautstärke und der Offset wirken auf den folgenden Beitritt; ein Quellenwechsel zwischen TV und Musik während einer bestehenden Gruppe löst keine automatische Lautstärkeänderung aus. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
+Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird der Offset erneut auf die für den Besuch gewählte Basislautstärke angewendet; er summiert sich nicht über mehrere Besuche auf. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Die Standardlautstärke und der Offset wirken auf den folgenden Beitritt; ein Quellenwechsel zwischen TV und Musik während einer bestehenden Gruppe löst keine automatische Lautstärkeänderung aus. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
 
 ## Stummer Start / Sonos Move (ab v0.4.1)
 
