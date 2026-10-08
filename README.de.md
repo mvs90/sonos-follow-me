@@ -2,16 +2,16 @@
 
 <p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
 
-Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautsprecher, mindestens zwei Sensoren, eigene Musikquellen und Zeitwerte. Die Einrichtung erfolgt vollständig in Home Assistant; zusätzliche `input_boolean`- oder `input_number`-Helfer sind nicht nötig.
+Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautsprecher, einen primären Sensor und optional weitere Sensoren, eigene Musikquellen und Zeitwerte. Die Einrichtung erfolgt vollständig in Home Assistant; zusätzliche `input_boolean`- oder `input_number`-Helfer sind nicht nötig.
 
 ## Installation
 
-Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle **Sonos-Integration** und mindestens zwei binäre Sensoren pro Raum.
+Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle **Sonos-Integration** und mindestens einen binären Sensor pro Raum.
 
 1. In **HACS → Benutzerdefinierte Repositories** `https://github.com/mvs90/sonos-follow-me` als **Integration** hinzufügen.
 2. **Sonos Follow Me** herunterladen und Home Assistant neu starten.
 3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen.
-4. Raumname, Lautsprecher, primären Sensor, weitere Sensoren und Musikquellen auswählen.
+4. Raumname, Lautsprecher, primären Sensor, optional weitere Sensoren und Musikquellen auswählen.
 5. Für jeden weiteren Raum erneut einen Eintrag hinzufügen. Einstellungen später über **Konfigurieren** ändern.
 
 Das Repository ist über HACS als benutzerdefiniertes Repository installierbar. Es ist **nicht im HACS-Standardkatalog gelistet**. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
@@ -51,7 +51,7 @@ Ab v0.4.2 lassen sich Standardlautstärke und TV-Offset per Slider einstellen. D
 
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.3` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.5.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 
@@ -59,7 +59,13 @@ Das Projektlogo liegt zusätzlich unter `custom_components/sonos_follow_me/brand
 
 **Die HACS-Repository-Liste ist ein separater Fall:** Dort besteht derzeit ein [offener Fehler für lokale Integrationslogos](https://github.com/hacs/integration/issues/5171). Die benötigten Bilder werden mitgeliefert, aber das Modul kann deren Anzeige in einer betroffenen HACS-Version nicht erzwingen. Ein Eintrag ins frühere zentrale Brands-Verzeichnis ist für neue Custom-Integrationen nicht mehr der vorgesehene Weg. Siehe [Home-Assistant-Dokumentation](https://developers.home-assistant.io/docs/core/integration/brand_images/).
 
+## Geräte statt Helfer (v0.5.0+)
+
+Jeder Raum erscheint als Gerät unter **Einstellungen → Geräte & Dienste → Sonos Follow Me**. Schalter, Belegung und Einstellungsentitäten sind diesem Raumgerät zugeordnet. Die Integration wird nicht mehr als Helfer einsortiert. Vorhandene Geräte, Entitäts-IDs und Einstellungen bleiben nach Update und Neustart erhalten; Räume müssen nicht neu angelegt werden. Manuell angelegte Helfer aus früheren YAML-Automationen bleiben unberührt.
+
 ## Sensorlogik
+
+**Nur ein Sensor:** Unter **Konfigurieren** das Feld **Weitere Sensoren** leer lassen oder alle dort ausgewählten Sensoren entfernen. Der primäre Sensor startet und hält die Belegung. Meldet er während der gesamten Ausschaltverzögerung „frei“, wird ausgeblendet. Das funktioniert in beiden Sensorlogik-Modi.
 
 **Primär startet, weitere halten:** Der PIR muss zuerst Anwesenheit erkennen. Danach dürfen Radar und beliebig viele weitere Sensoren die Belegung halten. Ein Radar-Fehlalarm alleine startet keine Musik. Meldet ein Sensor bereits beim PIR-Ereignis Anwesenheit, hält er den Raum ebenfalls.
 
@@ -72,7 +78,7 @@ Nicht verfügbare oder unbekannte Sensoren gelten nicht als „frei“. Neue Anw
 ## Einstellungen und Bedienung
 
 - **Ein Lautsprecher je Raum:** weitere Räume als weitere Einträge anlegen. Ein Sonos-Stereopaar kann als einzelne Sonos-Entität ausgewählt werden.
-- **Mindestens zwei Sensoren:** ein primärer und mindestens ein weiterer; zusätzliche Sensoren sind möglich.
+- **Mindestens ein Sensor:** ein primärer genügt; weitere Sensoren sind optional.
 - **Musikquellen:** andere Sonos-Lautsprecher auswählen. Die erste spielende Quelle in der Auswahlreihenfolge gewinnt; es wird genau einer Gruppe beigetreten.
 - **Ausschaltverzögerung:** 0–3600 Sekunden, Standard 15.
 - **Überblenddauer:** 0–30 Sekunden, Standard 3. Mit 0 werden Überblendungen deaktiviert.

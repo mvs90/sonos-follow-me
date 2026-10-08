@@ -3,12 +3,12 @@
     "step": {
       "user": {
         "title": "Configure room",
-        "description": "Primary: only sensor 1 starts occupancy; additional sensors hold it. Equal: any sensor may start occupancy. Select at least one additional sensor.",
+        "description": "One primary sensor is enough; additional sensors are optional. Primary: only the primary sensor starts occupancy; additional sensors hold it. Equal: any sensor may start occupancy.",
         "data": {
           "name": "Room name",
           "player": "Sonos speaker",
           "primary": "Primary sensor (PIR)",
-          "secondary": "Additional sensors (e.g. radar)",
+          "secondary": "Additional sensors (optional, e.g. radar)",
           "sources": "Music sources (order = priority)",
           "mode": "Sensor mode",
           "off_delay": "Clear delay",
@@ -23,13 +23,14 @@
           "volume_reset": "Optional. Changes the next visit’s fade target, not ongoing playback.",
           "default_volume": "Target after cooldown, e.g. 0.3 for 30%.",
           "volume_cooldown": "Starts when the room clears after the clear delay. Returning within this time keeps the last volume; the full cooldown starts again on the next departure.",
-          "tv_volume_offset": "Added to the volume selected on entry: remembered volume, or default volume after an enabled cooldown has expired. Also works with volume reset disabled. 30% - 10% = 20%. 0 disables the adjustment. Music/AirPlay are unchanged."
+          "tv_volume_offset": "Added to the volume selected on entry: remembered volume, or default volume after an enabled cooldown has expired. Also works with volume reset disabled. 30% - 10% = 20%. 0 disables the adjustment. Music/AirPlay are unchanged.",
+          "secondary": "Leave empty to use only the primary sensor. Existing additional sensors can be removed here."
         }
       }
     },
     "error": {
       "empty_name": "Enter a room name.",
-      "distinct_sensors": "Choose at least one sensor different from the primary sensor.",
+      "distinct_sensors": "The primary sensor cannot also be selected as an additional sensor.",
       "invalid_sources": "Choose at least one different Sonos speaker as source.",
       "player_used": "This speaker is already managed by another room."
     }
@@ -38,12 +39,12 @@
     "step": {
       "init": {
         "title": "Configure room",
-        "description": "Primary: only sensor 1 starts occupancy; additional sensors hold it. Equal: any sensor may start occupancy. Select at least one additional sensor.",
+        "description": "One primary sensor is enough; additional sensors are optional. Primary: only the primary sensor starts occupancy; additional sensors hold it. Equal: any sensor may start occupancy.",
         "data": {
           "name": "Room name",
           "player": "Sonos speaker",
           "primary": "Primary sensor (PIR)",
-          "secondary": "Additional sensors (e.g. radar)",
+          "secondary": "Additional sensors (optional, e.g. radar)",
           "sources": "Music sources (order = priority)",
           "mode": "Sensor mode",
           "off_delay": "Clear delay",
@@ -58,13 +59,14 @@
           "volume_reset": "Optional. Changes the next visit’s fade target, not ongoing playback.",
           "default_volume": "Target after cooldown, e.g. 0.3 for 30%.",
           "volume_cooldown": "Starts when the room clears after the clear delay. Returning within this time keeps the last volume; the full cooldown starts again on the next departure.",
-          "tv_volume_offset": "Added to the volume selected on entry: remembered volume, or default volume after an enabled cooldown has expired. Also works with volume reset disabled. 30% - 10% = 20%. 0 disables the adjustment. Music/AirPlay are unchanged."
+          "tv_volume_offset": "Added to the volume selected on entry: remembered volume, or default volume after an enabled cooldown has expired. Also works with volume reset disabled. 30% - 10% = 20%. 0 disables the adjustment. Music/AirPlay are unchanged.",
+          "secondary": "Leave empty to use only the primary sensor. Existing additional sensors can be removed here."
         }
       }
     },
     "error": {
       "empty_name": "Enter a room name.",
-      "distinct_sensors": "Choose at least one sensor different from the primary sensor.",
+      "distinct_sensors": "The primary sensor cannot also be selected as an additional sensor.",
       "invalid_sources": "Choose at least one different Sonos speaker as source.",
       "player_used": "This speaker is already managed by another room."
     }

@@ -3,12 +3,12 @@
     "step": {
       "user": {
         "title": "Raum konfigurieren",
-        "description": "Primär: Nur Sensor 1 startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten. Mindestens einen weiteren Sensor wählen.",
+        "description": "Ein primärer Sensor genügt; weitere Sensoren sind optional. Primär: Nur der primäre Sensor startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten.",
         "data": {
           "name": "Raumname",
           "player": "Sonos-Lautsprecher",
           "primary": "Primärer Sensor (PIR)",
-          "secondary": "Weitere Sensoren (z. B. Radar)",
+          "secondary": "Weitere Sensoren (optional, z. B. Radar)",
           "sources": "Musikquellen (Reihenfolge = Priorität)",
           "mode": "Sensorlogik",
           "off_delay": "Ausschaltverzögerung",
@@ -23,13 +23,14 @@
           "volume_reset": "Optional. Betrifft die Ziel-Lautstärke beim nächsten Betreten, nicht die laufende Wiedergabe.",
           "default_volume": "Ziel nach der Abkühlzeit, z. B. 0,3 für 30 %.",
           "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut.",
-          "tv_volume_offset": "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder nach aktivierter und abgelaufener Abkühlzeit die Standardlautstärke. Funktioniert auch ohne Standardlautstärke. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert."
+          "tv_volume_offset": "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder nach aktivierter und abgelaufener Abkühlzeit die Standardlautstärke. Funktioniert auch ohne Standardlautstärke. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+          "secondary": "Leer lassen, um nur den primären Sensor zu verwenden. Vorhandene weitere Sensoren können hier entfernt werden."
         }
       }
     },
     "error": {
       "empty_name": "Bitte einen Namen eingeben.",
-      "distinct_sensors": "Mindestens einen anderen Sensor als den primären wählen.",
+      "distinct_sensors": "Der primäre Sensor darf nicht zusätzlich unter „Weitere Sensoren“ gewählt werden.",
       "invalid_sources": "Mindestens einen anderen Sonos-Lautsprecher als Quelle wählen.",
       "player_used": "Dieser Lautsprecher wird bereits in einem Raum verwaltet."
     }
@@ -38,12 +39,12 @@
     "step": {
       "init": {
         "title": "Raum konfigurieren",
-        "description": "Primär: Nur Sensor 1 startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten. Mindestens einen weiteren Sensor wählen.",
+        "description": "Ein primärer Sensor genügt; weitere Sensoren sind optional. Primär: Nur der primäre Sensor startet die Belegung; weitere Sensoren halten sie. Gleichberechtigt: Jeder Sensor darf starten.",
         "data": {
           "name": "Raumname",
           "player": "Sonos-Lautsprecher",
           "primary": "Primärer Sensor (PIR)",
-          "secondary": "Weitere Sensoren (z. B. Radar)",
+          "secondary": "Weitere Sensoren (optional, z. B. Radar)",
           "sources": "Musikquellen (Reihenfolge = Priorität)",
           "mode": "Sensorlogik",
           "off_delay": "Ausschaltverzögerung",
@@ -58,13 +59,14 @@
           "volume_reset": "Optional. Betrifft die Ziel-Lautstärke beim nächsten Betreten, nicht die laufende Wiedergabe.",
           "default_volume": "Ziel nach der Abkühlzeit, z. B. 0,3 für 30 %.",
           "volume_cooldown": "Startet, sobald der Raum nach der Ausschaltverzögerung frei ist. Rückkehr innerhalb der Zeit behält die letzte Lautstärke; beim nächsten Verlassen beginnt die volle Zeit erneut.",
-          "tv_volume_offset": "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder nach aktivierter und abgelaufener Abkühlzeit die Standardlautstärke. Funktioniert auch ohne Standardlautstärke. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert."
+          "tv_volume_offset": "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder nach aktivierter und abgelaufener Abkühlzeit die Standardlautstärke. Funktioniert auch ohne Standardlautstärke. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+          "secondary": "Leer lassen, um nur den primären Sensor zu verwenden. Vorhandene weitere Sensoren können hier entfernt werden."
         }
       }
     },
     "error": {
       "empty_name": "Bitte einen Namen eingeben.",
-      "distinct_sensors": "Mindestens einen anderen Sensor als den primären wählen.",
+      "distinct_sensors": "Der primäre Sensor darf nicht zusätzlich unter „Weitere Sensoren“ gewählt werden.",
       "invalid_sources": "Mindestens einen anderen Sonos-Lautsprecher als Quelle wählen.",
       "player_used": "Dieser Lautsprecher wird bereits in einem Raum verwaltet."
     }

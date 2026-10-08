@@ -4,6 +4,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
+from homeassistant.helpers.device_registry import DeviceEntryType
+
 from custom_components.sonos_follow_me import CARD_URL, LOGO_URL, async_reload, async_setup
 from custom_components.sonos_follow_me.binary_sensor import RoomOccupancy
 from custom_components.sonos_follow_me.number import SETTINGS, RoomNumber
@@ -23,7 +25,7 @@ async def test_card_registration():
         assert logo.url_path == LOGO_URL
         assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
         assert not logo.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.4.3")
+        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.5.0")
 
 
 async def test_entities_expose_stable_room_metadata(room):
@@ -36,6 +38,8 @@ async def test_entities_expose_stable_room_metadata(room):
     entities += [RoomNumber(room, setting) for setting in SETTINGS]
     assert len({entity.unique_id for entity in entities}) == 9
     for entity in entities:
+        assert entity.device_info["identifiers"] == {("sonos_follow_me", room.entry.entry_id)}
+        assert entity.device_info["entry_type"] == DeviceEntryType.SERVICE
         assert entity.extra_state_attributes["sonos_follow_me_room"] == room.entry.entry_id
         assert entity.extra_state_attributes["setting"] == entity.key
     assert entities[0].extra_state_attributes["primary"] == "binary_sensor.pir"

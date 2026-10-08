@@ -55,7 +55,11 @@ def schema(values):
             )
         ),
     }.items():
-        marker = vol.Required(key, default=values[key]) if key in values else vol.Required(key)
+        if key == "secondary":
+            # Suggest existing sensors, but allow clearing them by omitting this field.
+            marker = vol.Optional(key, default=list, description={"suggested_value": values[key]})
+        else:
+            marker = vol.Required(key, default=values[key]) if key in values else vol.Required(key)
         fields[marker] = select
     return vol.Schema(fields)
 
@@ -64,7 +68,7 @@ def validate(hass, data, entry_id=None):
     """Reject ambiguous sensors and duplicate room players."""
     if not data["name"].strip():
         return {"name": "empty_name"}
-    if not data["secondary"] or data["primary"] in data["secondary"]:
+    if data["primary"] in data.get("secondary", []):
         return {"secondary": "distinct_sensors"}
     if not data["sources"] or data["player"] in data["sources"]:
         return {"sources": "invalid_sources"}
@@ -80,6 +84,8 @@ class SonosFollowMeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        if user_input is not None:
+            user_input = {"secondary": [], **user_input}
         errors = validate(self.hass, user_input) if user_input is not None else {}
         if user_input is not None and not errors:
             return self.async_create_entry(title=user_input["name"], data=user_input)
@@ -97,6 +103,8 @@ class RoomOptionsFlow(config_entries.OptionsFlow):
     """Edit all room settings."""
 
     async def async_step_init(self, user_input=None):
+        if user_input is not None:
+            user_input = {"secondary": [], **user_input}
         errors = (
             validate(self.hass, user_input, self.config_entry.entry_id)
             if user_input is not None

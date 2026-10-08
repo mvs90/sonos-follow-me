@@ -25,3 +25,17 @@ def test_missing_sensor_does_not_clear(missing):
     presence = Presence("primary")
     presence.update("on", ["off"])
     assert presence.update("off", [missing]) == "occupied"
+
+
+@pytest.mark.parametrize("mode", ["primary", "equal"])
+def test_single_sensor_starts_holds_and_clears(mode):
+    presence = Presence(mode)
+    assert presence.update("off", []) == "idle"
+    assert presence.update("on", []) == "occupied"
+    assert presence.update("unavailable", []) == "occupied"
+    assert presence.update("unknown", []) == "occupied"
+    assert presence.update("off", []) == "clear"
+    assert presence.update("on", []) == "occupied"
+    assert presence.update("off", []) == "clear"
+    presence.expire()
+    assert presence.update("off", []) == "idle"

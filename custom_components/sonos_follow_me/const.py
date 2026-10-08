@@ -2,6 +2,7 @@
 
 DOMAIN = "sonos_follow_me"
 DEFAULTS = {
+    "secondary": [],
     "mode": "primary",
     "off_delay": 15,
     "fade_seconds": 3,

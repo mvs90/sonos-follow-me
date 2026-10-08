@@ -1,5 +1,6 @@
 """Shared room entity."""
 
+from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
 from .const import DOMAIN
@@ -16,6 +17,7 @@ class RoomEntity(Entity):
         self._attr_translation_key = key
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, room.entry.entry_id)},
+            entry_type=DeviceEntryType.SERVICE,
             name=room.config["name"],
             manufacturer="Sonos Follow Me",
             model="Virtual room",

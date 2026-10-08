@@ -181,6 +181,40 @@ async def test_listener_starts_on_primary_event(room):
         assert room.managed
 
 
+@pytest.mark.parametrize("mode", ["primary", "equal"])
+async def test_single_sensor_events_join_and_leave(room, mode):
+    room.config.update(secondary=[], mode=mode, off_delay=0.03)
+    room.sensors = [room.config["primary"]]
+    room.presence.mode = mode
+    # An unconfigured radar cannot hold this room occupied.
+    room.hass.states.async_set("binary_sensor.radar", "on")
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert room.managed
+    room.hass.states.async_set("binary_sensor.pir", "off")
+    await room.hass.async_block_till_done()
+    assert room._timer is not None
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert room._timer is None
+    room.service.assert_any_await("join", entity="media_player.living", group_members=[room.player])
+    room.hass.states.async_set("binary_sensor.pir", "off")
+    await room.hass.async_block_till_done()
+    await asyncio.sleep(0.05)
+    await room.hass.async_block_till_done()
+    assert not room.managed
+    room.service.assert_any_await("unjoin")
+    room.service.assert_any_await("media_pause")
+
+
+async def test_room_without_secondary_key(room):
+    config = {k: v for k, v in CONFIG.items() if k != "secondary"}
+    single = Room(room.hass, SimpleNamespace(data=config, options={}, entry_id="single"))
+    assert single.sensors == [CONFIG["primary"]]
+    assert single.config["secondary"] == []
+
+
 async def test_real_events_and_services_depart_after_delay(room):
     calls = []
 

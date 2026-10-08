@@ -83,6 +83,18 @@ Permanent failures must set `startup_error`; tests assert that unmute/retry call
 remain bounded. Expected warnings/errors in the HA log are part of these cases.
 Results and service-call sequences are saved in `.local/fault-live-report.json`.
 
+To check single-sensor configuration and device grouping, leave that simulated
+room disabled and run:
+
+```sh
+.venv/bin/python dev/check_room_setup_live.py --auth-file .local/ha-auth.json
+```
+
+This checks an empty or omitted additional-sensor field, both sensor modes,
+cancellation of departure, re-adding the radar, and stable device/entity IDs.
+It restores the original room options and leaves Follow Me off. Results are saved
+in `.local/room-setup-live-report.json`.
+
 ## Physical Move checks
 
 Create `input_boolean.sonos_lab_pir` and `input_boolean.sonos_lab_radar`, both

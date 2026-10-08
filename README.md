@@ -8,7 +8,7 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 
 ## Features
 
-- Any number of rooms, each with its own Sonos speaker, two or more sensors, source priorities and timing.
+- Any number of rooms, each with its own Sonos speaker, one primary sensor and optional additional sensors, source priorities and timing.
 - **Primary mode:** PIR starts occupancy. Radar and any additional sensors only hold occupancy after the PIR has detected someone. Radar alone cannot start music.
 - **Equal mode:** any configured sensor can start or maintain occupancy.
 - Departure only after **all** sensors remain `off` throughout the configured delay. Renewed presence cancels departure, including during fading.
@@ -18,12 +18,16 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 
 ## Installation
 
-Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least two binary sensors per room. Tested in software against HA 2026.9.4; physical Sonos hardware validation is still outstanding.
+Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least one binary sensor per room. Tested against HA 2026.9.4, including a Sonos Move and isolated simulated failure scenarios.
 
 1. In HACS, open **Custom repositories**, add `https://github.com/mvs90/sonos-follow-me`, category **Integration**.
 2. Download **Sonos Follow Me** and restart Home Assistant.
 3. Go to **Settings → Devices & services → Add integration → Sonos Follow Me**.
 4. Add one entry per room. Repeat to manage additional speakers/rooms.
+
+Since v0.5.0, each room appears as a device under **Settings → Devices & services → Sonos Follow Me**, with its switches, occupancy sensor and settings grouped together. The integration is no longer classified as a helper. Existing room devices, entity IDs and settings are retained after updating and restarting; do not delete and recreate rooms. Manually created helpers from earlier YAML automations are not changed.
+
+A primary sensor alone can start and maintain occupancy in either sensor mode. When it stays off for the clear delay, the speaker fades out. In **Configure**, leave **Additional sensors** empty or remove previously selected sensors.
 
 This is a custom repository, **not an entry in the default HACS catalog**. Default listing and Home Assistant Brands inclusion have not been requested.
 
@@ -50,7 +54,7 @@ Controls use standard Home Assistant `switch`, `number` and `select` entities an
 
 From v0.4.2, default volume and TV offset use sliders with live value labels. The card displays the offset as a signed percentage; calculation remains additive (30% − 10% = 20%). Cooldown help explains that the next movement after expiry fades to the default volume when volume reset is enabled.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.4.3`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.5.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
@@ -67,7 +71,7 @@ The **HACS repository listing is separate**: [HACS issue #5171](https://github.c
 | Name | Name of the virtual room device |
 | Sonos speaker | One destination speaker per room; cannot be assigned twice |
 | Primary sensor | Reliable PIR / movement sensor |
-| Additional sensors | One or more distinct presence sensors, e.g. radar |
+| Additional sensors | Optional distinct presence sensors, e.g. radar; leave empty for a single-sensor room |
 | Sources | Other Sonos players; the first playing source in the selected order wins |
 | Sensor mode | `primary` (PIR starts, others hold) or `equal` |
 | Clear delay | 0–3600 seconds; default 15 |

@@ -95,6 +95,20 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
   }, config);
 }
 
+test("renders a room with only its primary sensor", async ({ page }) => {
+  await setup(page, {
+    type: "custom:sonos-follow-me-card",
+    entities: ["switch.bath"],
+  });
+  await page.evaluate(() => {
+    hass.states["switch.bath"].attributes.secondary = [];
+    card.hass = { ...hass };
+  });
+  await page.getByText("Einstellungen & Sensoren", { exact: true }).click();
+  await expect(page.getByText("PIR: Frei", { exact: true })).toBeVisible();
+  await expect(page.locator("li").filter({ hasText: "Radar" })).toHaveCount(0);
+});
+
 test("automatically discovers rooms, shows presence and settings", async ({
   page,
 }) => {
