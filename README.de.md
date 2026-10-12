@@ -51,7 +51,7 @@ Ab v0.4.2 lassen sich Standardlautstärke und TV-Offset per Slider einstellen. D
 
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.5.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 
@@ -62,6 +62,20 @@ Das Projektlogo liegt zusätzlich unter `custom_components/sonos_follow_me/brand
 ## Geräte statt Helfer (v0.5.0+)
 
 Jeder Raum erscheint als Gerät unter **Einstellungen → Geräte & Dienste → Sonos Follow Me**. Schalter, Belegung und Einstellungsentitäten sind diesem Raumgerät zugeordnet. Die Integration wird nicht mehr als Helfer einsortiert. Vorhandene Geräte, Entitäts-IDs und Einstellungen bleiben nach Update und Neustart erhalten; Räume müssen nicht neu angelegt werden. Manuell angelegte Helfer aus früheren YAML-Automationen bleiben unberührt.
+
+## Lautstärkequelle (v0.6.0+)
+
+Pro Raum lässt sich **Lautstärkequelle** in der Karte, am Raumgerät oder unter **Konfigurieren** auswählen:
+
+- **Eigene Raumlautstärke:** bisheriges Verhalten mit letzter Lautstärke und optionaler Standardlautstärke nach Abkühlzeit.
+- **Gruppe folgen:** Durchschnitt der verfügbaren Lautstärkewerte der Quellgruppe. Der eigene Zielplayer und andere aktive Follow-Me-Zielplayer werden nicht eingerechnet, damit ihre Fades den Durchschnitt nicht verändern.
+- **Master folgen:** Lautstärke des aktuellen Gruppenkoordinators, auch wenn als Musikquelle ein anderes Gruppenmitglied ausgewählt wurde.
+
+Beide Folgen-Modi übernehmen den Wert beim Betreten und folgen Änderungen während der Belegung einschließlich der Ausschaltverzögerung. Nur der Raumlautsprecher wird geregelt; die Quelllautsprecher werden nicht verändert. Nach dem Verlassen oder Deaktivieren endet das Folgen. Die Gruppenmitgliedschaft und der aktuelle Master werden erneut ausgewertet. Stummschaltung wird nicht als Lautstärkeänderung übernommen.
+
+Standardlautstärke, Rücksetzoption und Abkühlzeit werden in der Karte und auf der Geräteansicht ausgeblendet und nicht angewendet. In der Konfiguration erscheint der zusätzliche Schritt mit Anfangs-/Standardlautstärke und Abkühlzeit nur für **Eigene Raumlautstärke**. Beim Zurückwechseln stehen die gespeicherten Werte wieder zur Verfügung. Bestehende Räume bleiben nach dem Update bei **Eigene Raumlautstärke**.
+
+Der **TV-Offset** bleibt verfügbar und wird einmal zur übernommenen Lautstärke addiert. Ausschaltverzögerung und Überblenddauer gelten weiterhin. Fehlt beim Betreten ein gültiger Referenzwert, wartet der Raum mit dem Beitritt; er verwendet keine versteckte Standardlautstärke. Fällt die Referenz während der Wiedergabe aus, bleibt die zuletzt übernommene Lautstärke erhalten, bis wieder ein gültiger Wert vorliegt.
 
 ## Sensorlogik
 

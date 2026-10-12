@@ -12,7 +12,9 @@ from . import DOMAIN
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    async_add_entities([LabPlayer(hass.data[DOMAIN], key) for key in ("source", "destination")])
+    async_add_entities(
+        [LabPlayer(hass.data[DOMAIN], key) for key in ("source", "destination", "member")]
+    )
 
 
 class LabPlayer(MediaPlayerEntity):
@@ -39,7 +41,11 @@ class LabPlayer(MediaPlayerEntity):
 
     @property
     def state(self):
-        if self.lab["source_playing"] and (self.key == "source" or self.joined):
+        if self.lab["source_playing"] and (
+            self.key == "source"
+            or self.joined
+            or (self.key == "member" and self.lab["member_joined"])
+        ):
             return MediaPlayerState.PLAYING
         return MediaPlayerState.PAUSED
 
@@ -50,9 +56,16 @@ class LabPlayer(MediaPlayerEntity):
     @property
     def group_members(self):
         players = self.lab["entities"]
+        if self.key == "member" and not self.lab["member_joined"]:
+            return [self.entity_id]
+        if self.key == "destination" and not self.joined:
+            return [self.entity_id]
+        keys = ["source"]
+        if self.lab["member_joined"]:
+            keys.append("member")
         if players["destination"].joined:
-            return [players[k].entity_id for k in ("source", "destination")]
-        return [self.entity_id]
+            keys.append("destination")
+        return [players[k].entity_id for k in keys]
 
     @property
     def extra_state_attributes(self):

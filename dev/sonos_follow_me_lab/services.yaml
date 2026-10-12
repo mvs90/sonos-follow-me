@@ -53,3 +53,7 @@ configure:
       name: Simulated source playing
       selector:
         boolean:
+    member_joined:
+      name: Add simulated member to source group
+      selector:
+        boolean:

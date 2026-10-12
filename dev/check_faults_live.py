@@ -49,7 +49,9 @@ async def run(args):
                 "/api/config/config_entries/flow",
                 {"handler": "sonos_follow_me", "show_advanced_options": False},
             )
-            result = await ha.post("/api/config/config_entries/flow/" + flow["flow_id"], config)
+            result = await ha.finish_room_flow(
+                "/api/config/config_entries/flow/" + flow["flow_id"], config
+            )
             assert result["type"] == "create_entry", result
             entry_id = result["result"]["entry_id"]
         await asyncio.sleep(0.5)
@@ -65,7 +67,7 @@ async def run(args):
             await ha.service("switch", "turn_off", enabled)
             await lab(reset=True, source_playing=False)
             flow = await ha.post("/api/config/config_entries/options/flow", {"handler": entry_id})
-            result = await ha.post(
+            result = await ha.finish_room_flow(
                 "/api/config/config_entries/options/flow/" + flow["flow_id"], {**config, **settings}
             )
             assert result["type"] == "create_entry", result

@@ -43,7 +43,7 @@ async def run(args):
 
         async def options(config):
             flow = await ha.post("/api/config/config_entries/options/flow", {"handler": entry_id})
-            result = await ha.post(
+            result = await ha.finish_room_flow(
                 "/api/config/config_entries/options/flow/" + flow["flow_id"], config
             )
             assert result["type"] == "create_entry", result

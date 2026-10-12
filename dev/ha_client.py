@@ -58,6 +58,18 @@ class HA:
     async def post(self, path, data):
         return await self.request("POST", path, data)
 
+    async def finish_room_flow(self, path, data):
+        """Submit wiring, then the optional room-volume step with preserved defaults."""
+        volume_keys = {"volume", "volume_reset", "default_volume", "volume_cooldown"}
+        result = await self.post(path, {k: v for k, v in data.items() if k not in volume_keys})
+        if result.get("type") == "form" and result.get("step_id") == "volume":
+            values = {
+                field["name"]: data.get(field["name"], field.get("default"))
+                for field in result["data_schema"]
+            }
+            result = await self.post(path, values)
+        return result
+
     async def service(self, domain, service, entity_id=None, **data):
         if entity_id:
             data["entity_id"] = entity_id

@@ -13,12 +13,19 @@ const words = {
     empty: "Keine Follow-Me-Räume gefunden. Zuerst die Integration einrichten.",
     settings: "Einstellungen & Sensoren",
     remembered: "Letzte Lautstärke",
+    volume_mode: "Lautstärkequelle",
+    room: "Eigene Raumlautstärke",
+    group: "Gruppe folgen",
+    master: "Master folgen",
+    target: "Ziel-Lautstärke",
+    follow_hint:
+      "Folgt Lautstärkeänderungen während der Belegung. Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator.",
     default_volume: "Standardlautstärke",
     volume_cooldown: "Abkühlzeit",
     tv_volume_offset: "TV-Offset",
     tv_active: "TV-Lautstärke aktiv",
     tv_hint:
-      "Zur beim Betreten gewählten Lautstärke addiert: letzte Lautstärke oder Standard nach Abkühlzeit. Z. B. 30 % − 10 % = 20 %. 0 % = aus.",
+      "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. Z. B. 30 % − 10 % = 20 %. 0 % = aus.",
     cooldown_hint:
       "Nach Ablauf wird bei der nächsten Bewegung auf die Standardlautstärke eingeblendet, statt die zuletzt am Lautsprecher eingestellte Lautstärke zu übernehmen. Gilt bei aktivierter Option „Standardlautstärke verwenden“.",
     off_delay: "Ausschaltverzögerung",
@@ -53,12 +60,19 @@ const words = {
     empty: "No Follow Me rooms found. Set up the integration first.",
     settings: "Settings & sensors",
     remembered: "Remembered volume",
+    volume_mode: "Volume source",
+    room: "Own room volume",
+    group: "Follow group",
+    master: "Follow master",
+    target: "Target volume",
+    follow_hint:
+      "Tracks volume changes while occupied. Group: average source-speaker volume, excluding active Follow Me destinations. Master: current group coordinator.",
     default_volume: "Default volume",
     volume_cooldown: "Volume cooldown",
     tv_volume_offset: "TV offset",
     tv_active: "TV volume active",
     tv_hint:
-      "Added to the volume chosen on entry: remembered volume or default after cooldown. E.g. 30 % − 10 % = 20 %. 0 % = off.",
+      "Added to the selected target volume, including when following the group or master. E.g. 30 % − 10 % = 20 %. 0 % = off.",
     cooldown_hint:
       "After the cooldown, the next movement fades to the default volume instead of the last volume set on the speaker. Applies when “Use default volume” is enabled.",
     off_delay: "Clear delay",
@@ -133,8 +147,15 @@ class SonosFollowMeCard extends HTMLElement {
     this._render();
   }
   set hass(hass) {
+    const modes = Object.values(hass.states)
+      .filter((s) => s.attributes.setting === "volume_mode")
+      .map((s) => `${s.entity_id}:${s.state}`)
+      .sort()
+      .join("|");
+    const changed = modes !== this._volumeModes;
+    this._volumeModes = modes;
     this._hass = hass;
-    this._render();
+    this._render(changed);
   }
   connectedCallback() {
     if (!this._interval)
@@ -190,6 +211,24 @@ class SonosFollowMeCard extends HTMLElement {
       this._call(state, input.checked ? "turn_on" : "turn_off"),
     );
     label.append(input);
+    parent.append(label);
+  }
+  _select(state, key, options, parent, t) {
+    if (!state) return;
+    const label = node("label", t[key], "field");
+    const select = node("select");
+    select.setAttribute("aria-label", t[key]);
+    for (const option of options) {
+      const el = node("option", t[option]);
+      el.value = option;
+      select.append(el);
+    }
+    select.value = state.state;
+    select.disabled = !valid(state) || this._busy.has(state.entity_id);
+    select.addEventListener("change", () =>
+      this._call(state, "select_option", { option: select.value }),
+    );
+    label.append(select);
     parent.append(label);
   }
   _number(state, key, parent, t) {
@@ -349,22 +388,29 @@ class SonosFollowMeCard extends HTMLElement {
         ),
       );
       const player = hass.states[a.player];
+      const following =
+        (settings.volume_mode?.state || a.volume_mode || "room") !== "room";
       const friendly = (entity) =>
         hass.states[entity]?.attributes.friendly_name || entity;
       room.append(
         node(
           "div",
-          `${t.speaker}: ${friendly(a.player)} · ${t[player?.state] || player?.state || t.unavailable}\n${t.remembered}: ${Math.round((a.remembered_volume || 0) * 100)} %`,
+          `${t.speaker}: ${friendly(a.player)} · ${t[player?.state] || player?.state || t.unavailable}\n${following ? t.target : t.remembered}: ${Math.round((following ? a.playback_target_volume || 0 : a.remembered_volume || 0) * 100)} %`,
           "summary",
         ),
       );
-      this._toggle(settings.volume_reset, t.volume_reset, room);
+      this._select(
+        settings.volume_mode,
+        "volume_mode",
+        ["room", "group", "master"],
+        room,
+        t,
+      );
+      if (!following) this._toggle(settings.volume_reset, t.volume_reset, room);
       const grid = node("div", undefined, "grid");
-      for (const key of [
-        "default_volume",
-        "tv_volume_offset",
-        "volume_cooldown",
-      ])
+      for (const key of following
+        ? ["tv_volume_offset"]
+        : ["default_volume", "tv_volume_offset", "volume_cooldown"])
         this._number(settings[key], key, grid, t);
       room.append(grid);
       if (a.tv_volume_active)
@@ -376,6 +422,7 @@ class SonosFollowMeCard extends HTMLElement {
           ),
         );
       if (
+        !following &&
         settings.volume_reset?.state === "on" &&
         a.vacant_since != null &&
         valid(settings.volume_cooldown)
@@ -396,7 +443,10 @@ class SonosFollowMeCard extends HTMLElement {
             "hint",
           ),
         );
-      } else room.append(node("div", t.resetHint, "hint"));
+      } else
+        room.append(
+          node("div", following ? t.follow_hint : t.resetHint, "hint"),
+        );
       const details = node("details");
       details.open = this._expanded.has(id);
       details.append(node("summary", t.settings));

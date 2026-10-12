@@ -4,12 +4,13 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntryType
 
 from custom_components.sonos_follow_me import CARD_URL, LOGO_URL, async_reload, async_setup
 from custom_components.sonos_follow_me.binary_sensor import RoomOccupancy
 from custom_components.sonos_follow_me.number import SETTINGS, RoomNumber
-from custom_components.sonos_follow_me.select import SensorMode
+from custom_components.sonos_follow_me.select import SensorMode, VolumeMode
 from custom_components.sonos_follow_me.switch import FollowMeSwitch, VolumeResetSwitch
 
 
@@ -25,7 +26,7 @@ async def test_card_registration():
         assert logo.url_path == LOGO_URL
         assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
         assert not logo.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.5.0")
+        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.6.0")
 
 
 async def test_entities_expose_stable_room_metadata(room):
@@ -34,9 +35,10 @@ async def test_entities_expose_stable_room_metadata(room):
         VolumeResetSwitch(room),
         RoomOccupancy(room),
         SensorMode(room),
+        VolumeMode(room),
     ]
     entities += [RoomNumber(room, setting) for setting in SETTINGS]
-    assert len({entity.unique_id for entity in entities}) == 9
+    assert len({entity.unique_id for entity in entities}) == 10
     for entity in entities:
         assert entity.device_info["identifiers"] == {("sonos_follow_me", room.entry.entry_id)}
         assert entity.device_info["entry_type"] == DeviceEntryType.SERVICE
@@ -58,6 +60,31 @@ async def test_controls_use_existing_options_and_percent_conversion(room):
     room.update_settings.assert_called_with({"volume_reset": False})
     await SensorMode(room).async_select_option("equal")
     room.update_settings.assert_called_with({"mode": "equal"})
+    await VolumeMode(room).async_select_option("master")
+    room.update_settings.assert_called_with({"volume_mode": "master"})
+
+
+async def test_unused_volume_controls_hide_and_respect_user_hiding(room):
+    entity = RoomNumber(room, SETTINGS[0])
+    entity.hass = room.hass
+    entity.entity_id = "number.bath_default_volume"
+    entry = SimpleNamespace(hidden_by=None)
+    registry = Mock()
+    registry.async_get.return_value = entry
+    with patch("custom_components.sonos_follow_me.entity.er.async_get", return_value=registry):
+        room.config["volume_mode"] = "group"
+        entity._sync_visibility()
+        registry.async_update_entity.assert_called_with(
+            entity.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+        )
+        entry.hidden_by = er.RegistryEntryHider.INTEGRATION
+        room.config["volume_mode"] = "room"
+        entity._sync_visibility()
+        registry.async_update_entity.assert_called_with(entity.entity_id, hidden_by=None)
+        registry.async_update_entity.reset_mock()
+        entry.hidden_by = er.RegistryEntryHider.USER
+        entity._sync_visibility()
+        registry.async_update_entity.assert_not_called()
 
 
 async def test_live_settings_keep_playback_and_cooldown(room):

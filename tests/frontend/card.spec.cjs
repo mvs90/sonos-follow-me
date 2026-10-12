@@ -60,6 +60,7 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
           unit_of_measurement: unit,
         });
       state(`select.${room}_mode`, "primary", attr("mode"));
+      state(`select.${room}_volume_mode`, "room", attr("volume_mode"));
       state(`media_player.${room}`, present ? "playing" : "paused", {
         friendly_name: name,
       });
@@ -107,6 +108,61 @@ test("renders a room with only its primary sensor", async ({ page }) => {
   await page.getByText("Einstellungen & Sensoren", { exact: true }).click();
   await expect(page.getByText("PIR: Frei", { exact: true })).toBeVisible();
   await expect(page.locator("li").filter({ hasText: "Radar" })).toHaveCount(0);
+});
+
+test("following modes hide room-volume controls and restore them without losing values", async ({
+  page,
+}) => {
+  await setup(page, {
+    type: "custom:sonos-follow-me-card",
+    entities: ["switch.office"],
+  });
+  await page
+    .getByRole("combobox", { name: "Lautstärkequelle", exact: true })
+    .selectOption("group");
+  await expect(
+    page.getByRole("slider", { name: "Standardlautstärke", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByLabel("Abkühlzeit", { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByLabel("Standardlautstärke verwenden", { exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByText(/Abkühlzeit läuft/)).toHaveCount(0);
+  await expect(
+    page.getByRole("slider", { name: "TV-Offset", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("combobox", { name: "Lautstärkequelle", exact: true })
+    .selectOption("master");
+  await expect(page.getByLabel("Abkühlzeit", { exact: true })).toHaveCount(0);
+  await page
+    .getByRole("combobox", { name: "Lautstärkequelle", exact: true })
+    .selectOption("room");
+  await expect(
+    page.getByRole("slider", { name: "Standardlautstärke", exact: true }),
+  ).toHaveValue("25");
+  await expect(page.getByLabel("Abkühlzeit", { exact: true })).toHaveValue(
+    "30",
+  );
+});
+
+test("external mode change hides room settings even while a slider has focus", async ({
+  page,
+}) => {
+  await setup(page, {
+    type: "custom:sonos-follow-me-card",
+    entities: ["switch.bath"],
+  });
+  await page
+    .getByRole("slider", { name: "Standardlautstärke", exact: true })
+    .focus();
+  await page.evaluate(() => {
+    hass.states["select.bath_volume_mode"].state = "master";
+    card.hass = { ...hass };
+  });
+  await expect(
+    page.getByRole("slider", { name: "Standardlautstärke", exact: true }),
+  ).toHaveCount(0);
 });
 
 test("automatically discovers rooms, shows presence and settings", async ({

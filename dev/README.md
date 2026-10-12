@@ -63,7 +63,7 @@ Mount `dev/sonos_follow_me_lab` read-only at
 sonos_follow_me_lab:
 ```
 
-Restart HA. The lab exposes only two in-memory media players and two simulated
+Restart HA. The lab exposes only three in-memory media players and two simulated
 sensors. It cannot contact physical devices. Run:
 
 ```sh
@@ -94,6 +94,18 @@ This checks an empty or omitted additional-sensor field, both sensor modes,
 cancellation of departure, re-adding the radar, and stable device/entity IDs.
 It restores the original room options and leaves Follow Me off. Results are saved
 in `.local/room-setup-live-report.json`.
+
+For group/master volume following, use:
+
+```sh
+.venv/bin/python dev/check_volume_follow_live.py --auth-file .local/ha-auth.json
+```
+
+The optional third simulated player has a different volume so group average and
+master following can be distinguished. The runner checks live changes, TV offset,
+departure, hidden controls and preserved settings. It restores room options and
+leaves Follow Me off; no physical players are used. Configuration runners support
+the extra room-volume step introduced in v0.6.0.
 
 ## Physical Move checks
 

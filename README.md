@@ -54,7 +54,7 @@ Controls use standard Home Assistant `switch`, `number` and `select` entities an
 
 From v0.4.2, default volume and TV offset use sliders with live value labels. The card displays the offset as a signed percentage; calculation remains additive (30% − 10% = 20%). Cooldown help explains that the next movement after expiry fades to the default volume when volume reset is enabled.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.5.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
@@ -63,6 +63,20 @@ Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. B
 Local `brand/icon.png`, `icon@2x.png`, `logo.png` and `logo@2x.png` assets ship inside the integration. Home Assistant can use these for its integration UI; update through HACS, restart Home Assistant and reload the frontend. The transparent images support the built-in dark-image fallbacks.
 
 The **HACS repository listing is separate**: [HACS issue #5171](https://github.com/hacs/integration/issues/5171) currently tracks missing local integration icons. This release supplies the required images but cannot force affected HACS versions to display them. New custom integrations use [local brand images](https://developers.home-assistant.io/docs/core/integration/brand_images/) rather than new submissions to the legacy central Brands directory.
+
+## Volume source (v0.6.0+)
+
+Each room has a **Volume source** selector in its card, device and configuration:
+
+- **Own room volume:** the existing remembered-volume and optional default/cooldown behavior. Existing rooms keep this mode after updating.
+- **Follow group:** average of valid volume levels in the source group, excluding this destination and other active Follow Me destinations to avoid fade feedback.
+- **Follow master:** the current group coordinator's volume, even if a different group member was selected as a source.
+
+Following applies on entry and tracks changes throughout occupancy and the clear delay. Only the destination is adjusted; source volume levels are never set. Group membership and coordinator changes are tracked. Following ends on departure or disable; mute state is not mirrored.
+
+Default volume, reset and cooldown controls are hidden in the card and device view while following and have no effect. The configuration's separate initial/default-volume step appears only for own room volume. Saved settings and remembered room volume survive mode changes. The TV offset remains available and is added once to the followed level; fade duration and clear delay still apply.
+
+With no valid reference volume on entry, the room waits before joining instead of using a hidden default. If reference levels become unavailable during playback, it holds the last followed target until a valid reference returns.
 
 ## Room settings
 

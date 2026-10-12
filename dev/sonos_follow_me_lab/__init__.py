@@ -23,6 +23,7 @@ async def async_setup(hass, config):
         "sticky_mute": False,
         "tv": False,
         "source_playing": True,
+        "member_joined": False,
     }
 
     async def configure(call):
@@ -41,6 +42,7 @@ async def async_setup(hass, config):
                 sticky_mute=False,
                 tv=False,
                 source_playing=True,
+                member_joined=False,
                 calls=[],
             )
             for entity in lab["entities"].values():
@@ -71,6 +73,7 @@ async def async_setup(hass, config):
                         "muted",
                         "tv",
                         "source_playing",
+                        "member_joined",
                     )
                 },
                 vol.Optional("join_delay"): vol.All(vol.Coerce(float), vol.Range(min=0, max=30)),

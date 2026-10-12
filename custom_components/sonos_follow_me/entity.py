@@ -1,9 +1,10 @@
 """Shared room entity."""
 
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
-from .const import DOMAIN
+from .const import DOMAIN, ROOM_VOLUME_FIELDS
 
 
 class RoomEntity(Entity):
@@ -28,5 +29,22 @@ class RoomEntity(Entity):
         return {"sonos_follow_me_room": self.room.entry.entry_id, "setting": self.key}
 
     async def async_added_to_hass(self):
-        self.room.listeners.add(self.async_write_ha_state)
-        self.async_on_remove(lambda: self.room.listeners.discard(self.async_write_ha_state))
+        self._sync_visibility()
+        self.room.listeners.add(self._updated)
+        self.async_on_remove(lambda: self.room.listeners.discard(self._updated))
+
+    def _sync_visibility(self):
+        """Hide unused settings, preserving the user's own visibility choices."""
+        if self.key not in ROOM_VOLUME_FIELDS:
+            return
+        registry = er.async_get(self.hass)
+        entry = registry.async_get(self.entity_id)
+        if not entry or entry.hidden_by == er.RegistryEntryHider.USER:
+            return
+        hidden = er.RegistryEntryHider.INTEGRATION if self.room.following_volume else None
+        if entry.hidden_by != hidden:
+            registry.async_update_entity(self.entity_id, hidden_by=hidden)
+
+    def _updated(self):
+        self._sync_visibility()
+        self.async_write_ha_state()

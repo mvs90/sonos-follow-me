@@ -172,7 +172,7 @@ async def test_disabled_room_never_acts(room):
 
 
 async def test_listener_starts_on_primary_event(room):
-    with patch("custom_components.sonos_follow_me.room.async_track_state_change_event") as track:
+    with patch("custom_components.sonos_follow_me.room.async_track_state_change_filtered") as track:
         await room.async_start()
         event = SimpleNamespace(data={"entity_id": "binary_sensor.pir"})
         room.hass.states.async_set("binary_sensor.pir", "on")

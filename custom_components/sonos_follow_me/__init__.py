@@ -26,7 +26,7 @@ async def async_setup(hass, config):
             ),
         ]
     )
-    add_extra_js_url(hass, f"{CARD_URL}?v=0.5.0")
+    add_extra_js_url(hass, f"{CARD_URL}?v=0.6.0")
     return True
 
 
