@@ -22,7 +22,7 @@ Das Repository ist über HACS als benutzerdefiniertes Repository installierbar. 
 
 *Vorschau mit simulierten Raumdaten.*
 
-Die Karte wird im selben HACS-Paket mitgeliefert und automatisch geladen. Ab v0.3.1 zeigt sie das eigene Projektlogo im Kopfbereich; das Bild wird lokal mit der Integration ausgeliefert. Kein zweites HACS-Repository und keine manuelle Ressource sind nötig.
+Die Karte wird im selben HACS-Paket mitgeliefert und automatisch geladen. Ab v0.6.1 registriert und aktualisiert die Integration dafür eine Dashboard-Ressource. Bei YAML-Ressourcen verwendet sie einen Startmechanismus, der auf die fertige Home-Assistant-Oberfläche wartet. Ab v0.3.1 zeigt sie das eigene Projektlogo im Kopfbereich; das Bild wird lokal mit der Integration ausgeliefert. Kein zweites HACS-Repository und keine manuelle Ressource sind nötig.
 
 1. In HACS aktualisieren und Home Assistant neu starten.
 2. Den Browser bzw. die Companion-App vollständig neu laden.
@@ -51,7 +51,16 @@ Ab v0.4.2 lassen sich Standardlautstärke und TV-Offset per Slider einstellen. D
 
 Die Bedienelemente sind normale Home-Assistant-Schalter, Zahlen- und Auswahlentitäten. Sie können auch in Standardkarten oder Automationen verwendet werden und unterliegen den normalen Entitätsberechtigungen. Änderungen bleiben gespeichert und laden die Raumsteuerung nicht neu; laufende Wiedergabekontrolle bleibt erhalten. Raumname sowie Sensor-, Lautsprecher- und Quellenzuordnung werden weiterhin unter **Konfigurieren** geändert; solche Änderungen laden den Raum neu.
 
-Falls die Karte nach einem Update fehlt, zuerst Browser-/App-Cache neu laden. Als manueller Fallback kann unter Dashboard-Ressourcen `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.0` als **JavaScript-Modul** eingetragen werden. Die Integration muss eingerichtet und geladen sein. Deaktivierte oder ausgeblendete Entitäten ggf. wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+Ab v0.6.1 bleibt das Logo bei Zustandsänderungen, Bedienung und Zeitaktualisierungen im Dokument eingebunden und flackert nicht durch erneutes Laden. Die Registrierung der Karte wartet auf Home Assistants endgültige Element-Registrierung; damit wird ein Fehler beim frühen Laden zusätzlicher Frontend-Module abgefangen.
+
+Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update weiterhin erscheint:
+
+1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
+2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.1` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
+
+Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 

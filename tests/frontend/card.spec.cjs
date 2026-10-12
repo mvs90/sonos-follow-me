@@ -17,6 +17,9 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
   await page.setContent(
     "<base href='http://follow-me.test/'><style>body{margin:20px;background:#eef1f5;font-family:system-ui}sonos-follow-me-card{max-width:460px;--primary-color:#087f83;--primary-text-color:#182c33;--secondary-text-color:#62777c;--divider-color:#dce5e6}</style>",
   );
+  await page.evaluate(() => {
+    customElements.define("home-assistant", class extends HTMLElement {});
+  });
   await page.addScriptTag({ path: cardScript });
   await page.evaluate((config) => {
     window.calls = [];
@@ -95,6 +98,101 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
     document.body.append(card);
   }, config);
 }
+
+test("logo stays mounted through state updates, settings changes and service errors", async ({
+  page,
+}) => {
+  let logoRequests = 0;
+  page.on("request", (request) => {
+    if (request.url().includes("follow-me-logo.png")) logoRequests++;
+  });
+  await setup(page, { entities: ["switch.bath"] });
+  await expect
+    .poll(() => page.locator("img.logo").evaluate((img) => img.naturalWidth))
+    .toBeGreaterThan(0);
+  await page.evaluate(() => {
+    window.originalLogo = card.shadowRoot.querySelector("img.logo");
+    window.originalHeader = originalLogo.closest("header");
+    window.removedLogos = 0;
+    window.logoObserver = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const removed of record.removedNodes) {
+          if (removed === originalLogo || removed.contains(originalLogo))
+            removedLogos++;
+        }
+      }
+    });
+    logoObserver.observe(card.shadowRoot, { childList: true, subtree: true });
+    for (let i = 0; i < 30; i++) {
+      hass.states["binary_sensor.bath_occupancy"].state = i % 2 ? "on" : "off";
+      card.hass = { ...hass };
+    }
+    card.setConfig({ entities: ["switch.bath"], title: "Meine Räume" });
+  });
+  await expect(
+    page.getByRole("heading", { name: "Meine Räume" }),
+  ).toBeVisible();
+  await page.getByLabel("Follow Me", { exact: true }).uncheck();
+  await page.evaluate(() => {
+    window.fail = true;
+  });
+  await page.getByLabel("Follow Me", { exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Keine Berechtigung");
+  expect(
+    await page.evaluate(() => ({
+      sameLogo: card.shadowRoot.querySelector("img.logo") === originalLogo,
+      sameHeader:
+        originalLogo.closest("header") === originalHeader &&
+        originalHeader.isConnected,
+      removed: removedLogos,
+    })),
+  ).toEqual({ sameLogo: true, sameHeader: true, removed: 0 });
+  expect(logoRequests).toBe(1);
+});
+
+test("early extra-module load survives HA replacing the element registry and HTMLElement", async ({
+  page,
+}) => {
+  await page.setContent("<home-assistant></home-assistant>");
+  await page.addScriptTag({ path: cardScript });
+  // Reproduce the bootstrap ordering: extra module runs before HA's scoped registry.
+  await page.evaluate(() => {
+    const nativeRegistry = window.customElements;
+    const definitions = new Map();
+    window.HTMLElement = class extends HTMLElement {};
+    Object.defineProperty(window, "customElements", {
+      configurable: true,
+      value: {
+        get: (name) => definitions.get(name),
+        define: (name, constructor) => {
+          nativeRegistry.define(name, constructor);
+          definitions.set(name, constructor);
+        },
+      },
+    });
+    customElements.define("home-assistant", class extends HTMLElement {});
+  });
+  await expect
+    .poll(() =>
+      page.evaluate(() => Boolean(customElements.get("sonos-follow-me-card"))),
+    )
+    .toBe(true);
+  expect(
+    await page.evaluate(() => {
+      const Card = customElements.get("sonos-follow-me-card");
+      return (
+        Card.prototype instanceof HTMLElement &&
+        typeof new Card().setConfig === "function"
+      );
+    }),
+  ).toBe(true);
+  // Loading the same card through an additional dashboard resource is harmless.
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.addScriptTag({ path: cardScript });
+  expect(errors).toEqual([]);
+  expect(await page.evaluate(() => window.customCards.length)).toBe(1);
+});
 
 test("renders a room with only its primary sensor", async ({ page }) => {
   await setup(page, {

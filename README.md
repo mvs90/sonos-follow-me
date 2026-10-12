@@ -39,7 +39,7 @@ Manual installation: copy `custom_components/sonos_follow_me` to your HA `config
 
 *Preview with simulated room data.*
 
-The integration ships and automatically loads **Sonos Follow Me**, a custom dashboard card. Since v0.3.1, its header includes the project logo, served locally with the integration. Update in HACS, restart Home Assistant, then fully reload the browser/app. Choose **Edit dashboard → Add card → Sonos Follow Me**. No separate frontend repository or resource registration is required.
+The integration ships and automatically loads **Sonos Follow Me**, a custom dashboard card. Since v0.3.1, its header includes the project logo, served locally with the integration. Update in HACS, restart Home Assistant, then fully reload the browser/app. Choose **Edit dashboard → Add card → Sonos Follow Me**. No separate frontend repository or manual resource registration is required. Since v0.6.1, the integration creates/updates a dashboard module resource; installations with read-only YAML resources use a fallback that waits for the Home Assistant frontend to finish registering its elements.
 
 ```yaml
 type: custom:sonos-follow-me-card
@@ -54,7 +54,16 @@ Controls use standard Home Assistant `switch`, `number` and `select` entities an
 
 From v0.4.2, default volume and TV offset use sliders with live value labels. The card displays the offset as a signed percentage; calculation remains additive (30% − 10% = 20%). Cooldown help explains that the next movement after expiry fades to the default volume when volume reset is enabled.
 
-If the card is missing, reload the frontend cache first. A manual fallback resource is `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.0`, type **JavaScript module**. The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
+Since v0.6.1, the header and logo stay mounted during state changes, control actions and timed updates, preventing image flicker. Early module loading waits for Home Assistant's final custom-element registry before defining the card and editor.
+
+If **Custom element doesn't exist: sonos-follow-me-card** persists:
+
+1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
+2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.1` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
+
+The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 

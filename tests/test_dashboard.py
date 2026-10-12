@@ -1,32 +1,114 @@
 """Public entities, live options and bundled frontend registration."""
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
+from homeassistant.components.lovelace.const import LOVELACE_DATA
+from homeassistant.components.lovelace.resources import (
+    ResourceStorageCollection,
+    ResourceYAMLCollection,
+)
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntryType
 
-from custom_components.sonos_follow_me import CARD_URL, LOGO_URL, async_reload, async_setup
+from custom_components.sonos_follow_me import async_reload, async_setup
 from custom_components.sonos_follow_me.binary_sensor import RoomOccupancy
+from custom_components.sonos_follow_me.dashboard import CARD_URL, LOGO_URL
 from custom_components.sonos_follow_me.number import SETTINGS, RoomNumber
 from custom_components.sonos_follow_me.select import SensorMode, VolumeMode
 from custom_components.sonos_follow_me.switch import FollowMeSwitch, VolumeResetSwitch
 
+VERSION = json.loads(Path("custom_components/sonos_follow_me/manifest.json").read_text())["version"]
+MODULE_URL = f"{CARD_URL}?v={VERSION}"
 
-async def test_card_registration():
-    hass = SimpleNamespace(http=SimpleNamespace(async_register_static_paths=AsyncMock()))
-    with patch("custom_components.sonos_follow_me.add_extra_js_url") as add:
-        assert await async_setup(hass, {})
-        path = hass.http.async_register_static_paths.call_args.args[0][0]
-        assert path.url_path == CARD_URL
-        assert Path(path.path).is_file()
-        assert not path.cache_headers
-        logo = hass.http.async_register_static_paths.call_args.args[0][1]
-        assert logo.url_path == LOGO_URL
-        assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-        assert not logo.cache_headers
-        add.assert_called_once_with(hass, f"{CARD_URL}?v=0.6.0")
+
+@pytest.fixture
+def dashboard():
+    hass = SimpleNamespace(
+        http=SimpleNamespace(async_register_static_paths=AsyncMock()),
+        data={LOVELACE_DATA: SimpleNamespace(resources=ResourceYAMLCollection([]))},
+    )
+    with (
+        patch("custom_components.sonos_follow_me.dashboard.add_extra_js_url") as add,
+        patch(
+            "custom_components.sonos_follow_me.dashboard.async_get_integration",
+            return_value=SimpleNamespace(version=VERSION),
+        ),
+    ):
+        yield hass, add
+
+
+async def test_card_registration_yaml_fallback(dashboard):
+    hass, add = dashboard
+    original = [{"url": "/local/user-card.js", "type": "module"}]
+    hass.data[LOVELACE_DATA].resources = ResourceYAMLCollection(original)
+    assert await async_setup(hass, {})
+    path, logo = hass.http.async_register_static_paths.call_args.args[0]
+    assert path.url_path == CARD_URL
+    assert Path(path.path).is_file()
+    assert not path.cache_headers
+    assert logo.url_path == LOGO_URL
+    assert Path(logo.path).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert not logo.cache_headers
+    add.assert_called_once_with(hass, MODULE_URL)
+    assert hass.data[LOVELACE_DATA].resources.async_items() == original
+
+
+@pytest.mark.parametrize("existing", [False, True])
+async def test_card_resource_created_or_upgraded_without_touching_other_resources(
+    dashboard, existing
+):
+    hass, add = dashboard
+    resources = Mock(spec=ResourceStorageCollection)
+    resources.async_items.return_value = [
+        {"id": "other", "url": "/local/user-card.js", "type": "module"},
+    ]
+    if existing:
+        resources.async_items.return_value.extend(
+            [
+                {"id": "card", "url": f"{CARD_URL}?v=0.6.0", "type": "js"},
+                {"id": "duplicate", "url": CARD_URL, "type": "module"},
+            ]
+        )
+    hass.data[LOVELACE_DATA].resources = resources
+    assert await async_setup(hass, {})
+    resources.async_get_info.assert_awaited_once()
+    values = {"url": MODULE_URL, "res_type": "module"}
+    if existing:
+        resources.async_create_item.assert_not_called()
+        resources.async_update_item.assert_awaited_once_with("card", values)
+        resources.async_delete_item.assert_awaited_once_with("duplicate")
+    else:
+        resources.async_create_item.assert_awaited_once_with(values)
+        resources.async_update_item.assert_not_called()
+        resources.async_delete_item.assert_not_called()
+    add.assert_not_called()
+
+
+async def test_current_resource_requires_no_write(dashboard):
+    hass, add = dashboard
+    resources = Mock(spec=ResourceStorageCollection)
+    resources.async_items.return_value = [{"id": "card", "url": MODULE_URL, "type": "module"}]
+    hass.data[LOVELACE_DATA].resources = resources
+    assert await async_setup(hass, {})
+    resources.async_create_item.assert_not_called()
+    resources.async_update_item.assert_not_called()
+    resources.async_delete_item.assert_not_called()
+    add.assert_not_called()
+
+
+@pytest.mark.parametrize("error", [HomeAssistantError("Storage unavailable"), OSError("Read only")])
+async def test_resource_storage_failure_keeps_frontend_fallback(dashboard, error):
+    hass, add = dashboard
+    resources = Mock(spec=ResourceStorageCollection)
+    resources.async_get_info.side_effect = error
+    hass.data[LOVELACE_DATA].resources = resources
+    assert await async_setup(hass, {})
+    add.assert_called_once_with(hass, MODULE_URL)
 
 
 async def test_entities_expose_stable_room_metadata(room):

@@ -1,32 +1,17 @@
 """Sonos Follow Me integration."""
 
-from pathlib import Path
-
-from homeassistant.components.frontend import add_extra_js_url
-from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import Platform
 
 from .const import DEFAULTS
+from .dashboard import async_setup_dashboard
 from .room import Room
 
 PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SELECT]
-CARD_URL = "/sonos_follow_me/sonos-follow-me-card.js"
-LOGO_URL = "/sonos_follow_me/follow-me-logo.png"
 
 
 async def async_setup(hass, config):
     """Serve and load the bundled card once per integration, including YAML dashboards."""
-    await hass.http.async_register_static_paths(
-        [
-            StaticPathConfig(
-                CARD_URL, str(Path(__file__).parent / "frontend" / "sonos-follow-me-card.js"), False
-            ),
-            StaticPathConfig(
-                LOGO_URL, str(Path(__file__).parent / "frontend" / "follow-me-logo.png"), False
-            ),
-        ]
-    )
-    add_extra_js_url(hass, f"{CARD_URL}?v=0.6.0")
+    await async_setup_dashboard(hass)
     return True
 
 
