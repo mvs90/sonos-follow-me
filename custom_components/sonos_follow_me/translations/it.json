@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura stanza",
+        "description": "È sufficiente un sensore primario; i sensori aggiuntivi sono facoltativi. Primario: solo il sensore primario avvia la presenza; gli altri la mantengono. Equivalenti: qualsiasi sensore può avviare la presenza.",
+        "data": {
+          "name": "Nome della stanza",
+          "player": "Altoparlante Sonos",
+          "primary": "Sensore primario (PIR)",
+          "secondary": "Sensori aggiuntivi (facoltativi, ad es. radar)",
+          "sources": "Sorgenti musicali (ordine = priorità)",
+          "mode": "Logica dei sensori",
+          "off_delay": "Ritardo di assenza",
+          "fade_seconds": "Durata della dissolvenza",
+          "tv_volume_offset": "Offset del volume TV",
+          "volume_mode": "Sorgente del volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+          "secondary": "Lascia vuoto per usare solo il sensore primario. Qui puoi rimuovere i sensori aggiuntivi esistenti.",
+          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino."
+        }
+      },
+      "volume": {
+        "title": "Volume della stanza",
+        "description": "Queste impostazioni si applicano solo al volume della stanza. Restano salvate e vengono nascoste quando si segue il gruppo o il coordinatore.",
+        "data": {
+          "volume": "Volume iniziale (0–1)",
+          "volume_reset": "Ripristina il volume dopo un’assenza",
+          "default_volume": "Volume predefinito (0–1)",
+          "volume_cooldown": "Tempo di ripristino (minuti, 0 = immediato)"
+        },
+        "data_description": {
+          "volume_reset": "Facoltativo. Modifica il volume di destinazione della dissolvenza alla visita successiva, non la riproduzione in corso.",
+          "default_volume": "Volume di destinazione dopo il tempo di ripristino, ad es. 0,3 per il 30 %.",
+          "volume_cooldown": "Inizia quando la stanza risulta libera dopo il ritardo di assenza. Rientrando entro questo tempo si mantiene l’ultimo volume; il tempo completo riparte all’uscita successiva."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Inserisci un nome per la stanza.",
+      "distinct_sensors": "Il sensore primario non può essere selezionato anche come sensore aggiuntivo.",
+      "invalid_sources": "Scegli almeno un altro altoparlante Sonos come sorgente.",
+      "player_used": "Questo altoparlante è già gestito da un’altra stanza."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configura stanza",
+        "description": "È sufficiente un sensore primario; i sensori aggiuntivi sono facoltativi. Primario: solo il sensore primario avvia la presenza; gli altri la mantengono. Equivalenti: qualsiasi sensore può avviare la presenza.",
+        "data": {
+          "name": "Nome della stanza",
+          "player": "Altoparlante Sonos",
+          "primary": "Sensore primario (PIR)",
+          "secondary": "Sensori aggiuntivi (facoltativi, ad es. radar)",
+          "sources": "Sorgenti musicali (ordine = priorità)",
+          "mode": "Logica dei sensori",
+          "off_delay": "Ritardo di assenza",
+          "fade_seconds": "Durata della dissolvenza",
+          "tv_volume_offset": "Offset del volume TV",
+          "volume_mode": "Sorgente del volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+          "secondary": "Lascia vuoto per usare solo il sensore primario. Qui puoi rimuovere i sensori aggiuntivi esistenti.",
+          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino."
+        }
+      },
+      "volume": {
+        "title": "Volume della stanza",
+        "description": "Queste impostazioni si applicano solo al volume della stanza. Restano salvate e vengono nascoste quando si segue il gruppo o il coordinatore.",
+        "data": {
+          "volume": "Volume iniziale (0–1)",
+          "volume_reset": "Ripristina il volume dopo un’assenza",
+          "default_volume": "Volume predefinito (0–1)",
+          "volume_cooldown": "Tempo di ripristino (minuti, 0 = immediato)"
+        },
+        "data_description": {
+          "volume_reset": "Facoltativo. Modifica il volume di destinazione della dissolvenza alla visita successiva, non la riproduzione in corso.",
+          "default_volume": "Volume di destinazione dopo il tempo di ripristino, ad es. 0,3 per il 30 %.",
+          "volume_cooldown": "Inizia quando la stanza risulta libera dopo il ritardo di assenza. Rientrando entro questo tempo si mantiene l’ultimo volume; il tempo completo riparte all’uscita successiva."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Inserisci un nome per la stanza.",
+      "distinct_sensors": "Il sensore primario non può essere selezionato anche come sensore aggiuntivo.",
+      "invalid_sources": "Scegli almeno un altro altoparlante Sonos come sorgente.",
+      "player_used": "Questo altoparlante è già gestito da un’altra stanza."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Il primario avvia, gli altri mantengono",
+        "equal": "Tutti i sensori sono equivalenti"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Volume della stanza",
+        "group": "Segui il gruppo",
+        "master": "Segui il coordinatore"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Usa il volume predefinito"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Presenza"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Volume predefinito"
+      },
+      "volume_cooldown": {
+        "name": "Tempo di ripristino"
+      },
+      "off_delay": {
+        "name": "Ritardo di assenza"
+      },
+      "fade_seconds": {
+        "name": "Durata della dissolvenza"
+      },
+      "tv_volume_offset": {
+        "name": "Offset del volume TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Logica dei sensori",
+        "state": {
+          "primary": "Il primario avvia, gli altri mantengono",
+          "equal": "Tutti i sensori sono equivalenti"
+        }
+      },
+      "volume_mode": {
+        "name": "Sorgente del volume",
+        "state": {
+          "room": "Volume della stanza",
+          "group": "Segui il gruppo",
+          "master": "Segui il coordinatore"
+        }
+      }
+    }
+  }
+}

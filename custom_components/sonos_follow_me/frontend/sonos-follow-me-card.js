@@ -7,9 +7,9 @@
   while (!customElements.get("home-assistant")) {
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
+  // BEGIN GENERATED TRANSLATIONS
   const words = {
     de: {
-      rooms: "Räume",
       occupied: "Belegt",
       clear: "Frei",
       unavailable: "Nicht verfügbar",
@@ -22,27 +22,11 @@
         "Keine Follow-Me-Räume gefunden. Zuerst die Integration einrichten.",
       settings: "Einstellungen & Sensoren",
       remembered: "Letzte Lautstärke",
-      volume_mode: "Lautstärkequelle",
-      room: "Eigene Raumlautstärke",
-      group: "Gruppe folgen",
-      master: "Master folgen",
       target: "Ziel-Lautstärke",
-      follow_hint:
-        "Folgt Lautstärkeänderungen während der Belegung. Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator.",
-      default_volume: "Standardlautstärke",
-      volume_cooldown: "Abkühlzeit",
       tv_volume_offset: "TV-Offset",
       tv_active: "TV-Lautstärke aktiv",
-      tv_hint:
-        "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. Z. B. 30 % − 10 % = 20 %. 0 % = aus.",
       cooldown_hint:
         "Nach Ablauf wird bei der nächsten Bewegung auf die Standardlautstärke eingeblendet, statt die zuletzt am Lautsprecher eingestellte Lautstärke zu übernehmen. Gilt bei aktivierter Option „Standardlautstärke verwenden“.",
-      off_delay: "Ausschaltverzögerung",
-      fade_seconds: "Überblenddauer",
-      volume_reset: "Standardlautstärke verwenden",
-      mode: "Sensorlogik",
-      primary: "PIR startet, weitere halten",
-      equal: "Alle gleichberechtigt",
       sources: "Musikquellen",
       sensors: "Sensoren",
       speaker: "Lautsprecher",
@@ -55,9 +39,32 @@
       resetHint: "0 Minuten = Standardlautstärke beim nächsten Besuch.",
       missing: "Raum nicht verfügbar",
       edit: "Raumzuordnung bearbeiten",
+      room_count: {
+        one: "{count} Raum",
+        few: "{count} Räume",
+        many: "{count} Räume",
+        other: "{count} Räume",
+      },
+      invalid_entities:
+        "entities muss eine Liste von Follow-Me-Schalter-Entitäts-IDs sein.",
+      volume_mode: "Lautstärkequelle",
+      room: "Eigene Raumlautstärke",
+      group: "Gruppe folgen",
+      master: "Master folgen",
+      default_volume: "Standardlautstärke",
+      volume_cooldown: "Abkühlzeit",
+      off_delay: "Ausschaltverzögerung",
+      fade_seconds: "Überblenddauer",
+      volume_reset: "Standardlautstärke verwenden",
+      mode: "Sensorlogik",
+      primary: "Primär startet, weitere halten",
+      equal: "Alle Sensoren gleichberechtigt",
+      tv_hint:
+        "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+      follow_hint:
+        "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit.",
     },
     en: {
-      rooms: "Rooms",
       occupied: "Occupied",
       clear: "Clear",
       unavailable: "Unavailable",
@@ -69,27 +76,11 @@
       empty: "No Follow Me rooms found. Set up the integration first.",
       settings: "Settings & sensors",
       remembered: "Remembered volume",
-      volume_mode: "Volume source",
-      room: "Own room volume",
-      group: "Follow group",
-      master: "Follow master",
       target: "Target volume",
-      follow_hint:
-        "Tracks volume changes while occupied. Group: average source-speaker volume, excluding active Follow Me destinations. Master: current group coordinator.",
-      default_volume: "Default volume",
-      volume_cooldown: "Volume cooldown",
       tv_volume_offset: "TV offset",
       tv_active: "TV volume active",
-      tv_hint:
-        "Added to the selected target volume, including when following the group or master. E.g. 30 % − 10 % = 20 %. 0 % = off.",
       cooldown_hint:
         "After the cooldown, the next movement fades to the default volume instead of the last volume set on the speaker. Applies when “Use default volume” is enabled.",
-      off_delay: "Clear delay",
-      fade_seconds: "Fade duration",
-      volume_reset: "Use default volume",
-      mode: "Sensor mode",
-      primary: "PIR starts, others hold",
-      equal: "All sensors equal",
       sources: "Music sources",
       sensors: "Sensors",
       speaker: "Speaker",
@@ -102,8 +93,471 @@
       resetHint: "0 minutes = default volume on the next visit.",
       missing: "Room unavailable",
       edit: "Edit room assignment",
+      room_count: {
+        one: "{count} room",
+        few: "{count} rooms",
+        many: "{count} rooms",
+        other: "{count} rooms",
+      },
+      invalid_entities:
+        "entities must be a list of Follow Me switch entity IDs",
+      volume_mode: "Volume source",
+      room: "Own room volume",
+      group: "Follow group",
+      master: "Follow master",
+      default_volume: "Default volume",
+      volume_cooldown: "Volume cooldown",
+      off_delay: "Clear delay",
+      fade_seconds: "Fade duration",
+      volume_reset: "Use default volume",
+      mode: "Sensor mode",
+      primary: "Primary starts, additional sensors hold",
+      equal: "All sensors equal",
+      tv_hint:
+        "Added to the selected target volume, including when following the group or master. 30 % − 10 % = 20 %. 0 = disabled. Music/AirPlay are unchanged.",
+      follow_hint:
+        "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown.",
+    },
+    es: {
+      occupied: "Ocupada",
+      clear: "Libre",
+      unavailable: "No disponible",
+      playing: "Reproduciendo",
+      paused: "En pausa",
+      idle: "Listo",
+      on: "Encendido",
+      off: "Apagado",
+      empty:
+        "No se han encontrado habitaciones Follow Me. Configura primero la integración.",
+      settings: "Ajustes y sensores",
+      remembered: "Último volumen",
+      target: "Volumen objetivo",
+      tv_volume_offset: "Ajuste de TV",
+      tv_active: "Volumen de TV activo",
+      cooldown_hint:
+        "Al finalizar este tiempo, el siguiente movimiento inicia un fundido al volumen predeterminado, en lugar del último volumen ajustado en el altavoz. Se aplica si «Usar el volumen predeterminado» está activado.",
+      sources: "Fuentes de música",
+      sensors: "Sensores",
+      speaker: "Altavoz",
+      error: "No se pudo guardar el cambio",
+      title: "Título",
+      choose: "Habitaciones (sin selección: todas)",
+      cooldown: "Restablecimiento pendiente",
+      ready: "Volumen predeterminado en la próxima visita",
+      minute: "min",
+      resetHint: "0 minutos = volumen predeterminado en la próxima visita.",
+      missing: "Habitación no disponible",
+      edit: "Editar asignación de habitación",
+      invalid_entities:
+        "entities debe ser una lista de identificadores de entidades de interruptor Follow Me.",
+      room_count: {
+        one: "{count} habitación",
+        few: "{count} habitaciones",
+        many: "{count} habitaciones",
+        other: "{count} habitaciones",
+      },
+      volume_mode: "Fuente del volumen",
+      room: "Volumen propio de la habitación",
+      group: "Seguir al grupo",
+      master: "Seguir al coordinador",
+      default_volume: "Volumen predeterminado",
+      volume_cooldown: "Tiempo de restablecimiento",
+      off_delay: "Retardo de ausencia",
+      fade_seconds: "Duración del fundido",
+      volume_reset: "Usar el volumen predeterminado",
+      mode: "Lógica de sensores",
+      primary: "El principal inicia, los demás mantienen",
+      equal: "Todos los sensores son iguales",
+      tv_hint:
+        "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+      follow_hint:
+        "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento.",
+    },
+    fr: {
+      occupied: "Occupée",
+      clear: "Libre",
+      unavailable: "Indisponible",
+      playing: "Lecture",
+      paused: "En pause",
+      idle: "Prête",
+      on: "Activé",
+      off: "Désactivé",
+      empty:
+        "Aucune pièce Follow Me trouvée. Configurer d’abord l’intégration.",
+      settings: "Réglages et capteurs",
+      remembered: "Dernier volume",
+      target: "Volume cible",
+      tv_volume_offset: "Décalage TV",
+      tv_active: "Volume TV actif",
+      cooldown_hint:
+        "Après ce délai, le prochain mouvement déclenche un fondu vers le volume par défaut au lieu du dernier volume réglé sur l’enceinte. S’applique lorsque « Utiliser le volume par défaut » est activé.",
+      sources: "Sources musicales",
+      sensors: "Capteurs",
+      speaker: "Enceinte",
+      error: "Échec de la modification",
+      title: "Titre",
+      choose: "Pièces (aucune sélection : toutes)",
+      cooldown: "Réinitialisation en attente",
+      ready: "Volume par défaut à la prochaine visite",
+      minute: "min",
+      resetHint: "0 minute = volume par défaut à la prochaine visite.",
+      missing: "Pièce indisponible",
+      edit: "Modifier l’affectation de la pièce",
+      invalid_entities:
+        "entities doit être une liste d’identifiants d’entités interrupteurs Follow Me.",
+      room_count: {
+        one: "{count} pièce",
+        few: "{count} pièces",
+        many: "{count} pièces",
+        other: "{count} pièces",
+      },
+      volume_mode: "Source du volume",
+      room: "Volume propre à la pièce",
+      group: "Suivre le groupe",
+      master: "Suivre le coordinateur",
+      default_volume: "Volume par défaut",
+      volume_cooldown: "Délai de réinitialisation",
+      off_delay: "Délai avant absence",
+      fade_seconds: "Durée du fondu",
+      volume_reset: "Utiliser le volume par défaut",
+      mode: "Logique des capteurs",
+      primary: "Le principal déclenche, les autres maintiennent",
+      equal: "Tous les capteurs sont équivalents",
+      tv_hint:
+        "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+      follow_hint:
+        "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation.",
+    },
+    it: {
+      occupied: "Occupata",
+      clear: "Libera",
+      unavailable: "Non disponibile",
+      playing: "In riproduzione",
+      paused: "In pausa",
+      idle: "Pronto",
+      on: "Acceso",
+      off: "Spento",
+      empty:
+        "Nessuna stanza Follow Me trovata. Configura prima l’integrazione.",
+      settings: "Impostazioni e sensori",
+      remembered: "Ultimo volume",
+      target: "Volume di destinazione",
+      tv_volume_offset: "Offset TV",
+      tv_active: "Volume TV attivo",
+      cooldown_hint:
+        "Al termine di questo intervallo, il movimento successivo avvia una dissolvenza verso il volume predefinito, anziché l’ultimo volume impostato sull’altoparlante. Si applica se «Usa il volume predefinito» è attivo.",
+      sources: "Sorgenti musicali",
+      sensors: "Sensori",
+      speaker: "Altoparlante",
+      error: "Modifica non riuscita",
+      title: "Titolo",
+      choose: "Stanze (nessuna selezione: tutte)",
+      cooldown: "Ripristino in attesa",
+      ready: "Volume predefinito alla visita successiva",
+      minute: "min",
+      resetHint: "0 minuti = volume predefinito alla visita successiva.",
+      missing: "Stanza non disponibile",
+      edit: "Modifica assegnazione della stanza",
+      invalid_entities:
+        "entities deve essere un elenco di ID di entità interruttore Follow Me.",
+      room_count: {
+        one: "{count} stanza",
+        few: "{count} stanze",
+        many: "{count} stanze",
+        other: "{count} stanze",
+      },
+      volume_mode: "Sorgente del volume",
+      room: "Volume della stanza",
+      group: "Segui il gruppo",
+      master: "Segui il coordinatore",
+      default_volume: "Volume predefinito",
+      volume_cooldown: "Tempo di ripristino",
+      off_delay: "Ritardo di assenza",
+      fade_seconds: "Durata della dissolvenza",
+      volume_reset: "Usa il volume predefinito",
+      mode: "Logica dei sensori",
+      primary: "Il primario avvia, gli altri mantengono",
+      equal: "Tutti i sensori sono equivalenti",
+      tv_hint:
+        "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+      follow_hint:
+        "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino.",
+    },
+    nl: {
+      occupied: "Bezet",
+      clear: "Vrij",
+      unavailable: "Niet beschikbaar",
+      playing: "Afspelen",
+      paused: "Gepauzeerd",
+      idle: "Gereed",
+      on: "Aan",
+      off: "Uit",
+      empty: "Geen Follow Me-ruimtes gevonden. Stel eerst de integratie in.",
+      settings: "Instellingen en sensoren",
+      remembered: "Laatste volume",
+      target: "Doelvolume",
+      tv_volume_offset: "TV-aanpassing",
+      tv_active: "TV-volume actief",
+      cooldown_hint:
+        "Na deze wachttijd verhoogt de volgende beweging het volume geleidelijk tot het standaardvolume, in plaats van het laatst op de luidspreker ingestelde volume. Geldt als ‘Standaardvolume gebruiken’ is ingeschakeld.",
+      sources: "Muziekbronnen",
+      sensors: "Sensoren",
+      speaker: "Luidspreker",
+      error: "Wijziging mislukt",
+      title: "Titel",
+      choose: "Ruimtes (geen selectie: alle)",
+      cooldown: "Herstelwachttijd loopt",
+      ready: "Standaardvolume bij volgend bezoek",
+      minute: "min",
+      resetHint: "0 minuten = standaardvolume bij het volgende bezoek.",
+      missing: "Ruimte niet beschikbaar",
+      edit: "Ruimtetoewijzing wijzigen",
+      invalid_entities:
+        "entities moet een lijst met entiteits-ID’s van Follow Me-schakelaars zijn.",
+      room_count: {
+        one: "{count} ruimte",
+        few: "{count} ruimtes",
+        many: "{count} ruimtes",
+        other: "{count} ruimtes",
+      },
+      volume_mode: "Volumebron",
+      room: "Eigen ruimtevolume",
+      group: "Groep volgen",
+      master: "Coördinator volgen",
+      default_volume: "Standaardvolume",
+      volume_cooldown: "Herstelwachttijd",
+      off_delay: "Vertraging bij afwezigheid",
+      fade_seconds: "Duur van de volumeovergang",
+      volume_reset: "Standaardvolume gebruiken",
+      mode: "Sensorlogica",
+      primary: "Primair start, extra sensoren houden vast",
+      equal: "Alle sensoren gelijkwaardig",
+      tv_hint:
+        "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+      follow_hint:
+        "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd.",
+    },
+    pl: {
+      occupied: "Zajęte",
+      clear: "Wolne",
+      unavailable: "Niedostępne",
+      playing: "Odtwarzanie",
+      paused: "Wstrzymano",
+      idle: "Gotowy",
+      on: "Wł.",
+      off: "Wył.",
+      empty:
+        "Nie znaleziono pomieszczeń Follow Me. Najpierw skonfiguruj integrację.",
+      settings: "Ustawienia i czujniki",
+      remembered: "Ostatnia głośność",
+      target: "Głośność docelowa",
+      tv_volume_offset: "Korekta TV",
+      tv_active: "Aktywna głośność TV",
+      cooldown_hint:
+        "Po upływie tego czasu następny ruch płynnie zwiększy głośność do wartości domyślnej, zamiast przywracać ostatnią głośność ustawioną na głośniku. Dotyczy włączonej opcji „Używaj głośności domyślnej”.",
+      sources: "Źródła muzyki",
+      sensors: "Czujniki",
+      speaker: "Głośnik",
+      error: "Zmiana nie powiodła się",
+      title: "Tytuł",
+      choose: "Pomieszczenia (brak wyboru: wszystkie)",
+      cooldown: "Trwa czas przywracania",
+      ready: "Głośność domyślna przy następnej wizycie",
+      minute: "min",
+      resetHint: "0 minut = głośność domyślna przy następnej wizycie.",
+      missing: "Pomieszczenie niedostępne",
+      edit: "Edytuj przypisanie pomieszczenia",
+      invalid_entities:
+        "entities musi być listą identyfikatorów encji przełączników Follow Me.",
+      room_count: {
+        one: "{count} pomieszczenie",
+        few: "{count} pomieszczenia",
+        many: "{count} pomieszczeń",
+        other: "{count} pomieszczeń",
+      },
+      volume_mode: "Źródło głośności",
+      room: "Własna głośność pomieszczenia",
+      group: "Śledź grupę",
+      master: "Śledź koordynatora",
+      default_volume: "Głośność domyślna",
+      volume_cooldown: "Czas przywracania",
+      off_delay: "Opóźnienie nieobecności",
+      fade_seconds: "Czas płynnej zmiany głośności",
+      volume_reset: "Używaj głośności domyślnej",
+      mode: "Logika czujników",
+      primary: "Główny rozpoczyna, dodatkowe podtrzymują",
+      equal: "Wszystkie czujniki równorzędne",
+      tv_hint:
+        "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+      follow_hint:
+        "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania.",
+    },
+    "pt-BR": {
+      occupied: "Ocupado",
+      clear: "Livre",
+      unavailable: "Indisponível",
+      playing: "Reproduzindo",
+      paused: "Em pausa",
+      idle: "Pronto",
+      on: "Ligado",
+      off: "Desligado",
+      empty:
+        "Nenhum cômodo Follow Me encontrado. Configure a integração primeiro.",
+      settings: "Configurações e sensores",
+      remembered: "Último volume",
+      target: "Volume de destino",
+      tv_volume_offset: "Ajuste de TV",
+      tv_active: "Volume de TV ativo",
+      cooldown_hint:
+        "Após esse período, o próximo movimento inicia uma transição para o volume padrão, em vez do último volume definido no alto-falante. Aplica-se quando «Usar o volume padrão» está ativado.",
+      sources: "Fontes de música",
+      sensors: "Sensores",
+      speaker: "Alto-falante",
+      error: "Falha ao alterar",
+      title: "Título",
+      choose: "Cômodos (sem seleção: todos)",
+      cooldown: "Restauração pendente",
+      ready: "Volume padrão na próxima visita",
+      minute: "min",
+      resetHint: "0 minutos = volume padrão na próxima visita.",
+      missing: "Cômodo indisponível",
+      edit: "Editar atribuição do cômodo",
+      invalid_entities:
+        "entities deve ser uma lista de IDs de entidades de interruptor Follow Me.",
+      room_count: {
+        one: "{count} cômodo",
+        few: "{count} cômodos",
+        many: "{count} cômodos",
+        other: "{count} cômodos",
+      },
+      volume_mode: "Origem do volume",
+      room: "Volume próprio do cômodo",
+      group: "Seguir o grupo",
+      master: "Seguir o coordenador",
+      default_volume: "Volume padrão",
+      volume_cooldown: "Tempo de restauração",
+      off_delay: "Atraso de ausência",
+      fade_seconds: "Duração da transição",
+      volume_reset: "Usar o volume padrão",
+      mode: "Lógica dos sensores",
+      primary: "O principal inicia, os adicionais mantêm",
+      equal: "Todos os sensores são iguais",
+      tv_hint:
+        "Somado ao volume de destino selecionado, inclusive ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. Música e AirPlay não são alterados.",
+      follow_hint:
+        "Grupo: volume médio dos alto-falantes de origem, sem os destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são acompanhadas durante a ocupação. Volume próprio do cômodo: último volume ou volume padrão após o tempo de restauração.",
+    },
+    pt: {
+      occupied: "Ocupada",
+      clear: "Livre",
+      unavailable: "Indisponível",
+      playing: "A reproduzir",
+      paused: "Em pausa",
+      idle: "Pronta",
+      on: "Ligado",
+      off: "Desligado",
+      empty:
+        "Não foram encontradas divisões Follow Me. Configure primeiro a integração.",
+      settings: "Definições e sensores",
+      remembered: "Último volume",
+      target: "Volume de destino",
+      tv_volume_offset: "Ajuste TV",
+      tv_active: "Volume TV ativo",
+      cooldown_hint:
+        "Após este período, o próximo movimento inicia uma transição para o volume predefinido, em vez do último volume definido na coluna. Aplica-se quando «Utilizar o volume predefinido» está ativo.",
+      sources: "Fontes de música",
+      sensors: "Sensores",
+      speaker: "Coluna",
+      error: "Falha ao alterar",
+      title: "Título",
+      choose: "Divisões (sem seleção: todas)",
+      cooldown: "Reposição em espera",
+      ready: "Volume predefinido na próxima visita",
+      minute: "min",
+      resetHint: "0 minutos = volume predefinido na próxima visita.",
+      missing: "Divisão indisponível",
+      edit: "Editar atribuição da divisão",
+      invalid_entities:
+        "entities tem de ser uma lista de identificadores de entidades de interruptor Follow Me.",
+      room_count: {
+        one: "{count} divisão",
+        few: "{count} divisões",
+        many: "{count} divisões",
+        other: "{count} divisões",
+      },
+      volume_mode: "Origem do volume",
+      room: "Volume próprio da divisão",
+      group: "Seguir o grupo",
+      master: "Seguir o coordenador",
+      default_volume: "Volume predefinido",
+      volume_cooldown: "Tempo de reposição",
+      off_delay: "Atraso de ausência",
+      fade_seconds: "Duração da transição",
+      volume_reset: "Utilizar o volume predefinido",
+      mode: "Lógica dos sensores",
+      primary: "O principal inicia, os adicionais mantêm",
+      equal: "Todos os sensores são iguais",
+      tv_hint:
+        "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+      follow_hint:
+        "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição.",
+    },
+    sv: {
+      occupied: "Upptaget",
+      clear: "Ledigt",
+      unavailable: "Inte tillgänglig",
+      playing: "Spelar",
+      paused: "Pausad",
+      idle: "Redo",
+      on: "På",
+      off: "Av",
+      empty: "Inga Follow Me-rum hittades. Konfigurera integrationen först.",
+      settings: "Inställningar och sensorer",
+      remembered: "Senaste volym",
+      target: "Målvolym",
+      tv_volume_offset: "TV-justering",
+      tv_active: "TV-volym aktiv",
+      cooldown_hint:
+        "När tiden har löpt ut tonas volymen vid nästa rörelse upp till standardvolymen i stället för den senast inställda volymen på högtalaren. Gäller när ”Använd standardvolym” är aktiverat.",
+      sources: "Musikkällor",
+      sensors: "Sensorer",
+      speaker: "Högtalare",
+      error: "Ändringen misslyckades",
+      title: "Titel",
+      choose: "Rum (inget valt: alla)",
+      cooldown: "Återställningstid pågår",
+      ready: "Standardvolym vid nästa besök",
+      minute: "min",
+      resetHint: "0 minuter = standardvolym vid nästa besök.",
+      missing: "Rummet är inte tillgängligt",
+      edit: "Redigera rumstilldelning",
+      invalid_entities:
+        "entities måste vara en lista med entitets-ID:n för Follow Me-brytare.",
+      room_count: {
+        one: "{count} rum",
+        few: "{count} rum",
+        many: "{count} rum",
+        other: "{count} rum",
+      },
+      volume_mode: "Volymkälla",
+      room: "Egen rumsvolym",
+      group: "Följ gruppen",
+      master: "Följ samordnaren",
+      default_volume: "Standardvolym",
+      volume_cooldown: "Återställningstid",
+      off_delay: "Frånvarofördröjning",
+      fade_seconds: "Toningstid",
+      volume_reset: "Använd standardvolym",
+      mode: "Sensorlogik",
+      primary: "Primär aktiverar, övriga håller kvar",
+      equal: "Alla sensorer är likvärdiga",
+      tv_hint:
+        "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+      follow_hint:
+        "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden.",
     },
   };
+  // END GENERATED TRANSLATIONS
   const node = (tag, text, className) => {
     const element = document.createElement(tag);
     if (text !== undefined) element.textContent = text;
@@ -119,7 +573,21 @@
         s.attributes.sonos_follow_me_room &&
         s.attributes.setting === "enabled",
     );
-  const lang = (hass) => words[hass?.language?.startsWith("de") ? "de" : "en"];
+  const language = (hass) => {
+    const requested = (hass?.locale?.language || hass?.language || "en")
+      .replaceAll("_", "-")
+      .toLowerCase();
+    return (
+      Object.keys(words).find((key) => key.toLowerCase() === requested) ||
+      (words[requested.split("-")[0]] ? requested.split("-")[0] : "en")
+    );
+  };
+  const lang = (hass) => words[language(hass)];
+  const roomCount = (count, hass) => {
+    const forms = lang(hass).room_count;
+    const form = new Intl.PluralRules(language(hass)).select(count);
+    return (forms[form] || forms.other).replace("{count}", String(count));
+  };
   const css = `
 :host{display:block;color:var(--primary-text-color);font-family:var(--paper-font-body1_-_font-family,system-ui)}
 ha-card{display:block;overflow:hidden;background:var(--ha-card-background,var(--card-background-color,#fff));border-radius:var(--ha-card-border-radius,16px);border:1px solid var(--divider-color,#ddd)}
@@ -151,9 +619,7 @@ input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:v
             (e) => typeof e !== "string" || !e.startsWith("switch."),
           ))
       )
-        throw new Error(
-          "entities must be a list of Follow Me switch entity IDs",
-        );
+        throw new Error(lang(this._hass).invalid_entities);
       this._config = { ...config };
       this._render();
     }
@@ -163,7 +629,9 @@ input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:v
         .map((s) => `${s.entity_id}:${s.state}`)
         .sort()
         .join("|");
-      const changed = modes !== this._volumeModes;
+      const changed =
+        modes !== this._volumeModes || language(hass) !== this._language;
+      this._language = language(hass);
       this._volumeModes = modes;
       this._hass = hass;
       this._render(changed);
@@ -366,7 +834,7 @@ input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:v
         this.shadowRoot.append(node("style", css + sliderCss), this._card);
       }
       this._title.textContent = this._config.title || "Sonos Follow Me";
-      this._count.textContent = `${switches.length} ${t.rooms}`;
+      this._count.textContent = roomCount(switches.length, hass);
       this._errorElement.textContent = this._error || "";
       this._errorElement.hidden = !this._error;
       const container = document.createDocumentFragment();
@@ -536,8 +1004,10 @@ input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:v
       this._render();
     }
     set hass(hass) {
+      const changed = language(hass) !== this._language;
+      this._language = language(hass);
       this._hass = hass;
-      if (!this.shadowRoot.activeElement) this._render();
+      if (changed || !this.shadowRoot.activeElement) this._render();
     }
     _render() {
       if (!this._config || !this._hass) return;

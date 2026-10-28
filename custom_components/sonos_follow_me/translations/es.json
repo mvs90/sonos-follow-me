@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar habitación",
+        "description": "Basta con un sensor principal; los sensores adicionales son opcionales. Principal: solo el sensor principal inicia la ocupación; los demás la mantienen. Iguales: cualquier sensor puede iniciar la ocupación.",
+        "data": {
+          "name": "Nombre de la habitación",
+          "player": "Altavoz Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionales (opcionales, p. ej., radar)",
+          "sources": "Fuentes de música (orden = prioridad)",
+          "mode": "Lógica de sensores",
+          "off_delay": "Retardo de ausencia",
+          "fade_seconds": "Duración del fundido",
+          "tv_volume_offset": "Ajuste de volumen de TV",
+          "volume_mode": "Fuente del volumen"
+        },
+        "data_description": {
+          "tv_volume_offset": "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+          "secondary": "Dejar vacío para usar solo el sensor principal. Aquí se pueden quitar los sensores adicionales existentes.",
+          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento."
+        }
+      },
+      "volume": {
+        "title": "Volumen de la habitación",
+        "description": "Estos ajustes solo se aplican al volumen propio de la habitación. Se guardan y se ocultan al seguir al grupo o al coordinador.",
+        "data": {
+          "volume": "Volumen inicial (0–1)",
+          "volume_reset": "Restablecer el volumen tras una ausencia",
+          "default_volume": "Volumen predeterminado (0–1)",
+          "volume_cooldown": "Tiempo de restablecimiento (minutos, 0 = inmediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Cambia el volumen objetivo del fundido en la próxima visita, no la reproducción actual.",
+          "default_volume": "Volumen objetivo tras el tiempo de restablecimiento, p. ej., 0,3 para el 30 %.",
+          "volume_cooldown": "Comienza cuando la habitación queda libre tras el retardo de ausencia. Volver durante este tiempo conserva el último volumen; el tiempo completo vuelve a empezar en la siguiente salida."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Introduce un nombre para la habitación.",
+      "distinct_sensors": "El sensor principal no puede seleccionarse también como sensor adicional.",
+      "invalid_sources": "Elige al menos otro altavoz Sonos como fuente.",
+      "player_used": "Este altavoz ya está gestionado por otra habitación."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar habitación",
+        "description": "Basta con un sensor principal; los sensores adicionales son opcionales. Principal: solo el sensor principal inicia la ocupación; los demás la mantienen. Iguales: cualquier sensor puede iniciar la ocupación.",
+        "data": {
+          "name": "Nombre de la habitación",
+          "player": "Altavoz Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionales (opcionales, p. ej., radar)",
+          "sources": "Fuentes de música (orden = prioridad)",
+          "mode": "Lógica de sensores",
+          "off_delay": "Retardo de ausencia",
+          "fade_seconds": "Duración del fundido",
+          "tv_volume_offset": "Ajuste de volumen de TV",
+          "volume_mode": "Fuente del volumen"
+        },
+        "data_description": {
+          "tv_volume_offset": "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+          "secondary": "Dejar vacío para usar solo el sensor principal. Aquí se pueden quitar los sensores adicionales existentes.",
+          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento."
+        }
+      },
+      "volume": {
+        "title": "Volumen de la habitación",
+        "description": "Estos ajustes solo se aplican al volumen propio de la habitación. Se guardan y se ocultan al seguir al grupo o al coordinador.",
+        "data": {
+          "volume": "Volumen inicial (0–1)",
+          "volume_reset": "Restablecer el volumen tras una ausencia",
+          "default_volume": "Volumen predeterminado (0–1)",
+          "volume_cooldown": "Tiempo de restablecimiento (minutos, 0 = inmediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Cambia el volumen objetivo del fundido en la próxima visita, no la reproducción actual.",
+          "default_volume": "Volumen objetivo tras el tiempo de restablecimiento, p. ej., 0,3 para el 30 %.",
+          "volume_cooldown": "Comienza cuando la habitación queda libre tras el retardo de ausencia. Volver durante este tiempo conserva el último volumen; el tiempo completo vuelve a empezar en la siguiente salida."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Introduce un nombre para la habitación.",
+      "distinct_sensors": "El sensor principal no puede seleccionarse también como sensor adicional.",
+      "invalid_sources": "Elige al menos otro altavoz Sonos como fuente.",
+      "player_used": "Este altavoz ya está gestionado por otra habitación."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "El principal inicia, los demás mantienen",
+        "equal": "Todos los sensores son iguales"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Volumen propio de la habitación",
+        "group": "Seguir al grupo",
+        "master": "Seguir al coordinador"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Usar el volumen predeterminado"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Ocupación"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Volumen predeterminado"
+      },
+      "volume_cooldown": {
+        "name": "Tiempo de restablecimiento"
+      },
+      "off_delay": {
+        "name": "Retardo de ausencia"
+      },
+      "fade_seconds": {
+        "name": "Duración del fundido"
+      },
+      "tv_volume_offset": {
+        "name": "Ajuste de volumen de TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Lógica de sensores",
+        "state": {
+          "primary": "El principal inicia, los demás mantienen",
+          "equal": "Todos los sensores son iguales"
+        }
+      },
+      "volume_mode": {
+        "name": "Fuente del volumen",
+        "state": {
+          "room": "Volumen propio de la habitación",
+          "group": "Seguir al grupo",
+          "master": "Seguir al coordinador"
+        }
+      }
+    }
+  }
+}

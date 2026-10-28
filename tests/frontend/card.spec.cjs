@@ -494,3 +494,111 @@ test("focused slider receives delayed Home Assistant state confirmation", async 
   await expect(offset).toHaveValue("-11");
   await expect(page.getByText("-11 %", { exact: true })).toBeVisible();
 });
+
+const fs = require("node:fs");
+const translationDir = path.resolve(
+  "custom_components/sonos_follow_me/translations",
+);
+const cardTranslationDir = path.resolve(
+  "custom_components/sonos_follow_me/frontend/translations",
+);
+for (const file of fs
+  .readdirSync(translationDir)
+  .filter((file) => file.endsWith(".json"))) {
+  const language = file.slice(0, -5);
+  const backend = JSON.parse(
+    fs.readFileSync(path.join(translationDir, file), "utf8"),
+  );
+  const texts = JSON.parse(
+    fs.readFileSync(path.join(cardTranslationDir, file), "utf8"),
+  );
+  test(`card and editor render ${language} without losing controls on mobile`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 900 });
+    await setup(page, { entities: ["switch.bath"] });
+    await page.evaluate((language) => {
+      hass.language = language;
+      card.hass = { ...hass };
+    }, language);
+    await expect(
+      page.getByText(texts.room_count.one.replace("{count}", "1"), {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(page.getByText(texts.occupied, { exact: true })).toBeVisible();
+    const slider = page.getByRole("slider", {
+      name: backend.entity.number.default_volume.name,
+      exact: true,
+    });
+    await expect(slider).toHaveValue("25");
+    await expect(
+      page.getByRole("combobox", {
+        name: backend.entity.select.volume_mode.name,
+        exact: true,
+      }),
+    ).toHaveValue("room");
+    await slider.press("ArrowRight");
+    await expect(slider).toHaveValue("26");
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBe(360);
+    if (["fr", "pl"].includes(language))
+      await page.screenshot({
+        path: `test-results/card-${language}.png`,
+        fullPage: true,
+      });
+    await page.evaluate(() => {
+      const editor = customElements
+        .get("sonos-follow-me-card")
+        .getConfigElement();
+      editor.setConfig({ type: "custom:sonos-follow-me-card" });
+      editor.hass = hass;
+      document.body.replaceChildren(editor);
+    });
+    await expect(page.getByLabel(texts.title, { exact: true })).toBeVisible();
+    await expect(page.getByText(texts.choose, { exact: true })).toBeVisible();
+  });
+}
+
+for (const [language, expected] of [
+  ["fr-CA", "Volume par défaut"],
+  ["es-419", "Volumen predeterminado"],
+  ["pt-BR", "Volume padrão"],
+  ["PT_br", "Volume padrão"],
+  ["pt-PT", "Volume predefinido"],
+  ["xx-unknown", "Default volume"],
+]) {
+  test(`language fallback resolves ${language}`, async ({ page }) => {
+    await setup(page, { entities: ["switch.bath"] });
+    // Language changes must update even when an existing control has focus.
+    await page
+      .getByRole("slider", { name: "Standardlautstärke", exact: true })
+      .focus();
+    await page.evaluate((language) => {
+      hass.locale = { language };
+      card.hass = { ...hass };
+    }, language);
+    await expect(
+      page.getByRole("slider", { name: expected, exact: true }),
+    ).toHaveValue("25");
+  });
+}
+
+test("Polish room count uses singular, few and many forms", async ({
+  page,
+}) => {
+  await setup(page, { entities: ["switch.bath"] });
+  for (const [count, expected] of [
+    [1, "1 pomieszczenie"],
+    [2, "2 pomieszczenia"],
+    [5, "5 pomieszczeń"],
+  ]) {
+    await page.evaluate((count) => {
+      hass.language = "pl";
+      card.hass = { ...hass };
+      card.setConfig({ entities: Array(count).fill("switch.bath") });
+    }, count);
+    await expect(page.getByText(expected, { exact: true })).toBeVisible();
+  }
+});

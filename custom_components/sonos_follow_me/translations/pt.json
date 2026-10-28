@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar divisão",
+        "description": "Basta um sensor principal; os sensores adicionais são opcionais. Principal: só o sensor principal inicia a ocupação; os restantes mantêm-na. Iguais: qualquer sensor pode iniciar a ocupação.",
+        "data": {
+          "name": "Nome da divisão",
+          "player": "Coluna Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionais (opcionais, p. ex., radar)",
+          "sources": "Fontes de música (ordem = prioridade)",
+          "mode": "Lógica dos sensores",
+          "off_delay": "Atraso de ausência",
+          "fade_seconds": "Duração da transição",
+          "tv_volume_offset": "Ajuste do volume da TV",
+          "volume_mode": "Origem do volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+          "secondary": "Deixe vazio para utilizar apenas o sensor principal. Pode remover aqui os sensores adicionais existentes.",
+          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição."
+        }
+      },
+      "volume": {
+        "title": "Volume da divisão",
+        "description": "Estas definições aplicam-se apenas ao volume próprio da divisão. Ficam guardadas e são ocultadas ao seguir o grupo ou o coordenador.",
+        "data": {
+          "volume": "Volume inicial (0–1)",
+          "volume_reset": "Repor o volume após ausência",
+          "default_volume": "Volume predefinido (0–1)",
+          "volume_cooldown": "Tempo de reposição (minutos, 0 = imediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Altera o volume de destino da transição na próxima visita, não a reprodução em curso.",
+          "default_volume": "Volume de destino após o tempo de reposição, p. ex., 0,3 para 30%.",
+          "volume_cooldown": "Começa quando a divisão fica livre após o atraso de ausência. Regressar dentro deste período mantém o último volume; o tempo completo recomeça na saída seguinte."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Introduza um nome para a divisão.",
+      "distinct_sensors": "O sensor principal não pode ser também selecionado como sensor adicional.",
+      "invalid_sources": "Escolha pelo menos outra coluna Sonos como fonte.",
+      "player_used": "Esta coluna já é gerida por outra divisão."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar divisão",
+        "description": "Basta um sensor principal; os sensores adicionais são opcionais. Principal: só o sensor principal inicia a ocupação; os restantes mantêm-na. Iguais: qualquer sensor pode iniciar a ocupação.",
+        "data": {
+          "name": "Nome da divisão",
+          "player": "Coluna Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionais (opcionais, p. ex., radar)",
+          "sources": "Fontes de música (ordem = prioridade)",
+          "mode": "Lógica dos sensores",
+          "off_delay": "Atraso de ausência",
+          "fade_seconds": "Duração da transição",
+          "tv_volume_offset": "Ajuste do volume da TV",
+          "volume_mode": "Origem do volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+          "secondary": "Deixe vazio para utilizar apenas o sensor principal. Pode remover aqui os sensores adicionais existentes.",
+          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição."
+        }
+      },
+      "volume": {
+        "title": "Volume da divisão",
+        "description": "Estas definições aplicam-se apenas ao volume próprio da divisão. Ficam guardadas e são ocultadas ao seguir o grupo ou o coordenador.",
+        "data": {
+          "volume": "Volume inicial (0–1)",
+          "volume_reset": "Repor o volume após ausência",
+          "default_volume": "Volume predefinido (0–1)",
+          "volume_cooldown": "Tempo de reposição (minutos, 0 = imediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Altera o volume de destino da transição na próxima visita, não a reprodução em curso.",
+          "default_volume": "Volume de destino após o tempo de reposição, p. ex., 0,3 para 30%.",
+          "volume_cooldown": "Começa quando a divisão fica livre após o atraso de ausência. Regressar dentro deste período mantém o último volume; o tempo completo recomeça na saída seguinte."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Introduza um nome para a divisão.",
+      "distinct_sensors": "O sensor principal não pode ser também selecionado como sensor adicional.",
+      "invalid_sources": "Escolha pelo menos outra coluna Sonos como fonte.",
+      "player_used": "Esta coluna já é gerida por outra divisão."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "O principal inicia, os adicionais mantêm",
+        "equal": "Todos os sensores são iguais"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Volume próprio da divisão",
+        "group": "Seguir o grupo",
+        "master": "Seguir o coordenador"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Utilizar o volume predefinido"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Ocupação"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Volume predefinido"
+      },
+      "volume_cooldown": {
+        "name": "Tempo de reposição"
+      },
+      "off_delay": {
+        "name": "Atraso de ausência"
+      },
+      "fade_seconds": {
+        "name": "Duração da transição"
+      },
+      "tv_volume_offset": {
+        "name": "Ajuste do volume da TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Lógica dos sensores",
+        "state": {
+          "primary": "O principal inicia, os adicionais mantêm",
+          "equal": "Todos os sensores são iguais"
+        }
+      },
+      "volume_mode": {
+        "name": "Origem do volume",
+        "state": {
+          "room": "Volume próprio da divisão",
+          "group": "Seguir o grupo",
+          "master": "Seguir o coordenador"
+        }
+      }
+    }
+  }
+}

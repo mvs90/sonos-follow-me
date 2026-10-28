@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ruimte instellen",
+        "description": "Eén primaire sensor is voldoende; extra sensoren zijn optioneel. Primair: alleen de primaire sensor start de bezetting; de andere houden deze vast. Gelijkwaardig: elke sensor kan de bezetting starten.",
+        "data": {
+          "name": "Naam van de ruimte",
+          "player": "Sonos-luidspreker",
+          "primary": "Primaire sensor (PIR)",
+          "secondary": "Extra sensoren (optioneel, bijv. radar)",
+          "sources": "Muziekbronnen (volgorde = prioriteit)",
+          "mode": "Sensorlogica",
+          "off_delay": "Vertraging bij afwezigheid",
+          "fade_seconds": "Duur van de volumeovergang",
+          "tv_volume_offset": "TV-volumeaanpassing",
+          "volume_mode": "Volumebron"
+        },
+        "data_description": {
+          "tv_volume_offset": "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+          "secondary": "Laat leeg om alleen de primaire sensor te gebruiken. Bestaande extra sensoren kunnen hier worden verwijderd.",
+          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd."
+        }
+      },
+      "volume": {
+        "title": "Ruimtevolume",
+        "description": "Deze instellingen gelden alleen voor het eigen ruimtevolume. Ze blijven opgeslagen en worden verborgen bij het volgen van de groep of coördinator.",
+        "data": {
+          "volume": "Beginvolume (0–1)",
+          "volume_reset": "Volume herstellen na afwezigheid",
+          "default_volume": "Standaardvolume (0–1)",
+          "volume_cooldown": "Herstelwachttijd (minuten, 0 = direct)"
+        },
+        "data_description": {
+          "volume_reset": "Optioneel. Wijzigt het doelvolume voor de volgende binnenkomst, niet de lopende weergave.",
+          "default_volume": "Doelvolume na de wachttijd, bijv. 0,3 voor 30%.",
+          "volume_cooldown": "Begint wanneer de ruimte vrij is na de afwezigheidsvertraging. Terugkeer binnen deze tijd behoudt het laatste volume; de volledige wachttijd begint opnieuw bij het volgende vertrek."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Voer een naam voor de ruimte in.",
+      "distinct_sensors": "De primaire sensor mag niet ook als extra sensor worden gekozen.",
+      "invalid_sources": "Kies minstens één andere Sonos-luidspreker als bron.",
+      "player_used": "Deze luidspreker wordt al door een andere ruimte beheerd."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ruimte instellen",
+        "description": "Eén primaire sensor is voldoende; extra sensoren zijn optioneel. Primair: alleen de primaire sensor start de bezetting; de andere houden deze vast. Gelijkwaardig: elke sensor kan de bezetting starten.",
+        "data": {
+          "name": "Naam van de ruimte",
+          "player": "Sonos-luidspreker",
+          "primary": "Primaire sensor (PIR)",
+          "secondary": "Extra sensoren (optioneel, bijv. radar)",
+          "sources": "Muziekbronnen (volgorde = prioriteit)",
+          "mode": "Sensorlogica",
+          "off_delay": "Vertraging bij afwezigheid",
+          "fade_seconds": "Duur van de volumeovergang",
+          "tv_volume_offset": "TV-volumeaanpassing",
+          "volume_mode": "Volumebron"
+        },
+        "data_description": {
+          "tv_volume_offset": "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+          "secondary": "Laat leeg om alleen de primaire sensor te gebruiken. Bestaande extra sensoren kunnen hier worden verwijderd.",
+          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd."
+        }
+      },
+      "volume": {
+        "title": "Ruimtevolume",
+        "description": "Deze instellingen gelden alleen voor het eigen ruimtevolume. Ze blijven opgeslagen en worden verborgen bij het volgen van de groep of coördinator.",
+        "data": {
+          "volume": "Beginvolume (0–1)",
+          "volume_reset": "Volume herstellen na afwezigheid",
+          "default_volume": "Standaardvolume (0–1)",
+          "volume_cooldown": "Herstelwachttijd (minuten, 0 = direct)"
+        },
+        "data_description": {
+          "volume_reset": "Optioneel. Wijzigt het doelvolume voor de volgende binnenkomst, niet de lopende weergave.",
+          "default_volume": "Doelvolume na de wachttijd, bijv. 0,3 voor 30%.",
+          "volume_cooldown": "Begint wanneer de ruimte vrij is na de afwezigheidsvertraging. Terugkeer binnen deze tijd behoudt het laatste volume; de volledige wachttijd begint opnieuw bij het volgende vertrek."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Voer een naam voor de ruimte in.",
+      "distinct_sensors": "De primaire sensor mag niet ook als extra sensor worden gekozen.",
+      "invalid_sources": "Kies minstens één andere Sonos-luidspreker als bron.",
+      "player_used": "Deze luidspreker wordt al door een andere ruimte beheerd."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Primair start, extra sensoren houden vast",
+        "equal": "Alle sensoren gelijkwaardig"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Eigen ruimtevolume",
+        "group": "Groep volgen",
+        "master": "Coördinator volgen"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Standaardvolume gebruiken"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Bezetting"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Standaardvolume"
+      },
+      "volume_cooldown": {
+        "name": "Herstelwachttijd"
+      },
+      "off_delay": {
+        "name": "Vertraging bij afwezigheid"
+      },
+      "fade_seconds": {
+        "name": "Duur van de volumeovergang"
+      },
+      "tv_volume_offset": {
+        "name": "TV-volumeaanpassing"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Sensorlogica",
+        "state": {
+          "primary": "Primair start, extra sensoren houden vast",
+          "equal": "Alle sensoren gelijkwaardig"
+        }
+      },
+      "volume_mode": {
+        "name": "Volumebron",
+        "state": {
+          "room": "Eigen ruimtevolume",
+          "group": "Groep volgen",
+          "master": "Coördinator volgen"
+        }
+      }
+    }
+  }
+}

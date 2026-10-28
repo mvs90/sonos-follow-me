@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfigurera rum",
+        "description": "En primär sensor räcker; ytterligare sensorer är valfria. Primär: endast den primära sensorn aktiverar närvaro; övriga håller den aktiv. Likvärdiga: alla sensorer kan aktivera närvaro.",
+        "data": {
+          "name": "Rumsnamn",
+          "player": "Sonos-högtalare",
+          "primary": "Primär sensor (PIR)",
+          "secondary": "Ytterligare sensorer (valfritt, t.ex. radar)",
+          "sources": "Musikkällor (ordning = prioritet)",
+          "mode": "Sensorlogik",
+          "off_delay": "Frånvarofördröjning",
+          "fade_seconds": "Toningstid",
+          "tv_volume_offset": "TV-volymjustering",
+          "volume_mode": "Volymkälla"
+        },
+        "data_description": {
+          "tv_volume_offset": "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+          "secondary": "Lämna tomt för att endast använda den primära sensorn. Befintliga extra sensorer kan tas bort här.",
+          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden."
+        }
+      },
+      "volume": {
+        "title": "Rumsvolym",
+        "description": "Dessa inställningar gäller endast egen rumsvolym. De sparas och döljs när gruppen eller samordnaren följs.",
+        "data": {
+          "volume": "Startvolym (0–1)",
+          "volume_reset": "Återställ volym efter frånvaro",
+          "default_volume": "Standardvolym (0–1)",
+          "volume_cooldown": "Återställningstid (minuter, 0 = direkt)"
+        },
+        "data_description": {
+          "volume_reset": "Valfritt. Ändrar målvolymen för intoningen vid nästa besök, inte pågående uppspelning.",
+          "default_volume": "Målvolym efter återställningstiden, t.ex. 0,3 för 30 %.",
+          "volume_cooldown": "Börjar när rummet är tomt efter frånvarofördröjningen. Återkomst inom denna tid behåller den senaste volymen; hela tiden börjar om vid nästa avfärd."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Ange ett rumsnamn.",
+      "distinct_sensors": "Den primära sensorn kan inte även väljas som extra sensor.",
+      "invalid_sources": "Välj minst en annan Sonos-högtalare som källa.",
+      "player_used": "Den här högtalaren hanteras redan av ett annat rum."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurera rum",
+        "description": "En primär sensor räcker; ytterligare sensorer är valfria. Primär: endast den primära sensorn aktiverar närvaro; övriga håller den aktiv. Likvärdiga: alla sensorer kan aktivera närvaro.",
+        "data": {
+          "name": "Rumsnamn",
+          "player": "Sonos-högtalare",
+          "primary": "Primär sensor (PIR)",
+          "secondary": "Ytterligare sensorer (valfritt, t.ex. radar)",
+          "sources": "Musikkällor (ordning = prioritet)",
+          "mode": "Sensorlogik",
+          "off_delay": "Frånvarofördröjning",
+          "fade_seconds": "Toningstid",
+          "tv_volume_offset": "TV-volymjustering",
+          "volume_mode": "Volymkälla"
+        },
+        "data_description": {
+          "tv_volume_offset": "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+          "secondary": "Lämna tomt för att endast använda den primära sensorn. Befintliga extra sensorer kan tas bort här.",
+          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden."
+        }
+      },
+      "volume": {
+        "title": "Rumsvolym",
+        "description": "Dessa inställningar gäller endast egen rumsvolym. De sparas och döljs när gruppen eller samordnaren följs.",
+        "data": {
+          "volume": "Startvolym (0–1)",
+          "volume_reset": "Återställ volym efter frånvaro",
+          "default_volume": "Standardvolym (0–1)",
+          "volume_cooldown": "Återställningstid (minuter, 0 = direkt)"
+        },
+        "data_description": {
+          "volume_reset": "Valfritt. Ändrar målvolymen för intoningen vid nästa besök, inte pågående uppspelning.",
+          "default_volume": "Målvolym efter återställningstiden, t.ex. 0,3 för 30 %.",
+          "volume_cooldown": "Börjar när rummet är tomt efter frånvarofördröjningen. Återkomst inom denna tid behåller den senaste volymen; hela tiden börjar om vid nästa avfärd."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Ange ett rumsnamn.",
+      "distinct_sensors": "Den primära sensorn kan inte även väljas som extra sensor.",
+      "invalid_sources": "Välj minst en annan Sonos-högtalare som källa.",
+      "player_used": "Den här högtalaren hanteras redan av ett annat rum."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Primär aktiverar, övriga håller kvar",
+        "equal": "Alla sensorer är likvärdiga"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Egen rumsvolym",
+        "group": "Följ gruppen",
+        "master": "Följ samordnaren"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Använd standardvolym"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Närvaro"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Standardvolym"
+      },
+      "volume_cooldown": {
+        "name": "Återställningstid"
+      },
+      "off_delay": {
+        "name": "Frånvarofördröjning"
+      },
+      "fade_seconds": {
+        "name": "Toningstid"
+      },
+      "tv_volume_offset": {
+        "name": "TV-volymjustering"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Sensorlogik",
+        "state": {
+          "primary": "Primär aktiverar, övriga håller kvar",
+          "equal": "Alla sensorer är likvärdiga"
+        }
+      },
+      "volume_mode": {
+        "name": "Volymkälla",
+        "state": {
+          "room": "Egen rumsvolym",
+          "group": "Följ gruppen",
+          "master": "Följ samordnaren"
+        }
+      }
+    }
+  }
+}

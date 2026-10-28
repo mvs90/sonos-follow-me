@@ -8,13 +8,20 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        homeassistant: ['2026.9.0', '2026.10.4']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
           cache: pip
-      - run: pip install -r requirements-test.txt
+      - name: Install test dependencies
+        run: |
+          sed 's/^homeassistant==.*/homeassistant==${{ matrix.homeassistant }}/' requirements-test.txt > /tmp/sonos-follow-me-test-requirements.txt
+          pip install -r /tmp/sonos-follow-me-test-requirements.txt
       - run: ruff check custom_components tests dev
       - run: ruff format --check custom_components tests dev
       - run: pytest -q
@@ -30,7 +37,6 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          ignore: brands
   frontend:
     runs-on: ubuntu-latest
     steps:

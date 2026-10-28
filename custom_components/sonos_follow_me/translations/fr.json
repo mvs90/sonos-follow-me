@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer la pièce",
+        "description": "Un capteur principal suffit ; les capteurs supplémentaires sont facultatifs. Principal : seul le capteur principal déclenche la présence, les autres la maintiennent. Équivalent : chaque capteur peut déclencher la présence.",
+        "data": {
+          "name": "Nom de la pièce",
+          "player": "Enceinte Sonos",
+          "primary": "Capteur principal (PIR)",
+          "secondary": "Capteurs supplémentaires (facultatifs, p. ex. radar)",
+          "sources": "Sources musicales (ordre = priorité)",
+          "mode": "Logique des capteurs",
+          "off_delay": "Délai avant absence",
+          "fade_seconds": "Durée du fondu",
+          "tv_volume_offset": "Décalage du volume TV",
+          "volume_mode": "Source du volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+          "secondary": "Laisser vide pour utiliser uniquement le capteur principal. Les capteurs supplémentaires existants peuvent être retirés ici.",
+          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation."
+        }
+      },
+      "volume": {
+        "title": "Volume de la pièce",
+        "description": "Ces réglages concernent uniquement le volume propre à la pièce. Ils restent enregistrés et sont masqués lors du suivi du groupe ou du coordinateur.",
+        "data": {
+          "volume": "Volume initial (0–1)",
+          "volume_reset": "Réinitialiser le volume après une absence",
+          "default_volume": "Volume par défaut (0–1)",
+          "volume_cooldown": "Délai de réinitialisation (minutes, 0 = immédiatement)"
+        },
+        "data_description": {
+          "volume_reset": "Facultatif. Modifie le volume cible du fondu à la prochaine visite, pas la lecture en cours.",
+          "default_volume": "Volume cible après le délai, p. ex. 0,3 pour 30 %.",
+          "volume_cooldown": "Commence lorsque la pièce devient libre après le délai avant absence. Un retour pendant cette période conserve le dernier volume ; le délai complet recommence au départ suivant."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Saisir un nom de pièce.",
+      "distinct_sensors": "Le capteur principal ne peut pas aussi être choisi comme capteur supplémentaire.",
+      "invalid_sources": "Choisir au moins une autre enceinte Sonos comme source.",
+      "player_used": "Cette enceinte est déjà gérée par une autre pièce."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurer la pièce",
+        "description": "Un capteur principal suffit ; les capteurs supplémentaires sont facultatifs. Principal : seul le capteur principal déclenche la présence, les autres la maintiennent. Équivalent : chaque capteur peut déclencher la présence.",
+        "data": {
+          "name": "Nom de la pièce",
+          "player": "Enceinte Sonos",
+          "primary": "Capteur principal (PIR)",
+          "secondary": "Capteurs supplémentaires (facultatifs, p. ex. radar)",
+          "sources": "Sources musicales (ordre = priorité)",
+          "mode": "Logique des capteurs",
+          "off_delay": "Délai avant absence",
+          "fade_seconds": "Durée du fondu",
+          "tv_volume_offset": "Décalage du volume TV",
+          "volume_mode": "Source du volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+          "secondary": "Laisser vide pour utiliser uniquement le capteur principal. Les capteurs supplémentaires existants peuvent être retirés ici.",
+          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation."
+        }
+      },
+      "volume": {
+        "title": "Volume de la pièce",
+        "description": "Ces réglages concernent uniquement le volume propre à la pièce. Ils restent enregistrés et sont masqués lors du suivi du groupe ou du coordinateur.",
+        "data": {
+          "volume": "Volume initial (0–1)",
+          "volume_reset": "Réinitialiser le volume après une absence",
+          "default_volume": "Volume par défaut (0–1)",
+          "volume_cooldown": "Délai de réinitialisation (minutes, 0 = immédiatement)"
+        },
+        "data_description": {
+          "volume_reset": "Facultatif. Modifie le volume cible du fondu à la prochaine visite, pas la lecture en cours.",
+          "default_volume": "Volume cible après le délai, p. ex. 0,3 pour 30 %.",
+          "volume_cooldown": "Commence lorsque la pièce devient libre après le délai avant absence. Un retour pendant cette période conserve le dernier volume ; le délai complet recommence au départ suivant."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Saisir un nom de pièce.",
+      "distinct_sensors": "Le capteur principal ne peut pas aussi être choisi comme capteur supplémentaire.",
+      "invalid_sources": "Choisir au moins une autre enceinte Sonos comme source.",
+      "player_used": "Cette enceinte est déjà gérée par une autre pièce."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Le principal déclenche, les autres maintiennent",
+        "equal": "Tous les capteurs sont équivalents"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Volume propre à la pièce",
+        "group": "Suivre le groupe",
+        "master": "Suivre le coordinateur"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Utiliser le volume par défaut"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Présence"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Volume par défaut"
+      },
+      "volume_cooldown": {
+        "name": "Délai de réinitialisation"
+      },
+      "off_delay": {
+        "name": "Délai avant absence"
+      },
+      "fade_seconds": {
+        "name": "Durée du fondu"
+      },
+      "tv_volume_offset": {
+        "name": "Décalage du volume TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Logique des capteurs",
+        "state": {
+          "primary": "Le principal déclenche, les autres maintiennent",
+          "equal": "Tous les capteurs sont équivalents"
+        }
+      },
+      "volume_mode": {
+        "name": "Source du volume",
+        "state": {
+          "room": "Volume propre à la pièce",
+          "group": "Suivre le groupe",
+          "master": "Suivre le coordinateur"
+        }
+      }
+    }
+  }
+}

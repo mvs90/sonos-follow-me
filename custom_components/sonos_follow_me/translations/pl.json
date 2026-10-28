@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Skonfiguruj pomieszczenie",
+        "description": "Wystarczy jeden czujnik główny; dodatkowe czujniki są opcjonalne. Główny: tylko czujnik główny rozpoczyna wykrywanie obecności, pozostałe je podtrzymują. Równorzędne: każdy czujnik może rozpocząć wykrywanie obecności.",
+        "data": {
+          "name": "Nazwa pomieszczenia",
+          "player": "Głośnik Sonos",
+          "primary": "Czujnik główny (PIR)",
+          "secondary": "Dodatkowe czujniki (opcjonalne, np. radar)",
+          "sources": "Źródła muzyki (kolejność = priorytet)",
+          "mode": "Logika czujników",
+          "off_delay": "Opóźnienie nieobecności",
+          "fade_seconds": "Czas płynnej zmiany głośności",
+          "tv_volume_offset": "Korekta głośności TV",
+          "volume_mode": "Źródło głośności"
+        },
+        "data_description": {
+          "tv_volume_offset": "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+          "secondary": "Pozostaw puste, aby używać tylko czujnika głównego. Tutaj można usunąć wybrane wcześniej dodatkowe czujniki.",
+          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania."
+        }
+      },
+      "volume": {
+        "title": "Głośność pomieszczenia",
+        "description": "Te ustawienia dotyczą tylko własnej głośności pomieszczenia. Pozostają zapisane i są ukrywane podczas śledzenia grupy lub koordynatora.",
+        "data": {
+          "volume": "Głośność początkowa (0–1)",
+          "volume_reset": "Przywracaj głośność po nieobecności",
+          "default_volume": "Głośność domyślna (0–1)",
+          "volume_cooldown": "Czas przywracania (minuty, 0 = natychmiast)"
+        },
+        "data_description": {
+          "volume_reset": "Opcjonalne. Zmienia docelową głośność przy następnym wejściu, a nie bieżące odtwarzanie.",
+          "default_volume": "Głośność docelowa po czasie przywracania, np. 0,3 oznacza 30%.",
+          "volume_cooldown": "Rozpoczyna się, gdy pomieszczenie zostanie uznane za puste po opóźnieniu nieobecności. Powrót w tym czasie zachowuje ostatnią głośność; pełny czas zaczyna się ponownie przy następnym wyjściu."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Wpisz nazwę pomieszczenia.",
+      "distinct_sensors": "Czujnik główny nie może być jednocześnie wybrany jako czujnik dodatkowy.",
+      "invalid_sources": "Wybierz co najmniej jeden inny głośnik Sonos jako źródło.",
+      "player_used": "Ten głośnik jest już zarządzany przez inne pomieszczenie."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Skonfiguruj pomieszczenie",
+        "description": "Wystarczy jeden czujnik główny; dodatkowe czujniki są opcjonalne. Główny: tylko czujnik główny rozpoczyna wykrywanie obecności, pozostałe je podtrzymują. Równorzędne: każdy czujnik może rozpocząć wykrywanie obecności.",
+        "data": {
+          "name": "Nazwa pomieszczenia",
+          "player": "Głośnik Sonos",
+          "primary": "Czujnik główny (PIR)",
+          "secondary": "Dodatkowe czujniki (opcjonalne, np. radar)",
+          "sources": "Źródła muzyki (kolejność = priorytet)",
+          "mode": "Logika czujników",
+          "off_delay": "Opóźnienie nieobecności",
+          "fade_seconds": "Czas płynnej zmiany głośności",
+          "tv_volume_offset": "Korekta głośności TV",
+          "volume_mode": "Źródło głośności"
+        },
+        "data_description": {
+          "tv_volume_offset": "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+          "secondary": "Pozostaw puste, aby używać tylko czujnika głównego. Tutaj można usunąć wybrane wcześniej dodatkowe czujniki.",
+          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania."
+        }
+      },
+      "volume": {
+        "title": "Głośność pomieszczenia",
+        "description": "Te ustawienia dotyczą tylko własnej głośności pomieszczenia. Pozostają zapisane i są ukrywane podczas śledzenia grupy lub koordynatora.",
+        "data": {
+          "volume": "Głośność początkowa (0–1)",
+          "volume_reset": "Przywracaj głośność po nieobecności",
+          "default_volume": "Głośność domyślna (0–1)",
+          "volume_cooldown": "Czas przywracania (minuty, 0 = natychmiast)"
+        },
+        "data_description": {
+          "volume_reset": "Opcjonalne. Zmienia docelową głośność przy następnym wejściu, a nie bieżące odtwarzanie.",
+          "default_volume": "Głośność docelowa po czasie przywracania, np. 0,3 oznacza 30%.",
+          "volume_cooldown": "Rozpoczyna się, gdy pomieszczenie zostanie uznane za puste po opóźnieniu nieobecności. Powrót w tym czasie zachowuje ostatnią głośność; pełny czas zaczyna się ponownie przy następnym wyjściu."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Wpisz nazwę pomieszczenia.",
+      "distinct_sensors": "Czujnik główny nie może być jednocześnie wybrany jako czujnik dodatkowy.",
+      "invalid_sources": "Wybierz co najmniej jeden inny głośnik Sonos jako źródło.",
+      "player_used": "Ten głośnik jest już zarządzany przez inne pomieszczenie."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "Główny rozpoczyna, dodatkowe podtrzymują",
+        "equal": "Wszystkie czujniki równorzędne"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Własna głośność pomieszczenia",
+        "group": "Śledź grupę",
+        "master": "Śledź koordynatora"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Używaj głośności domyślnej"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Obecność"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Głośność domyślna"
+      },
+      "volume_cooldown": {
+        "name": "Czas przywracania"
+      },
+      "off_delay": {
+        "name": "Opóźnienie nieobecności"
+      },
+      "fade_seconds": {
+        "name": "Czas płynnej zmiany głośności"
+      },
+      "tv_volume_offset": {
+        "name": "Korekta głośności TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Logika czujników",
+        "state": {
+          "primary": "Główny rozpoczyna, dodatkowe podtrzymują",
+          "equal": "Wszystkie czujniki równorzędne"
+        }
+      },
+      "volume_mode": {
+        "name": "Źródło głośności",
+        "state": {
+          "room": "Własna głośność pomieszczenia",
+          "group": "Śledź grupę",
+          "master": "Śledź koordynatora"
+        }
+      }
+    }
+  }
+}

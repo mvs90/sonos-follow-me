@@ -2,7 +2,7 @@
 
 <p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
 
-Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, installable through HACS as a custom repository. MIT licensed; independent community project, not affiliated with Sonos.
+Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, installable through HACS or the Home Assistant Marketplace as a custom repository. MIT licensed; independent community project, not affiliated with Sonos.
 
 **[Deutsche Anleitung](README.de.md)**
 
@@ -14,22 +14,24 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 - Departure only after **all** sensors remain `off` throughout the configured delay. Renewed presence cancels departure, including during fading.
 - Optional default volume after an absence cooldown (including immediate reset for the next visit).
 - Room enable switch and occupancy entity. Smooth configurable fades; remembered volume and enable state, without external helpers.
-- UI setup and options in English and German. Uses the official Sonos integration locally.
+- Setup, options, entity labels and dashboard card in ten language variants. Uses the official Sonos integration locally.
 
 ## Installation
 
+[![Open Sonos Follow Me in your Home Assistant](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mvs90&repository=sonos-follow-me&category=integration)
+
 Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least one binary sensor per room. Tested against HA 2026.9.4, including a Sonos Move and isolated simulated failure scenarios.
 
-1. In HACS, open **Custom repositories**, add `https://github.com/mvs90/sonos-follow-me`, category **Integration**.
-2. Download **Sonos Follow Me** and restart Home Assistant.
-3. Go to **Settings → Devices & services → Add integration → Sonos Follow Me**.
+1. Open the install link above, or add `https://github.com/mvs90/sonos-follow-me` as a custom repository, category **Integration**. On Home Assistant 2026.10 and older, use HACS. Starting with 2026.11, use **Settings → Marketplace**.
+2. Install **Sonos Follow Me**. In HACS, restart Home Assistant after downloading. The Marketplace can start first-time setup immediately; updates still require a restart.
+3. Go to **Settings → Devices & services → Add integration → Sonos Follow Me**, unless setup has opened automatically.
 4. Add one entry per room. Repeat to manage additional speakers/rooms.
 
 Since v0.5.0, each room appears as a device under **Settings → Devices & services → Sonos Follow Me**, with its switches, occupancy sensor and settings grouped together. The integration is no longer classified as a helper. Existing room devices, entity IDs and settings are retained after updating and restarting; do not delete and recreate rooms. Manually created helpers from earlier YAML automations are not changed.
 
 A primary sensor alone can start and maintain occupancy in either sensor mode. When it stays off for the clear delay, the speaker fades out. In **Configure**, leave **Additional sensors** empty or remove previously selected sensors.
 
-This is a custom repository, **not an entry in the default HACS catalog**. Default listing and Home Assistant Brands inclusion have not been requested.
+This repository is **not yet listed in the default catalog**. Until its catalog submission is accepted, use the custom repository link above. HACS and the Marketplace use the [same catalog](https://contributors.home-assistant.io/marketplace/guides/catalog/). Sonos Follow Me remains independently maintained community software.
 
 Manual installation: copy `custom_components/sonos_follow_me` to your HA `config/custom_components` directory and restart.
 
@@ -48,7 +50,7 @@ title: Sonos Follow Me
 
 All rooms are discovered automatically. The graphical editor supports a custom title and selection of specific rooms. Optional YAML `entities` accepts a list of your room's **Follow Me switch entity IDs**; an omitted or empty list shows all rooms.
 
-The card shows occupancy, speakers, remembered volume, cooldown status (updated approximately every 30 seconds), sensor states and source priority. Control Follow Me, volume reset, default volume **in percent**, cooldown, clear delay, fade duration and sensor mode directly. Additional settings/sensor details expand per room. It supports English/German, mobile layouts, theme colors and visible service errors.
+The card shows occupancy, speakers, remembered volume, cooldown status (updated approximately every 30 seconds), sensor states and source priority. Control Follow Me, volume reset, default volume **in percent**, cooldown, clear delay, fade duration and sensor mode directly. Additional settings/sensor details expand per room. It supports the languages below, mobile layouts, theme colors and visible service errors.
 
 Controls use standard Home Assistant `switch`, `number` and `select` entities and normal entity permissions, so they also work in other cards and automations. Public settings persist through config-entry options and apply live without losing playback ownership. Device/sensor/source assignments and room names remain in the integration's Configure dialog; changing those still reloads the room.
 
@@ -60,18 +62,24 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.1` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.2` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
 
 Frontend development: `npm ci`, `npx playwright install chromium`, `npm test`. Browser tests use simulated Home Assistant states and services; they do not connect to real speakers.
 
+## Languages (v0.6.2+)
+
+Setup, options, entity labels, the dashboard card and its editor support **English, German, French, Spanish, Italian, Dutch, Polish, Swedish, Portuguese and Brazilian Portuguese**. The card uses your Home Assistant profile language, resolves regional variants such as `fr-CA` to French, and falls back to English for unsupported languages. Room and speaker names remain as you named them.
+
+Editable JSON catalogs are checked for missing keys and mismatched placeholders. Shared card labels are generated from the integration's translations, so changes stay consistent. To correct a translation or add a language, follow the [translation maintenance guide](dev/TRANSLATIONS.md).
+
 ## Integration branding and HACS listing (v0.3.2+)
 
 Local `brand/icon.png`, `icon@2x.png`, `logo.png` and `logo@2x.png` assets ship inside the integration. Home Assistant can use these for its integration UI; update through HACS, restart Home Assistant and reload the frontend. The transparent images support the built-in dark-image fallbacks.
 
-The **HACS repository listing is separate**: [HACS issue #5171](https://github.com/hacs/integration/issues/5171) currently tracks missing local integration icons. This release supplies the required images but cannot force affected HACS versions to display them. New custom integrations use [local brand images](https://developers.home-assistant.io/docs/core/integration/brand_images/) rather than new submissions to the legacy central Brands directory.
+The current HACS validator accepts these local brand assets; no separate submission to the central Brands repository is needed. Once an integration is in the catalog, the Marketplace also obtains its brand images from its latest release. Older HACS versions may not show local icons in the repository list. See the [custom integration branding documentation](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
 
 ## Volume source (v0.6.0+)
 
@@ -171,10 +179,10 @@ python -m venv .venv
 .venv/bin/ruff format --check custom_components tests dev
 ```
 
-Tests cover the presence latch, UI validation, timer cancellation, source selection, playback ownership, service failures and interrupted departure. GitHub Actions runs these tests plus Hassfest and HACS validation (Brands check excluded while this remains a custom repository).
+Tests cover the presence latch, UI validation, timer cancellation, source selection, playback ownership, service failures and interrupted departure. GitHub Actions runs the Python tests against the minimum supported Home Assistant release (2026.9.0) and the current stable release (2026.10.4), plus browser tests, Hassfest and full HACS validation including brand images. No HACS checks are excluded.
 
 The [running-HA test lab](dev/README.md) provides Docker Desktop Sonos networking instructions, reproducible failure injection through real HA services, and an opt-in physical Move test runner. Local credentials, backups and detailed reports stay outside Git in `.local/`.
 
 Based on the user-provided `Multiroom Sonos Follow Me (Universal)` automation, reimplemented as an event-driven integration. Bug reports and pull requests are welcome; include HA version, mode and a sanitized sequence of sensor states.
 
-See [Home Assistant Sonos documentation](https://www.home-assistant.io/integrations/sonos/) and [HACS integration requirements](https://www.hacs.dev/docs/publish/integration/).
+See [Home Assistant Sonos documentation](https://www.home-assistant.io/integrations/sonos/) and [HACS integration requirements](https://contributors.home-assistant.io/marketplace/guides/integrations/).

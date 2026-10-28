@@ -2,7 +2,9 @@
   "name": "sonos-follow-me-card-tests",
   "private": true,
   "scripts": {
-    "test": "playwright test"
+    "build:translations": "node dev/build_card_translations.cjs",
+    "check:translations": "node dev/build_card_translations.cjs --check",
+    "test": "npm run check:translations && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

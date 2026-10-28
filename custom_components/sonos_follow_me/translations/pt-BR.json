@@ -1,0 +1,158 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar cômodo",
+        "description": "Um sensor principal é suficiente; sensores adicionais são opcionais. Principal: somente o sensor principal inicia a ocupação; os demais a mantêm. Iguais: qualquer sensor pode iniciar a ocupação.",
+        "data": {
+          "name": "Nome do cômodo",
+          "player": "Alto-falante Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionais (opcionais, por exemplo, radar)",
+          "sources": "Fontes de música (ordem = prioridade)",
+          "mode": "Lógica dos sensores",
+          "off_delay": "Atraso de ausência",
+          "fade_seconds": "Duração da transição",
+          "tv_volume_offset": "Ajuste do volume da TV",
+          "volume_mode": "Origem do volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Somado ao volume de destino selecionado, inclusive ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. Música e AirPlay não são alterados.",
+          "secondary": "Deixe vazio para usar apenas o sensor principal. Os sensores adicionais existentes podem ser removidos aqui.",
+          "volume_mode": "Grupo: volume médio dos alto-falantes de origem, sem os destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são acompanhadas durante a ocupação. Volume próprio do cômodo: último volume ou volume padrão após o tempo de restauração."
+        }
+      },
+      "volume": {
+        "title": "Volume do cômodo",
+        "description": "Estas configurações se aplicam apenas ao volume próprio do cômodo. Permanecem salvas e ficam ocultas ao seguir o grupo ou o coordenador.",
+        "data": {
+          "volume": "Volume inicial (0–1)",
+          "volume_reset": "Restaurar o volume após ausência",
+          "default_volume": "Volume padrão (0–1)",
+          "volume_cooldown": "Tempo de restauração (minutos, 0 = imediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Altera o volume de destino da transição na próxima visita, não a reprodução em andamento.",
+          "default_volume": "Volume de destino após o tempo de restauração, por exemplo, 0,3 para 30%.",
+          "volume_cooldown": "Começa quando o cômodo fica livre após o atraso de ausência. Retornar dentro desse período mantém o último volume; o tempo completo recomeça na próxima saída."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Digite um nome para o cômodo.",
+      "distinct_sensors": "O sensor principal não pode ser selecionado também como sensor adicional.",
+      "invalid_sources": "Escolha pelo menos outro alto-falante Sonos como fonte.",
+      "player_used": "Este alto-falante já é gerenciado por outro cômodo."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar cômodo",
+        "description": "Um sensor principal é suficiente; sensores adicionais são opcionais. Principal: somente o sensor principal inicia a ocupação; os demais a mantêm. Iguais: qualquer sensor pode iniciar a ocupação.",
+        "data": {
+          "name": "Nome do cômodo",
+          "player": "Alto-falante Sonos",
+          "primary": "Sensor principal (PIR)",
+          "secondary": "Sensores adicionais (opcionais, por exemplo, radar)",
+          "sources": "Fontes de música (ordem = prioridade)",
+          "mode": "Lógica dos sensores",
+          "off_delay": "Atraso de ausência",
+          "fade_seconds": "Duração da transição",
+          "tv_volume_offset": "Ajuste do volume da TV",
+          "volume_mode": "Origem do volume"
+        },
+        "data_description": {
+          "tv_volume_offset": "Somado ao volume de destino selecionado, inclusive ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. Música e AirPlay não são alterados.",
+          "secondary": "Deixe vazio para usar apenas o sensor principal. Os sensores adicionais existentes podem ser removidos aqui.",
+          "volume_mode": "Grupo: volume médio dos alto-falantes de origem, sem os destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são acompanhadas durante a ocupação. Volume próprio do cômodo: último volume ou volume padrão após o tempo de restauração."
+        }
+      },
+      "volume": {
+        "title": "Volume do cômodo",
+        "description": "Estas configurações se aplicam apenas ao volume próprio do cômodo. Permanecem salvas e ficam ocultas ao seguir o grupo ou o coordenador.",
+        "data": {
+          "volume": "Volume inicial (0–1)",
+          "volume_reset": "Restaurar o volume após ausência",
+          "default_volume": "Volume padrão (0–1)",
+          "volume_cooldown": "Tempo de restauração (minutos, 0 = imediato)"
+        },
+        "data_description": {
+          "volume_reset": "Opcional. Altera o volume de destino da transição na próxima visita, não a reprodução em andamento.",
+          "default_volume": "Volume de destino após o tempo de restauração, por exemplo, 0,3 para 30%.",
+          "volume_cooldown": "Começa quando o cômodo fica livre após o atraso de ausência. Retornar dentro desse período mantém o último volume; o tempo completo recomeça na próxima saída."
+        }
+      }
+    },
+    "error": {
+      "empty_name": "Digite um nome para o cômodo.",
+      "distinct_sensors": "O sensor principal não pode ser selecionado também como sensor adicional.",
+      "invalid_sources": "Escolha pelo menos outro alto-falante Sonos como fonte.",
+      "player_used": "Este alto-falante já é gerenciado por outro cômodo."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "primary": "O principal inicia, os adicionais mantêm",
+        "equal": "Todos os sensores são iguais"
+      }
+    },
+    "volume_mode": {
+      "options": {
+        "room": "Volume próprio do cômodo",
+        "group": "Seguir o grupo",
+        "master": "Seguir o coordenador"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "enabled": {
+        "name": "Follow Me"
+      },
+      "volume_reset": {
+        "name": "Usar o volume padrão"
+      }
+    },
+    "binary_sensor": {
+      "occupancy": {
+        "name": "Ocupação"
+      }
+    },
+    "number": {
+      "default_volume": {
+        "name": "Volume padrão"
+      },
+      "volume_cooldown": {
+        "name": "Tempo de restauração"
+      },
+      "off_delay": {
+        "name": "Atraso de ausência"
+      },
+      "fade_seconds": {
+        "name": "Duração da transição"
+      },
+      "tv_volume_offset": {
+        "name": "Ajuste do volume da TV"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Lógica dos sensores",
+        "state": {
+          "primary": "O principal inicia, os adicionais mantêm",
+          "equal": "Todos os sensores são iguais"
+        }
+      },
+      "volume_mode": {
+        "name": "Origem do volume",
+        "state": {
+          "room": "Volume próprio do cômodo",
+          "group": "Seguir o grupo",
+          "master": "Seguir o coordenador"
+        }
+      }
+    }
+  }
+}

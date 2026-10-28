@@ -6,15 +6,17 @@ Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautspreche
 
 ## Installation
 
+[![Sonos Follow Me in deinem Home Assistant öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mvs90&repository=sonos-follow-me&category=integration)
+
 Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle **Sonos-Integration** und mindestens einen binären Sensor pro Raum.
 
-1. In **HACS → Benutzerdefinierte Repositories** `https://github.com/mvs90/sonos-follow-me` als **Integration** hinzufügen.
-2. **Sonos Follow Me** herunterladen und Home Assistant neu starten.
-3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen.
+1. Den Installationslink oben öffnen oder `https://github.com/mvs90/sonos-follow-me` als benutzerdefiniertes Repository der Kategorie **Integration** hinzufügen. Bis Home Assistant 2026.10 erfolgt das über **HACS**, ab 2026.11 über **Einstellungen → Marketplace**.
+2. **Sonos Follow Me** installieren. In HACS nach dem Herunterladen Home Assistant neu starten. Der Marketplace kann die Ersteinrichtung direkt öffnen; Updates benötigen weiterhin einen Neustart.
+3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen, sofern die Einrichtung nicht automatisch erscheint.
 4. Raumname, Lautsprecher, primären Sensor, optional weitere Sensoren und Musikquellen auswählen.
 5. Für jeden weiteren Raum erneut einen Eintrag hinzufügen. Einstellungen später über **Konfigurieren** ändern.
 
-Das Repository ist über HACS als benutzerdefiniertes Repository installierbar. Es ist **nicht im HACS-Standardkatalog gelistet**. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
+Das Repository ist **noch nicht im Standardkatalog gelistet**. Bis zur Annahme des Aufnahmeantrags den oben genannten Installationslink verwenden. HACS und Marketplace verwenden [denselben Katalog](https://contributors.home-assistant.io/marketplace/guides/catalog/); Sonos Follow Me bleibt ein unabhängig gepflegtes Community-Projekt. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
 
 ## Eigene Dashboard-Karte (ab v0.3.0)
 
@@ -57,16 +59,22 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.1` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.2` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
+
+## Sprachen (ab v0.6.2)
+
+Einrichtung, Optionen, Entitätsbezeichnungen, Dashboard-Karte und Karteneditor unterstützen **Deutsch, Englisch, Französisch, Spanisch, Italienisch, Niederländisch, Polnisch, Schwedisch sowie europäisches und brasilianisches Portugiesisch**. Die Karte folgt der Sprache deines Home-Assistant-Profils. Regionale Varianten wie `fr-CA` verwenden die entsprechende Grundsprache; bei nicht unterstützten Sprachen erscheint Englisch. Eigene Raum- und Lautsprechernamen bleiben erhalten.
+
+Gemeinsame Bezeichnungen werden aus den Übersetzungen der Integration in die Karte übernommen. Automatische Prüfungen erkennen fehlende Texte, abweichende Platzhalter und eine nicht aktualisierte Karte. Die [Anleitung zur Übersetzungspflege](dev/TRANSLATIONS.md) beschreibt Ergänzungen und Korrekturen.
 
 ## Integrationslogo und HACS-Anzeige (ab v0.3.2)
 
 Das Projektlogo liegt zusätzlich unter `custom_components/sonos_follow_me/brand/` als Icon und Logo in normaler und hoher Auflösung. Home Assistant verwendet diese lokalen Bilder in seiner Integrationsoberfläche; nach dem HACS-Update Home Assistant neu starten und die Oberfläche neu laden.
 
-**Die HACS-Repository-Liste ist ein separater Fall:** Dort besteht derzeit ein [offener Fehler für lokale Integrationslogos](https://github.com/hacs/integration/issues/5171). Die benötigten Bilder werden mitgeliefert, aber das Modul kann deren Anzeige in einer betroffenen HACS-Version nicht erzwingen. Ein Eintrag ins frühere zentrale Brands-Verzeichnis ist für neue Custom-Integrationen nicht mehr der vorgesehene Weg. Siehe [Home-Assistant-Dokumentation](https://developers.home-assistant.io/docs/core/integration/brand_images/).
+Der aktuelle HACS-Validator akzeptiert die mitgelieferten Logos; ein separater Antrag im zentralen Brands-Verzeichnis ist nicht erforderlich. Für Integrationen im Katalog bezieht der Marketplace die Bilder ebenfalls aus dem neuesten Release. Ältere HACS-Versionen zeigen lokale Icons möglicherweise nicht in der Repository-Liste. Siehe die [aktuelle Branding-Dokumentation](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
 
 ## Geräte statt Helfer (v0.5.0+)
 
@@ -156,6 +164,6 @@ Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lau
 
 Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Nach der Fehlersperre kann ein späteres Zustandsereignis einen neuen Beitrittsversuch auslösen.
 
-Software- und Praxistests laufen gegen **Home Assistant 2026.9.4**. Das [Testlabor](dev/README.md) beschreibt die Docker-Netzwerkanbindung, wiederholbare Fehlersimulationen und den optionalen Testlauf am echten Move. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
+Die automatischen Python-Tests laufen in GitHub Actions gegen **Home Assistant 2026.9.0 und 2026.10.4**, ergänzt durch Browsertests, Hassfest und die vollständige HACS-Prüfung ohne Ausnahmen. Die bisherigen Praxistests wurden mit **Home Assistant 2026.9.4** durchgeführt. Ein Praxistest mit dem Marketplace in 2026.11 steht noch aus. Das [Testlabor](dev/README.md) beschreibt die Docker-Netzwerkanbindung, wiederholbare Fehlersimulationen und den optionalen Testlauf am echten Move. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
 
 MIT-Lizenz, unabhängiges Community-Projekt. Weitere technische Hinweise und Entwicklungsbefehle stehen in der [englischen README](README.md).
