@@ -186,3 +186,9 @@ The [running-HA test lab](dev/README.md) provides Docker Desktop Sonos networkin
 Based on the user-provided `Multiroom Sonos Follow Me (Universal)` automation, reimplemented as an event-driven integration. Bug reports and pull requests are welcome; include HA version, mode and a sanitized sequence of sensor states.
 
 See [Home Assistant Sonos documentation](https://www.home-assistant.io/integrations/sonos/) and [HACS integration requirements](https://contributors.home-assistant.io/marketplace/guides/integrations/).
+
+## Support this project
+
+If you find this project useful, you can support its development and maintenance
+with a voluntary contribution via [PayPal](https://www.paypal.me/mvs90).
+Thank you for your support!
