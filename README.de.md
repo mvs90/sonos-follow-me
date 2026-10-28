@@ -171,3 +171,9 @@ Bei Projektänderungen und manuellen Läufen prüft GitHub Actions **Home Assist
 Die früheren Tests am echten Move verwendeten **Home Assistant 2026.9.4**. Bei der Prüfung am 28.10.2026 war der physische Lautsprecher nicht erreichbar. Die neuen Tests nutzen deshalb simulierte Lautsprecher über echte Home-Assistant-Dienste. Die Installation über den Marketplace wurde noch nicht geprüft. Das [Testlabor](dev/README.md) beschreibt die getrennte Vorschau, wiederholbare Tests und den optionalen Hardwaretest. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`.
 
 MIT-Lizenz, unabhängiges Community-Projekt. Weitere technische Hinweise und Entwicklungsbefehle stehen in der [englischen README](README.md).
+
+## Projekt unterstützen
+
+Wenn dir dieses Projekt hilft, kannst du seine Weiterentwicklung und Pflege
+freiwillig über [PayPal](https://www.paypal.me/mvs90) unterstützen.
+Vielen Dank für deine Unterstützung!
