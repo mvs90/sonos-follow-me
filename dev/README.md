@@ -134,3 +134,74 @@ actual `volume_level`, `is_volume_muted`, `group_members`, and controller
 
 Successful simulated failures show that recovery handles those inputs. They do
 not prove the root cause of an intermittent fault on a physical speaker.
+
+## Separate preview container and compatibility checks
+
+`dev/compose.preview.yaml` creates a separate HA instance at
+`http://127.0.0.1:8124`, with its own named volume and simulated speakers. It uses
+the official `dev` image by default. Pin a digest through `HA_PREVIEW_IMAGE` when
+recording a reproducible result. For example, use the digest in the
+[compatibility report](../docs/compatibility.md). `HA_PREVIEW_PORT` can override
+8124. The ordinary stable instance keeps its existing Compose project and data.
+
+```sh
+docker compose -f dev/compose.preview.yaml pull
+docker compose -f dev/compose.preview.yaml up -d
+```
+
+Complete onboarding in that instance and create a local test account. Sign in
+with the existing login helper, keeping its authentication separate:
+
+```sh
+.venv/bin/python dev/ha_login.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json
+```
+
+Run the suites in order (each manipulates only the dedicated simulated room):
+
+```sh
+.venv/bin/python dev/check_faults_live.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json --report .local/preview-faults.json
+.venv/bin/python dev/check_room_setup_live.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json --report .local/preview-room-setup.json
+.venv/bin/python dev/check_volume_follow_live.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json --report .local/preview-volume-follow.json
+.venv/bin/python dev/check_compatibility_live.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json --phase prepare \
+  --snapshot .local/preview-snapshot.json
+docker compose -f dev/compose.preview.yaml restart
+.venv/bin/python dev/check_compatibility_live.py --url http://127.0.0.1:8124 \
+  --auth-file .local/ha-preview-auth.json --phase verify \
+  --snapshot .local/preview-snapshot.json --report .local/preview-compatibility.json
+```
+
+If using a local environment file to pin the image, include its `--env-file`
+argument on every Compose command. The `prepare` phase keeps an additional
+simulated room, **Sonos Compatibility Second Room**, and creates/updates the
+**Sonos Kompatibilität** dashboard at `/sonos-compatibility/test`. Both simulated
+rooms stay disabled. Do not reuse those names for non-test configurations. The
+`verify` phase waits for room startup, compares IDs and settings, checks all
+translation texts and validates the single versioned card resource. To repeat
+against stable, use its URL and authentication file and separate snapshot/report
+paths; restart that instance using its own Compose project.
+
+In the actual HA browser, inspect the dashboard and logo, adjust and restore both
+sliders, switch between room/group/master volume and verify hidden settings, then
+open and cancel the graphical card editor. Finish with both Follow Me switches
+off and the original test settings restored. The standalone `npm test` suite
+adds systematic mobile, language and startup-registry checks.
+
+To run Python tests against an official image's installed dependencies, mount
+this repository read-only and invoke the container test helper:
+
+```sh
+docker run --rm --entrypoint /bin/sh -v "$PWD:/work:ro" -w /work \
+  -e PYTHONDONTWRITEBYTECODE=1 \
+  ghcr.io/home-assistant/home-assistant:dev dev/run_container_tests.sh
+```
+
+The helper creates a temporary test venv inheriting the image's packages, installs
+only test tools, prints the actual HA version and runs lint, formatting and all
+Python tests. It does not install a different Home Assistant version. CI runs
+this for the latest development image on pushes, pull requests and manual runs.
+Local containers stay on their selected image until explicitly updated.

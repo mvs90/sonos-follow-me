@@ -10,6 +10,8 @@ Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautspreche
 
 Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle **Sonos-Integration** und mindestens einen binären Sensor pro Raum.
 
+Am **28.10.2026** in laufenden Containern mit **2026.10.4** sowie der November-Vorschau **2026.11.0.dev202610281312** geprüft. Der [Kompatibilitätsbericht](docs/compatibility.md) beschreibt Umfang und Grenzen.
+
 1. Den Installationslink oben öffnen oder `https://github.com/mvs90/sonos-follow-me` als benutzerdefiniertes Repository der Kategorie **Integration** hinzufügen. Bis Home Assistant 2026.10 erfolgt das über **HACS**, ab 2026.11 über **Einstellungen → Marketplace**.
 2. **Sonos Follow Me** installieren. In HACS nach dem Herunterladen Home Assistant neu starten. Der Marketplace kann die Ersteinrichtung direkt öffnen; Updates benötigen weiterhin einen Neustart.
 3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen, sofern die Einrichtung nicht automatisch erscheint.
@@ -59,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.2` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.3` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
@@ -164,6 +166,8 @@ Ausschalten des Follow-Me-Schalters lässt die aktuelle Wiedergabe bestehen. Lau
 
 Lautstärkeänderungen **während einer Überblendung** werden nicht gespeichert und können überschrieben werden. Für unmittelbare manuelle Kontrolle die Überblenddauer auf 0 setzen. Netzwerkfehler können Sonos-Aktionen verhindern; Fehler stehen im Home-Assistant-Protokoll. Nach der Fehlersperre kann ein späteres Zustandsereignis einen neuen Beitrittsversuch auslösen.
 
-Die automatischen Python-Tests laufen in GitHub Actions gegen **Home Assistant 2026.9.0 und 2026.10.4**, ergänzt durch Browsertests, Hassfest und die vollständige HACS-Prüfung ohne Ausnahmen. Die bisherigen Praxistests wurden mit **Home Assistant 2026.9.4** durchgeführt. Ein Praxistest mit dem Marketplace in 2026.11 steht noch aus. Das [Testlabor](dev/README.md) beschreibt die Docker-Netzwerkanbindung, wiederholbare Fehlersimulationen und den optionalen Testlauf am echten Move. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`. Veröffentlichung und Installation konfigurieren deine laufende Home-Assistant-Instanz nicht automatisch.
+Bei Projektänderungen und manuellen Läufen prüft GitHub Actions **Home Assistant 2026.9.0, 2026.10.4 und das jeweils aktuelle offizielle Entwicklungsimage**, ergänzt durch Browsertests, Hassfest und die vollständige HACS-Prüfung ohne Ausnahmen. Die laufenden Container mit 2026.10.4 und der oben genannten November-Vorschau bestanden jeweils 125 Python-Tests, 24 Funktions- und Fehlerprüfungen sowie zusätzliche Mehrraum-, Neustart-, Übersetzungs- und Kartenprüfungen. Diese Ergebnisse gelten für die geprüften Versionen; spätere Änderungen werden durch erneute Tests bewertet.
+
+Die früheren Tests am echten Move verwendeten **Home Assistant 2026.9.4**. Bei der Prüfung am 28.10.2026 war der physische Lautsprecher nicht erreichbar. Die neuen Tests nutzen deshalb simulierte Lautsprecher über echte Home-Assistant-Dienste. Die Installation über den Marketplace wurde noch nicht geprüft. Das [Testlabor](dev/README.md) beschreibt die getrennte Vorschau, wiederholbare Tests und den optionalen Hardwaretest. Zugangsdaten, Sicherungen und detaillierte lokale Testberichte bleiben im von Git ausgeschlossenen Verzeichnis `.local/`.
 
 MIT-Lizenz, unabhängiges Community-Projekt. Weitere technische Hinweise und Entwicklungsbefehle stehen in der [englischen README](README.md).

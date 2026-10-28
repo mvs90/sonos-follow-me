@@ -25,6 +25,18 @@ jobs:
       - run: ruff check custom_components tests dev
       - run: ruff format --check custom_components tests dev
       - run: pytest -q
+  preview:
+    name: tests (latest development image)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test the actual Home Assistant development runtime
+        run: |
+          docker pull ghcr.io/home-assistant/home-assistant:dev
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/work:ro" -w /work \
+            -e PYTHONDONTWRITEBYTECODE=1 \
+            ghcr.io/home-assistant/home-assistant:dev dev/run_container_tests.sh
   hassfest:
     runs-on: ubuntu-latest
     steps:

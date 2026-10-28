@@ -1,0 +1,26 @@
+name: sonos-follow-me-preview
+
+services:
+  homeassistant:
+    container_name: sonos-follow-me-ha-preview
+    image: ${HA_PREVIEW_IMAGE:-ghcr.io/home-assistant/home-assistant:dev}
+    restart: unless-stopped
+    stop_grace_period: 90s
+    ports:
+      - "127.0.0.1:${HA_PREVIEW_PORT:-8124}:8123"
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - preview-config:/config
+      - ./preview-configuration.yaml:/config/configuration.yaml:ro
+      - ../custom_components/sonos_follow_me:/config/custom_components/sonos_follow_me:ro
+      - ./sonos_follow_me_lab:/config/custom_components/sonos_follow_me_lab:ro
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8123/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+volumes:
+  preview-config:

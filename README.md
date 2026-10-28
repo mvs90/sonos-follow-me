@@ -20,7 +20,7 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 
 [![Open Sonos Follow Me in your Home Assistant](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mvs90&repository=sonos-follow-me&category=integration)
 
-Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least one binary sensor per room. Tested against HA 2026.9.4, including a Sonos Move and isolated simulated failure scenarios.
+Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least one binary sensor per room. Verified in running containers on **2026.10.4** and **2026.11.0.dev202610281312** on 2026-10-28. See the [compatibility report](docs/compatibility.md) for checks and limits. The earlier physical Sonos Move checks used HA 2026.9.4.
 
 1. Open the install link above, or add `https://github.com/mvs90/sonos-follow-me` as a custom repository, category **Integration**. On Home Assistant 2026.10 and older, use HACS. Starting with 2026.11, use **Settings → Marketplace**.
 2. Install **Sonos Follow Me**. In HACS, restart Home Assistant after downloading. The Marketplace can start first-time setup immediately; updates still require a restart.
@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.2` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.3` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
@@ -169,7 +169,7 @@ Regression tests reproduce pre-fix failures with simulated persistent mute, dela
 
 ## Development
 
-Python 3.14 and Home Assistant 2026.9.4:
+Python 3.14 and Home Assistant 2026.10.4:
 
 ```sh
 python -m venv .venv
@@ -179,7 +179,7 @@ python -m venv .venv
 .venv/bin/ruff format --check custom_components tests dev
 ```
 
-Tests cover the presence latch, UI validation, timer cancellation, source selection, playback ownership, service failures and interrupted departure. GitHub Actions runs the Python tests against the minimum supported Home Assistant release (2026.9.0) and the current stable release (2026.10.4), plus browser tests, Hassfest and full HACS validation including brand images. No HACS checks are excluded.
+Tests cover the presence latch, UI validation, timer cancellation, source selection, playback ownership, service failures and interrupted departure. On pushes, pull requests and manual runs, GitHub Actions checks the minimum supported release (2026.9.0), stable 2026.10.4 and the latest official development container, plus browser tests, Hassfest and full HACS validation including brand images. The development job uses that image's actual Home Assistant dependencies. No HACS checks are excluded. A passing preview is evidence for that tested build, not a guarantee for all future releases.
 
 The [running-HA test lab](dev/README.md) provides Docker Desktop Sonos networking instructions, reproducible failure injection through real HA services, and an opt-in physical Move test runner. Local credentials, backups and detailed reports stay outside Git in `.local/`.
 
