@@ -2,7 +2,7 @@
 
 <p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
 
-Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, installable through HACS or the Home Assistant Marketplace as a custom repository. MIT licensed; independent community project, not affiliated with Sonos.
+Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, available in the HACS and Home Assistant Marketplace catalog. MIT licensed; independent community project, not affiliated with Sonos.
 
 **[Deutsche Anleitung](README.de.md)**
 
@@ -22,7 +22,7 @@ Follow music between rooms using PIR and radar presence sensors. A Home Assistan
 
 Requires Home Assistant **2026.9.0+**, the official **Sonos** integration, and at least one binary sensor per room. Verified in running containers on **2026.10.4** and **2026.11.0.dev202610281312** on 2026-10-28. See the [compatibility report](docs/compatibility.md) for checks and limits. The earlier physical Sonos Move checks used HA 2026.9.4.
 
-1. Open the install link above, or add `https://github.com/mvs90/sonos-follow-me` as a custom repository, category **Integration**. On Home Assistant 2026.10 and older, use HACS. Starting with 2026.11, use **Settings → Marketplace**.
+1. Open **HACS** and search for **Sonos Follow Me**. Starting with Home Assistant 2026.11, search under **Settings → Marketplace**. The install link above also opens the repository directly.
 2. Install **Sonos Follow Me**. In HACS, restart Home Assistant after downloading. The Marketplace can start first-time setup immediately; updates still require a restart.
 3. Go to **Settings → Devices & services → Add integration → Sonos Follow Me**, unless setup has opened automatically.
 4. Add one entry per room. Repeat to manage additional speakers/rooms.
@@ -31,7 +31,7 @@ Since v0.5.0, each room appears as a device under **Settings → Devices & servi
 
 A primary sensor alone can start and maintain occupancy in either sensor mode. When it stays off for the clear delay, the speaker fades out. In **Configure**, leave **Additional sensors** empty or remove previously selected sensors.
 
-This repository is **not yet listed in the default catalog**. Until its catalog submission is accepted, use the custom repository link above. HACS and the Marketplace use the [same catalog](https://contributors.home-assistant.io/marketplace/guides/catalog/). Sonos Follow Me remains independently maintained community software.
+Sonos Follow Me is **listed in the default catalog** following its [accepted submission](https://github.com/hacs/default/pull/12867). Adding a custom repository is not required. HACS and the Marketplace use the [same catalog](https://contributors.home-assistant.io/marketplace/guides/catalog/). Sonos Follow Me remains independently maintained community software.
 
 Manual installation: copy `custom_components/sonos_follow_me` to your HA `config/custom_components` directory and restart.
 
@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.3` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.4` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
