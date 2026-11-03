@@ -12,13 +12,13 @@ Voraussetzung: **Home Assistant 2026.9.0 oder neuer**, eingerichtete offizielle 
 
 Am **28.10.2026** in laufenden Containern mit **2026.10.4** sowie der November-Vorschau **2026.11.0.dev202610281312** geprüft. Der [Kompatibilitätsbericht](docs/compatibility.md) beschreibt Umfang und Grenzen.
 
-1. Den Installationslink oben öffnen oder `https://github.com/mvs90/sonos-follow-me` als benutzerdefiniertes Repository der Kategorie **Integration** hinzufügen. Bis Home Assistant 2026.10 erfolgt das über **HACS**, ab 2026.11 über **Einstellungen → Marketplace**.
+1. **HACS** öffnen und nach **Sonos Follow Me** suchen. Ab Home Assistant 2026.11 erfolgt die Suche unter **Einstellungen → Marketplace**. Der Installationslink oben öffnet das Repository ebenfalls direkt.
 2. **Sonos Follow Me** installieren. In HACS nach dem Herunterladen Home Assistant neu starten. Der Marketplace kann die Ersteinrichtung direkt öffnen; Updates benötigen weiterhin einen Neustart.
 3. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Sonos Follow Me** öffnen, sofern die Einrichtung nicht automatisch erscheint.
 4. Raumname, Lautsprecher, primären Sensor, optional weitere Sensoren und Musikquellen auswählen.
 5. Für jeden weiteren Raum erneut einen Eintrag hinzufügen. Einstellungen später über **Konfigurieren** ändern.
 
-Das Repository ist **noch nicht im Standardkatalog gelistet**. Bis zur Annahme des Aufnahmeantrags den oben genannten Installationslink verwenden. HACS und Marketplace verwenden [denselben Katalog](https://contributors.home-assistant.io/marketplace/guides/catalog/); Sonos Follow Me bleibt ein unabhängig gepflegtes Community-Projekt. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
+Sonos Follow Me ist nach [Annahme des Aufnahmeantrags](https://github.com/hacs/default/pull/12867) **im Standardkatalog gelistet**. Ein benutzerdefiniertes Repository muss nicht hinzugefügt werden. HACS und Marketplace verwenden [denselben Katalog](https://contributors.home-assistant.io/marketplace/guides/catalog/); Sonos Follow Me bleibt ein unabhängig gepflegtes Community-Projekt. Die alte Blueprint-Automation für dieselben Lautsprecher deaktivieren, damit sie nicht gleichzeitig eingreift.
 
 ## Eigene Dashboard-Karte (ab v0.3.0)
 
@@ -61,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.3` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.4` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
