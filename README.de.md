@@ -1,6 +1,6 @@
 # Sonos Follow Me – deutsche Anleitung
 
-<p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
+<p><img src="https://raw.githubusercontent.com/mvs90/sonos-follow-me/main/custom_components/sonos_follow_me/brand/logo.png" alt="Follow Me logo" width="160"></p>
 
 Musik folgt dir durch mehrere Räume. Jeder Raum bekommt einen Sonos-Lautsprecher, einen primären Sensor und optional weitere Sensoren, eigene Musikquellen und Zeitwerte. Die Einrichtung erfolgt vollständig in Home Assistant; zusätzliche `input_boolean`- oder `input_number`-Helfer sind nicht nötig.
 
@@ -61,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.4` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.5` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
@@ -76,7 +76,7 @@ Gemeinsame Bezeichnungen werden aus den Übersetzungen der Integration in die Ka
 
 Das Projektlogo liegt zusätzlich unter `custom_components/sonos_follow_me/brand/` als Icon und Logo in normaler und hoher Auflösung. Home Assistant verwendet diese lokalen Bilder in seiner Integrationsoberfläche; nach dem HACS-Update Home Assistant neu starten und die Oberfläche neu laden.
 
-Der aktuelle HACS-Validator akzeptiert die mitgelieferten Logos; ein separater Antrag im zentralen Brands-Verzeichnis ist nicht erforderlich. Für Integrationen im Katalog bezieht der Marketplace die Bilder ebenfalls aus dem neuesten Release. Ältere HACS-Versionen zeigen lokale Icons möglicherweise nicht in der Repository-Liste. Siehe die [aktuelle Branding-Dokumentation](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
+Der Marketplace zeigt das [Katalogsymbol](https://brands.home-assistant.io/marketplace/sonos_follow_me/icon.png) bereits vor der Installation. Die Repository-Liste von HACS 2.0.5 verwendet einen älteren Bilddienst und kann für diese Integration einen Platzhalter anzeigen. In der Repository-Beschreibung ist das Projektlogo in beiden Stores sichtbar. Weitere Einzelheiten stehen in der [Branding-Dokumentation für Integrationen](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
 
 ## Geräte statt Helfer (v0.5.0+)
 
