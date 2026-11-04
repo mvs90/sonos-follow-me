@@ -1,6 +1,6 @@
 # Sonos Follow Me
 
-<p><img src="docs/follow-me-logo.png" alt="Follow Me logo" width="160"></p>
+<p><img src="https://raw.githubusercontent.com/mvs90/sonos-follow-me/main/custom_components/sonos_follow_me/brand/logo.png" alt="Follow Me logo" width="160"></p>
 
 Follow music between rooms using PIR and radar presence sensors. A Home Assistant custom integration, available in the HACS and Home Assistant Marketplace catalog. MIT licensed; independent community project, not affiliated with Sonos.
 
@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.4` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.5` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
@@ -79,7 +79,7 @@ Editable JSON catalogs are checked for missing keys and mismatched placeholders.
 
 Local `brand/icon.png`, `icon@2x.png`, `logo.png` and `logo@2x.png` assets ship inside the integration. Home Assistant can use these for its integration UI; update through HACS, restart Home Assistant and reload the frontend. The transparent images support the built-in dark-image fallbacks.
 
-The current HACS validator accepts these local brand assets; no separate submission to the central Brands repository is needed. Once an integration is in the catalog, the Marketplace also obtains its brand images from its latest release. Older HACS versions may not show local icons in the repository list. See the [custom integration branding documentation](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
+The Marketplace shows the [catalog icon](https://brands.home-assistant.io/marketplace/sonos_follow_me/icon.png) before installation. The classic HACS 2.0.5 repository list uses a separate, older image service and may show a placeholder for this integration. The repository description displays the project logo in both stores. See the [custom integration branding documentation](https://contributors.home-assistant.io/marketplace/guides/integrations/#brand-images).
 
 ## Volume source (v0.6.0+)
 
