@@ -270,18 +270,27 @@ class Room:
             sent, pending = self._volume_echoes.popleft()
             if now - sent >= VOLUME_ECHO_WINDOW:
                 continue
-            if pending == level:
+            if pending == level and not matched:
                 matched = True
             else:
                 self._volume_echoes.append((sent, pending))
         return matched
 
-    async def _set_volume(self, value):
+    async def _set_volume(self, value, *, recovery=False):
         level = round(value * 100)
         state = self.hass.states.get(self.player)
         current = state.attributes.get("volume_level") if state else None
-        if current != level / 100 or self._volume_echoes:
-            self._volume_echoes.append((monotonic(), level))
+        now = monotonic()
+        while self._volume_echoes and now - self._volume_echoes[0][0] >= VOLUME_ECHO_WINDOW:
+            self._volume_echoes.popleft()
+        # Recovery may explicitly write the already reported zero after an
+        # ignored positive command. That zero has no transition to confirm.
+        if not (recovery and current == level / 100):
+            if self._volume_echoes:
+                if self._volume_echoes[-1][1] != level:
+                    self._volume_echoes.append((now, level))
+            elif current != level / 100:
+                self._volume_echoes.append((now, level))
         await self.service("volume_set", volume_level=value)
 
     async def _wait_until(self, predicate, timeout):
@@ -353,7 +362,7 @@ class Room:
                 muted,
                 target,
             )
-            await self._set_volume(0)
+            await self._set_volume(0, recovery=True)
             await self.service("volume_mute", is_volume_muted=False)
             await self._fade(0, target)
 

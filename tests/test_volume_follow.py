@@ -383,3 +383,19 @@ async def test_recovered_volume_does_not_latch_manual_priority(room, endpoint, i
     assert not room.manual_volume_active
     if endpoint == "source":
         assert room.playback_volume == 0.6
+
+
+async def test_ordered_feedback_preserves_repeated_level_transitions(room):
+    source(room, volume=0.4)
+    await enter(room, "master")
+    # Service calls complete before the device publishes their volume feedback.
+    room.service.side_effect = None
+    for level in (0.1, 0.1, 0.2, 0.1):
+        await room._set_volume(level)
+    for level in (0.1, 0.2, 0.1):
+        manual_volume(room, level)
+        await room.hass.async_block_till_done()
+        assert not room.manual_volume_active
+    manual_volume(room, 0.2)
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
