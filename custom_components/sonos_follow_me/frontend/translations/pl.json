@@ -32,5 +32,6 @@
     "few": "{count} pomieszczenia",
     "many": "{count} pomieszczeń",
     "other": "{count} pomieszczeń"
-  }
+  },
+  "manual_volume_active": "Ręczna regulacja głośności ma pierwszeństwo"
 }

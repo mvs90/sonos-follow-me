@@ -17,6 +17,8 @@ const shared = {
   off_delay: "entity.number.off_delay.name",
   fade_seconds: "entity.number.fade_seconds.name",
   volume_reset: "entity.switch.volume_reset.name",
+  tv_offset_follow: "entity.switch.tv_offset_follow.name",
+  tv_offset_follow_hint: "config.step.user.data_description.tv_offset_follow",
   mode: "entity.select.mode.name",
   primary: "selector.mode.options.primary",
   equal: "selector.mode.options.equal",

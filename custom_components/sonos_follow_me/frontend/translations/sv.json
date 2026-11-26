@@ -32,5 +32,6 @@
     "few": "{count} rum",
     "many": "{count} rum",
     "other": "{count} rum"
-  }
+  },
+  "manual_volume_active": "Manuell volym har företräde"
 }

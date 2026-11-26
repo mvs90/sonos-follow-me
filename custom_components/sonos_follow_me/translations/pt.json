@@ -14,12 +14,14 @@
           "off_delay": "Atraso de ausência",
           "fade_seconds": "Duração da transição",
           "tv_volume_offset": "Ajuste do volume da TV",
-          "volume_mode": "Origem do volume"
+          "volume_mode": "Origem do volume",
+          "tv_offset_follow": "Aplicar ajuste TV ao seguir"
         },
         "data_description": {
-          "tv_volume_offset": "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+          "tv_volume_offset": "Adicionado ao volume de destino escolhido para o áudio da TV. 30 % − 10 % = 20 %. 0 = desativado. Para o volume do grupo ou do principal, ative «Aplicar ajuste TV ao seguir».",
           "secondary": "Deixe vazio para utilizar apenas o sensor principal. Pode remover aqui os sensores adicionais existentes.",
-          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição."
+          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição.",
+          "tv_offset_follow": "Quando ativado, o ajuste TV também se aplica ao seguir o volume do grupo ou do principal. Desative para usar diretamente o volume de referência. O volume próprio da divisão utiliza sempre o ajuste TV."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Atraso de ausência",
           "fade_seconds": "Duração da transição",
           "tv_volume_offset": "Ajuste do volume da TV",
-          "volume_mode": "Origem do volume"
+          "volume_mode": "Origem do volume",
+          "tv_offset_follow": "Aplicar ajuste TV ao seguir"
         },
         "data_description": {
-          "tv_volume_offset": "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+          "tv_volume_offset": "Adicionado ao volume de destino escolhido para o áudio da TV. 30 % − 10 % = 20 %. 0 = desativado. Para o volume do grupo ou do principal, ative «Aplicar ajuste TV ao seguir».",
           "secondary": "Deixe vazio para utilizar apenas o sensor principal. Pode remover aqui os sensores adicionais existentes.",
-          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição."
+          "volume_mode": "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição.",
+          "tv_offset_follow": "Quando ativado, o ajuste TV também se aplica ao seguir o volume do grupo ou do principal. Desative para usar diretamente o volume de referência. O volume próprio da divisão utiliza sempre o ajuste TV."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Utilizar o volume predefinido"
+      },
+      "tv_offset_follow": {
+        "name": "Aplicar ajuste TV ao seguir"
       }
     },
     "binary_sensor": {

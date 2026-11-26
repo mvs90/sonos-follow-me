@@ -205,3 +205,20 @@ only test tools, prints the actual HA version and runs lint, formatting and all
 Python tests. It does not install a different Home Assistant version. CI runs
 this for the latest development image on pushes, pull requests and manual runs.
 Local containers stay on their selected image until explicitly updated.
+
+## Release packaging
+
+Run `python dev/build_release.py --tag v<VERSION>` after updating the integration
+manifest. The ZIP contains the integration files at its root, including the card,
+translations and brand images. `hacs.json` selects this one asset so GitHub can
+count actual package downloads for HACS and Marketplace.
+
+Pushing a `v*` tag runs **Package release**, which creates a draft release with
+`sonos_follow_me.zip` already attached. The workflow can also be dispatched for an
+existing tag that has no release yet. Review CI and release notes before publishing
+the draft. Never publish a ZIP-enabled release without its asset. Keep older tags
+and assets intact so users can reinstall previous versions.
+
+`check_volume_follow_live.py` also checks the TV-follow switch, manual volume
+priority and delayed AirPlay coordinator/destination reports. It runs only against
+verified simulated players, restores room settings and leaves the test room disabled.

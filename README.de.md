@@ -61,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.5` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.6` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
@@ -90,11 +90,21 @@ Pro Raum lässt sich **Lautstärkequelle** in der Karte, am Raumgerät oder unte
 - **Gruppe folgen:** Durchschnitt der verfügbaren Lautstärkewerte der Quellgruppe. Der eigene Zielplayer und andere aktive Follow-Me-Zielplayer werden nicht eingerechnet, damit ihre Fades den Durchschnitt nicht verändern.
 - **Master folgen:** Lautstärke des aktuellen Gruppenkoordinators, auch wenn als Musikquelle ein anderes Gruppenmitglied ausgewählt wurde.
 
-Beide Folgen-Modi übernehmen den Wert beim Betreten und folgen Änderungen während der Belegung einschließlich der Ausschaltverzögerung. Nur der Raumlautsprecher wird geregelt; die Quelllautsprecher werden nicht verändert. Nach dem Verlassen oder Deaktivieren endet das Folgen. Die Gruppenmitgliedschaft und der aktuelle Master werden erneut ausgewertet. Stummschaltung wird nicht als Lautstärkeänderung übernommen.
+Beide Folgen-Modi übernehmen den Wert beim Betreten und folgen Änderungen während der Belegung einschließlich der Ausschaltverzögerung, bis die unten beschriebene manuelle Regelung Vorrang erhält. Nur der Raumlautsprecher wird geregelt; die Quelllautsprecher werden nicht verändert. Nach dem Verlassen oder Deaktivieren endet das Folgen. Die Gruppenmitgliedschaft und der aktuelle Master werden erneut ausgewertet. Stummschaltung wird nicht als Lautstärkeänderung übernommen.
 
 Standardlautstärke, Rücksetzoption und Abkühlzeit werden in der Karte und auf der Geräteansicht ausgeblendet und nicht angewendet. In der Konfiguration erscheint der zusätzliche Schritt mit Anfangs-/Standardlautstärke und Abkühlzeit nur für **Eigene Raumlautstärke**. Beim Zurückwechseln stehen die gespeicherten Werte wieder zur Verfügung. Bestehende Räume bleiben nach dem Update bei **Eigene Raumlautstärke**.
 
-Der **TV-Offset** bleibt verfügbar und wird einmal zur übernommenen Lautstärke addiert. Ausschaltverzögerung und Überblenddauer gelten weiterhin. Fehlt beim Betreten ein gültiger Referenzwert, wartet der Raum mit dem Beitritt; er verwendet keine versteckte Standardlautstärke. Fällt die Referenz während der Wiedergabe aus, bleibt die zuletzt übernommene Lautstärke erhalten, bis wieder ein gültiger Wert vorliegt.
+Der Schalter **TV-Offset beim Folgen anwenden** steuert, ob der TV-Offset zur Gruppen- oder Masterlautstärke addiert wird. Er ist zunächst eingeschaltet und erhält damit das bisherige Verhalten. In den Folgen-Modi erscheint er in der Karte und am Raumgerät. Beim Umschalten wird sofort zum neuen Zielwert übergeblendet. Bei eigener Raumlautstärke gilt der TV-Offset immer. Ausschaltverzögerung und Überblenddauer gelten weiterhin. Fehlt beim Betreten ein gültiger Referenzwert, wartet der Raum mit dem Beitritt; er verwendet keine versteckte Standardlautstärke. Fällt die Referenz während der Wiedergabe aus, bleibt die zuletzt übernommene Lautstärke erhalten, bis wieder ein gültiger Wert vorliegt.
+
+## Manuelle Lautstärke und AirPlay (ab v0.6.6)
+
+Eine manuelle Lautstärkeänderung am verwalteten Raumlautsprecher erhält für den restlichen Besuch Vorrang, auch während des Einblendens. Die Karte zeigt **Manuelle Lautstärke hat Vorrang**. Bei einer AirPlay-Quelle pausiert die automatische Nachregelung bereits bei einer Lautstärkeänderung am Gruppenkoordinator, da die Gruppenmeldungen des iPhones zeitversetzt in Home Assistant eintreffen können. Anschließend kann das iPhone die Gruppe ohne konkurrierende Lautstärkebefehle von Follow Me regeln.
+
+Beim nächsten Raumbesuch oder nach einer ausdrücklichen Änderung der Lautstärkequelle, des TV-Offsets oder des TV-Folgen-Schalters wird die automatische Regelung wieder aktiv. Das sensorgesteuerte Verlassen funktioniert weiterhin. Normale Musik- und TV-Referenzänderungen werden bis zur manuellen Übernahme weiter verfolgt. Verzögerte Rückmeldungen eigener Lautstärkebefehle werden gefiltert. Das Verhalten wurde mit simulierten Zustandsmeldungen und Diensten geprüft, einschließlich verzögerter AirPlay-Meldungen. Eine Sitzung mit einem echten iPhone wurde für diese Version noch nicht verifiziert.
+
+## Downloadzahl (ab v0.6.6)
+
+Jeder Release enthält `sonos_follow_me.zip`, das HACS und Marketplace direkt installieren. Die Downloadanzeige übernimmt den GitHub-Zähler dieses Release-Pakets. Er zählt Downloads der jeweiligen Version einschließlich Updates und erneuter Downloads. Aktive Installationen werden damit nicht gezählt. Frühere Installationen über einzelne Dateien lassen sich nicht nachträglich erfassen. Die Anzeige kann durch GitHub- und Katalogaktualisierungen verzögert erscheinen.
 
 ## Sensorlogik
 
@@ -144,7 +154,7 @@ Beim Beitritt wird der **Gruppenkoordinator** der gewählten Quelle geprüft. `s
 
 Bei erkanntem TV-Ton und einem Offset ungleich 0 gilt **gewählte Ziellautstärke + Offset**, begrenzt auf 0–100 %. Ohne aktivierte Standardlautstärke oder bei Rückkehr vor Ablauf der Abkühlzeit ist die gespeicherte Lautstärke die Basis. Erst wenn die aktivierte Abkühlzeit abgelaufen ist, wird die Standardlautstärke zur Basis. Beispiel: letzte Lautstärke 40 %, Standard 25 %, Offset −10 % → vor Ablauf oder bei ausgeschalteter Rücksetzung 30 %, nach Ablauf 15 %. Für AirPlay, Musik und nicht erkannte Quellen entfällt der TV-Offset.
 
-Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird der Offset erneut auf die für den Besuch gewählte Basislautstärke angewendet; er summiert sich nicht über mehrere Besuche auf. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Die Standardlautstärke und der Offset wirken auf den folgenden Beitritt; ein Quellenwechsel zwischen TV und Musik während einer bestehenden Gruppe löst keine automatische Lautstärkeänderung aus. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
+Während dieses TV-Besuchs manuell geänderte Lautstärken bleiben für den laufenden Besuch wirksam, überschreiben aber nicht die gespeicherte Musiklautstärke. Beim nächsten TV-Beitritt wird der Offset erneut auf die für den Besuch gewählte Basislautstärke angewendet; er summiert sich nicht über mehrere Besuche auf. Die Karte zeigt **TV-Lautstärke aktiv** mit dem Zielwert. Bei eigener Raumlautstärke wird die Quelle beim Beitritt erkannt. Eine ausdrückliche Änderung des TV-Offsets aktualisiert das aktive Ziel sofort. In den Gruppen-/Master-Modi werden Quellenänderungen bis zur manuellen Lautstärkeübernahme weiter verfolgt. Nach einem Neustart gilt weiterhin die unten beschriebene Rücksetzung der Wiedergabekontrolle.
 
 ## Stummer Start / Sonos Move (ab v0.4.1)
 

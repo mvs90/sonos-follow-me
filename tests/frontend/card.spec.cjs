@@ -48,6 +48,7 @@ async function setup(page, config = { type: "custom:sonos-follow-me-card" }) {
         attr("occupancy"),
       );
       state(`switch.${room}_reset`, "on", attr("volume_reset"));
+      state(`switch.${room}_tv_offset_follow`, "on", attr("tv_offset_follow"));
       for (const [key, value, max, step, unit] of [
         ["default_volume", 25, 100, 1, "%"],
         ["volume_cooldown", 30, 10080, 1, "min"],
@@ -601,4 +602,54 @@ test("Polish room count uses singular, few and many forms", async ({
     }, count);
     await expect(page.getByText(expected, { exact: true })).toBeVisible();
   }
+});
+
+for (const mode of ["group", "master"]) {
+  test(`TV offset follow switch works in ${mode} and keeps its value when hidden`, async ({
+    page,
+  }) => {
+    await setup(page, { entities: ["switch.bath"] });
+    const toggle = page.getByRole("checkbox", {
+      name: "TV-Offset beim Folgen anwenden",
+      exact: true,
+    });
+    await expect(toggle).toHaveCount(0);
+    const volume = page.getByRole("combobox", {
+      name: "Lautstärkequelle",
+      exact: true,
+    });
+    await volume.selectOption(mode);
+    await expect(toggle).toBeChecked();
+    await toggle.uncheck();
+    await expect(toggle).not.toBeChecked();
+    expect(await page.evaluate(() => calls)).toContainEqual([
+      "switch",
+      "turn_off",
+      { entity_id: "switch.bath_tv_offset_follow" },
+    ]);
+    await volume.selectOption("room");
+    await expect(toggle).toHaveCount(0);
+    await volume.selectOption(mode);
+    await expect(toggle).not.toBeChecked();
+    await toggle.check();
+    await expect(toggle).toBeChecked();
+    await page.evaluate(() => {
+      hass.states["switch.bath_tv_offset_follow"].state = "unavailable";
+      card.hass = { ...hass };
+    });
+    await expect(toggle).toBeDisabled();
+  });
+}
+
+test("card shows manual volume priority during AirPlay control", async ({
+  page,
+}) => {
+  await setup(page, { entities: ["switch.bath"] });
+  await page.evaluate(() => {
+    hass.states["switch.bath"].attributes.manual_volume_active = true;
+    card.hass = { ...hass };
+  });
+  await expect(
+    page.getByText("Manuelle Lautstärke hat Vorrang", { exact: true }),
+  ).toBeVisible();
 });

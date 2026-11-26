@@ -14,12 +14,14 @@
           "off_delay": "Clear delay",
           "fade_seconds": "Fade duration",
           "tv_volume_offset": "TV volume offset",
-          "volume_mode": "Volume source"
+          "volume_mode": "Volume source",
+          "tv_offset_follow": "Apply TV offset when following"
         },
         "data_description": {
-          "tv_volume_offset": "Added to the selected target volume, including when following the group or master. 30 % − 10 % = 20 %. 0 = disabled. Music/AirPlay are unchanged.",
+          "tv_volume_offset": "Added to the selected target volume for TV audio. 30 % − 10 % = 20 %. 0 = disabled. For group or master volume, enable “Apply TV offset when following”.",
           "secondary": "Leave empty to use only the primary sensor. Existing additional sensors can be removed here.",
-          "volume_mode": "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown."
+          "volume_mode": "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown.",
+          "tv_offset_follow": "When enabled, the TV offset also applies when following the group or master volume. Disable to use the reference volume directly. Own room volume always uses the TV offset."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Clear delay",
           "fade_seconds": "Fade duration",
           "tv_volume_offset": "TV volume offset",
-          "volume_mode": "Volume source"
+          "volume_mode": "Volume source",
+          "tv_offset_follow": "Apply TV offset when following"
         },
         "data_description": {
-          "tv_volume_offset": "Added to the selected target volume, including when following the group or master. 30 % − 10 % = 20 %. 0 = disabled. Music/AirPlay are unchanged.",
+          "tv_volume_offset": "Added to the selected target volume for TV audio. 30 % − 10 % = 20 %. 0 = disabled. For group or master volume, enable “Apply TV offset when following”.",
           "secondary": "Leave empty to use only the primary sensor. Existing additional sensors can be removed here.",
-          "volume_mode": "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown."
+          "volume_mode": "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown.",
+          "tv_offset_follow": "When enabled, the TV offset also applies when following the group or master volume. Disable to use the reference volume directly. Own room volume always uses the TV offset."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Use default volume"
+      },
+      "tv_offset_follow": {
+        "name": "Apply TV offset when following"
       }
     },
     "binary_sensor": {

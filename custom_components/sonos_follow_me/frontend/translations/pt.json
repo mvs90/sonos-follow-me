@@ -32,5 +32,6 @@
     "few": "{count} divisões",
     "many": "{count} divisões",
     "other": "{count} divisões"
-  }
+  },
+  "manual_volume_active": "O volume manual tem prioridade"
 }

@@ -47,6 +47,7 @@
       },
       invalid_entities:
         "entities muss eine Liste von Follow-Me-Schalter-Entitäts-IDs sein.",
+      manual_volume_active: "Manuelle Lautstärke hat Vorrang",
       volume_mode: "Lautstärkequelle",
       room: "Eigene Raumlautstärke",
       group: "Gruppe folgen",
@@ -56,11 +57,14 @@
       off_delay: "Ausschaltverzögerung",
       fade_seconds: "Überblenddauer",
       volume_reset: "Standardlautstärke verwenden",
+      tv_offset_follow: "TV-Offset beim Folgen anwenden",
+      tv_offset_follow_hint:
+        "Wenn aktiviert, gilt der TV-Offset auch beim Folgen der Gruppen- oder Masterlautstärke. Ausgeschaltet wird die Referenzlautstärke direkt übernommen. Bei eigener Raumlautstärke gilt der TV-Offset immer.",
       mode: "Sensorlogik",
       primary: "Primär startet, weitere halten",
       equal: "Alle Sensoren gleichberechtigt",
       tv_hint:
-        "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+        "Wird bei TV-Ton zur gewählten Ziellautstärke addiert. 30 % − 10 % = 20 %. 0 = deaktiviert. Bei Gruppen- oder Masterlautstärke „TV-Offset beim Folgen anwenden“ aktivieren.",
       follow_hint:
         "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit.",
     },
@@ -101,6 +105,7 @@
       },
       invalid_entities:
         "entities must be a list of Follow Me switch entity IDs",
+      manual_volume_active: "Manual volume has priority",
       volume_mode: "Volume source",
       room: "Own room volume",
       group: "Follow group",
@@ -110,11 +115,14 @@
       off_delay: "Clear delay",
       fade_seconds: "Fade duration",
       volume_reset: "Use default volume",
+      tv_offset_follow: "Apply TV offset when following",
+      tv_offset_follow_hint:
+        "When enabled, the TV offset also applies when following the group or master volume. Disable to use the reference volume directly. Own room volume always uses the TV offset.",
       mode: "Sensor mode",
       primary: "Primary starts, additional sensors hold",
       equal: "All sensors equal",
       tv_hint:
-        "Added to the selected target volume, including when following the group or master. 30 % − 10 % = 20 %. 0 = disabled. Music/AirPlay are unchanged.",
+        "Added to the selected target volume for TV audio. 30 % − 10 % = 20 %. 0 = disabled. For group or master volume, enable “Apply TV offset when following”.",
       follow_hint:
         "Group: average source-speaker volume excluding active Follow Me destinations. Master: current group coordinator. Changes are followed while occupied. Own room volume: remembered volume or default after cooldown.",
     },
@@ -156,6 +164,7 @@
         many: "{count} habitaciones",
         other: "{count} habitaciones",
       },
+      manual_volume_active: "El volumen manual tiene prioridad",
       volume_mode: "Fuente del volumen",
       room: "Volumen propio de la habitación",
       group: "Seguir al grupo",
@@ -165,11 +174,14 @@
       off_delay: "Retardo de ausencia",
       fade_seconds: "Duración del fundido",
       volume_reset: "Usar el volumen predeterminado",
+      tv_offset_follow: "Aplicar ajuste de TV al seguir",
+      tv_offset_follow_hint:
+        "Si está activado, el ajuste de TV también se aplica al seguir el volumen del grupo o del maestro. Desactívalo para usar directamente el volumen de referencia. El volumen propio de la habitación siempre utiliza el ajuste de TV.",
       mode: "Lógica de sensores",
       primary: "El principal inicia, los demás mantienen",
       equal: "Todos los sensores son iguales",
       tv_hint:
-        "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+        "Se suma al volumen objetivo seleccionado para el audio de TV. 30 % − 10 % = 20 %. 0 = desactivado. Para el volumen del grupo o del maestro, activa «Aplicar ajuste de TV al seguir».",
       follow_hint:
         "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento.",
     },
@@ -211,6 +223,7 @@
         many: "{count} pièces",
         other: "{count} pièces",
       },
+      manual_volume_active: "Le volume manuel est prioritaire",
       volume_mode: "Source du volume",
       room: "Volume propre à la pièce",
       group: "Suivre le groupe",
@@ -220,11 +233,14 @@
       off_delay: "Délai avant absence",
       fade_seconds: "Durée du fondu",
       volume_reset: "Utiliser le volume par défaut",
+      tv_offset_follow: "Appliquer le décalage TV en suivi",
+      tv_offset_follow_hint:
+        "Si activé, le décalage TV s’applique aussi au suivi du volume du groupe ou du maître. Désactivez cette option pour reprendre directement le volume de référence. Le volume propre à la pièce utilise toujours le décalage TV.",
       mode: "Logique des capteurs",
       primary: "Le principal déclenche, les autres maintiennent",
       equal: "Tous les capteurs sont équivalents",
       tv_hint:
-        "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+        "Ajouté au volume cible choisi pour le son TV. 30 % − 10 % = 20 %. 0 = désactivé. Pour le volume du groupe ou du maître, activez « Appliquer le décalage TV en suivi ».",
       follow_hint:
         "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation.",
     },
@@ -266,6 +282,7 @@
         many: "{count} stanze",
         other: "{count} stanze",
       },
+      manual_volume_active: "Il volume manuale ha la priorità",
       volume_mode: "Sorgente del volume",
       room: "Volume della stanza",
       group: "Segui il gruppo",
@@ -275,11 +292,14 @@
       off_delay: "Ritardo di assenza",
       fade_seconds: "Durata della dissolvenza",
       volume_reset: "Usa il volume predefinito",
+      tv_offset_follow: "Applica offset TV al volume seguito",
+      tv_offset_follow_hint:
+        "Se attivo, l’offset TV si applica anche seguendo il volume del gruppo o del master. Disattivalo per usare direttamente il volume di riferimento. Il volume della stanza usa sempre l’offset TV.",
       mode: "Logica dei sensori",
       primary: "Il primario avvia, gli altri mantengono",
       equal: "Tutti i sensori sono equivalenti",
       tv_hint:
-        "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+        "Aggiunto al volume di destinazione selezionato per l’audio TV. 30 % − 10 % = 20 %. 0 = disattivato. Per il volume del gruppo o del master, attiva «Applica offset TV al volume seguito».",
       follow_hint:
         "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino.",
     },
@@ -320,6 +340,7 @@
         many: "{count} ruimtes",
         other: "{count} ruimtes",
       },
+      manual_volume_active: "Handmatig volume heeft voorrang",
       volume_mode: "Volumebron",
       room: "Eigen ruimtevolume",
       group: "Groep volgen",
@@ -329,11 +350,14 @@
       off_delay: "Vertraging bij afwezigheid",
       fade_seconds: "Duur van de volumeovergang",
       volume_reset: "Standaardvolume gebruiken",
+      tv_offset_follow: "TV-aanpassing toepassen bij volgen",
+      tv_offset_follow_hint:
+        "Indien ingeschakeld geldt de TV-aanpassing ook bij het volgen van het groeps- of mastervolume. Schakel dit uit om het referentievolume rechtstreeks over te nemen. Het eigen kamervolume gebruikt altijd de TV-aanpassing.",
       mode: "Sensorlogica",
       primary: "Primair start, extra sensoren houden vast",
       equal: "Alle sensoren gelijkwaardig",
       tv_hint:
-        "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+        "Wordt bij TV-geluid bij het gekozen doelvolume opgeteld. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Schakel voor groeps- of mastervolume «TV-aanpassing toepassen bij volgen» in.",
       follow_hint:
         "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd.",
     },
@@ -375,6 +399,7 @@
         many: "{count} pomieszczeń",
         other: "{count} pomieszczeń",
       },
+      manual_volume_active: "Ręczna regulacja głośności ma pierwszeństwo",
       volume_mode: "Źródło głośności",
       room: "Własna głośność pomieszczenia",
       group: "Śledź grupę",
@@ -384,11 +409,14 @@
       off_delay: "Opóźnienie nieobecności",
       fade_seconds: "Czas płynnej zmiany głośności",
       volume_reset: "Używaj głośności domyślnej",
+      tv_offset_follow: "Stosuj korektę TV przy śledzeniu",
+      tv_offset_follow_hint:
+        "Po włączeniu korekta TV jest stosowana również przy śledzeniu głośności grupy lub koordynatora. Wyłącz, aby używać bezpośrednio głośności odniesienia. Własna głośność pokoju zawsze uwzględnia korektę TV.",
       mode: "Logika czujników",
       primary: "Główny rozpoczyna, dodatkowe podtrzymują",
       equal: "Wszystkie czujniki równorzędne",
       tv_hint:
-        "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+        "Dodawana do wybranej głośności docelowej dla dźwięku TV. 30 % − 10 % = 20 %. 0 = wyłączona. Dla głośności grupy lub koordynatora włącz „Stosuj korektę TV przy śledzeniu”.",
       follow_hint:
         "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania.",
     },
@@ -430,6 +458,7 @@
         many: "{count} cômodos",
         other: "{count} cômodos",
       },
+      manual_volume_active: "O volume manual tem prioridade",
       volume_mode: "Origem do volume",
       room: "Volume próprio do cômodo",
       group: "Seguir o grupo",
@@ -439,11 +468,14 @@
       off_delay: "Atraso de ausência",
       fade_seconds: "Duração da transição",
       volume_reset: "Usar o volume padrão",
+      tv_offset_follow: "Aplicar ajuste de TV ao seguir",
+      tv_offset_follow_hint:
+        "Quando ativado, o ajuste de TV também se aplica ao seguir o volume do grupo ou do principal. Desative para usar diretamente o volume de referência. O volume próprio do cômodo sempre usa o ajuste de TV.",
       mode: "Lógica dos sensores",
       primary: "O principal inicia, os adicionais mantêm",
       equal: "Todos os sensores são iguais",
       tv_hint:
-        "Somado ao volume de destino selecionado, inclusive ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. Música e AirPlay não são alterados.",
+        "Adicionado ao volume de destino escolhido para o áudio da TV. 30 % − 10 % = 20 %. 0 = desativado. Para o volume do grupo ou do principal, ative “Aplicar ajuste de TV ao seguir”.",
       follow_hint:
         "Grupo: volume médio dos alto-falantes de origem, sem os destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são acompanhadas durante a ocupação. Volume próprio do cômodo: último volume ou volume padrão após o tempo de restauração.",
     },
@@ -485,6 +517,7 @@
         many: "{count} divisões",
         other: "{count} divisões",
       },
+      manual_volume_active: "O volume manual tem prioridade",
       volume_mode: "Origem do volume",
       room: "Volume próprio da divisão",
       group: "Seguir o grupo",
@@ -494,11 +527,14 @@
       off_delay: "Atraso de ausência",
       fade_seconds: "Duração da transição",
       volume_reset: "Utilizar o volume predefinido",
+      tv_offset_follow: "Aplicar ajuste TV ao seguir",
+      tv_offset_follow_hint:
+        "Quando ativado, o ajuste TV também se aplica ao seguir o volume do grupo ou do principal. Desative para usar diretamente o volume de referência. O volume próprio da divisão utiliza sempre o ajuste TV.",
       mode: "Lógica dos sensores",
       primary: "O principal inicia, os adicionais mantêm",
       equal: "Todos os sensores são iguais",
       tv_hint:
-        "Somado ao volume de destino selecionado, incluindo ao seguir o grupo ou o coordenador. 30 % − 10 % = 20 %. 0 = desativado. A música e o AirPlay não são alterados.",
+        "Adicionado ao volume de destino escolhido para o áudio da TV. 30 % − 10 % = 20 %. 0 = desativado. Para o volume do grupo ou do principal, ative «Aplicar ajuste TV ao seguir».",
       follow_hint:
         "Grupo: volume médio das colunas de origem, excluindo destinos Follow Me ativos. Coordenador: coordenador atual do grupo. As alterações são seguidas durante a ocupação. Volume próprio da divisão: último volume ou volume predefinido após o tempo de reposição.",
     },
@@ -539,6 +575,7 @@
         many: "{count} rum",
         other: "{count} rum",
       },
+      manual_volume_active: "Manuell volym har företräde",
       volume_mode: "Volymkälla",
       room: "Egen rumsvolym",
       group: "Följ gruppen",
@@ -548,11 +585,14 @@
       off_delay: "Frånvarofördröjning",
       fade_seconds: "Toningstid",
       volume_reset: "Använd standardvolym",
+      tv_offset_follow: "Använd TV-justering vid följning",
+      tv_offset_follow_hint:
+        "När detta är aktiverat används TV-justeringen även när gruppens eller masterns volym följs. Stäng av för att använda referensvolymen direkt. Rummets egen volym använder alltid TV-justeringen.",
       mode: "Sensorlogik",
       primary: "Primär aktiverar, övriga håller kvar",
       equal: "Alla sensorer är likvärdiga",
       tv_hint:
-        "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+        "Läggs till den valda målvolymen för TV-ljud. 30 % − 10 % = 20 %. 0 = avaktiverat. Aktivera ”Använd TV-justering vid följning” för gruppens eller masterns volym.",
       follow_hint:
         "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden.",
     },
@@ -895,12 +935,18 @@ input[type=range]{width:100%;min-width:0;min-height:36px;margin:0;accent-color:v
         );
         if (!following)
           this._toggle(settings.volume_reset, t.volume_reset, room);
+        if (following && settings.tv_offset_follow) {
+          this._toggle(settings.tv_offset_follow, t.tv_offset_follow, room);
+          room.append(node("div", t.tv_offset_follow_hint, "hint"));
+        }
         const grid = node("div", undefined, "grid");
         for (const key of following
           ? ["tv_volume_offset"]
           : ["default_volume", "tv_volume_offset", "volume_cooldown"])
           this._number(settings[key], key, grid, t);
         room.append(grid);
+        if (a.manual_volume_active)
+          room.append(node("div", t.manual_volume_active, "badge"));
         if (a.tv_volume_active)
           room.append(
             node(

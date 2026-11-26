@@ -57,7 +57,7 @@ async def inventory(ha):
         for e in await ha.ws({"type": "config/entity_registry/list"})
         if e["config_entry_id"] in ids
     ]
-    assert len(registry) == 20, len(registry)
+    assert len(registry) == 22, len(registry)
     assert len({e["device_id"] for e in registry}) == 2
     assert all(e["device_id"] for e in registry)
     settings = {}

@@ -14,12 +14,14 @@
           "off_delay": "Délai avant absence",
           "fade_seconds": "Durée du fondu",
           "tv_volume_offset": "Décalage du volume TV",
-          "volume_mode": "Source du volume"
+          "volume_mode": "Source du volume",
+          "tv_offset_follow": "Appliquer le décalage TV en suivi"
         },
         "data_description": {
-          "tv_volume_offset": "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+          "tv_volume_offset": "Ajouté au volume cible choisi pour le son TV. 30 % − 10 % = 20 %. 0 = désactivé. Pour le volume du groupe ou du maître, activez « Appliquer le décalage TV en suivi ».",
           "secondary": "Laisser vide pour utiliser uniquement le capteur principal. Les capteurs supplémentaires existants peuvent être retirés ici.",
-          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation."
+          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation.",
+          "tv_offset_follow": "Si activé, le décalage TV s’applique aussi au suivi du volume du groupe ou du maître. Désactivez cette option pour reprendre directement le volume de référence. Le volume propre à la pièce utilise toujours le décalage TV."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Délai avant absence",
           "fade_seconds": "Durée du fondu",
           "tv_volume_offset": "Décalage du volume TV",
-          "volume_mode": "Source du volume"
+          "volume_mode": "Source du volume",
+          "tv_offset_follow": "Appliquer le décalage TV en suivi"
         },
         "data_description": {
-          "tv_volume_offset": "Ajouté au volume cible sélectionné, même en suivant le groupe ou le coordinateur. 30 % − 10 % = 20 %. 0 = désactivé. La musique et AirPlay restent inchangés.",
+          "tv_volume_offset": "Ajouté au volume cible choisi pour le son TV. 30 % − 10 % = 20 %. 0 = désactivé. Pour le volume du groupe ou du maître, activez « Appliquer le décalage TV en suivi ».",
           "secondary": "Laisser vide pour utiliser uniquement le capteur principal. Les capteurs supplémentaires existants peuvent être retirés ici.",
-          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation."
+          "volume_mode": "Groupe : volume moyen des enceintes sources, sans les enceintes cibles Follow Me actives. Coordinateur : coordinateur actuel du groupe. Les changements sont suivis pendant la présence. Volume propre à la pièce : dernier volume ou volume par défaut après le délai de réinitialisation.",
+          "tv_offset_follow": "Si activé, le décalage TV s’applique aussi au suivi du volume du groupe ou du maître. Désactivez cette option pour reprendre directement le volume de référence. Le volume propre à la pièce utilise toujours le décalage TV."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Utiliser le volume par défaut"
+      },
+      "tv_offset_follow": {
+        "name": "Appliquer le décalage TV en suivi"
       }
     },
     "binary_sensor": {

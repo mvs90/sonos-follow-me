@@ -32,5 +32,6 @@
     "few": "{count} stanze",
     "many": "{count} stanze",
     "other": "{count} stanze"
-  }
+  },
+  "manual_volume_active": "Il volume manuale ha la priorità"
 }
