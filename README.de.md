@@ -61,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.6` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.7` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.
@@ -162,7 +162,7 @@ Beim Hinzufügen wartet Follow Me bis zu 10 Sekunden darauf, dass Home Assistant
 
 Nach dem Fade werden Lautstärke und Mute-Rückmeldung geprüft. Bleibt der Lautsprecher bei 0 oder stumm, folgen höchstens zwei weitere Einblendversuche mit jeweils bis zu 2 Sekunden für die Rückmeldung. Eine hörbare niedrigere Lautstärke wird dabei respektiert. Das ist eine begrenzte Startprüfung, kein dauerhaftes automatisches Entstummen. Ein absichtlich eingestellter Zielwert 0 bleibt stumm. Deaktivieren/Entladen bzw. eine abgelaufene Raumbelegung bricht den laufenden Start ab.
 
-Eigene Lautstärkebefehle können verspätet gemeldet werden. Rückmeldungen, die einem eigenen Befehl der letzten 5 Sekunden entsprechen, werden deshalb nicht als neue manuelle Wunschlautstärke gespeichert. Echte manuelle Änderungen auf genau solche Werte können innerhalb dieses kurzen Fensters ebenfalls von der Speicherung ausgenommen sein; die Lautstärke am Gerät wird dadurch nicht zurückgesetzt.
+Follow Me wartet bis zu fünf Sekunden auf die Bestätigung eigener Lautstärkebefehle. Sobald ein Wert bestätigt ist, kann eine spätere Änderung auf denselben Wert wieder manuellen Vorrang erhalten. Sonos meldet den Pegel ohne Angabe, wer ihn geändert hat. Trifft eine manuelle Änderung genau den Wert eines noch offenen Befehls, kann sie deshalb als Bestätigung gewertet werden.
 
 Wiederholungen stehen im Home-Assistant-Protokoll unter `custom_components.sonos_follow_me`. Ein fehlgeschlagener Start erscheint zusätzlich als Attribut `startup_error` am Follow-Me-Schalter; beim nächsten Start wird es zurückgesetzt. Nach einem Fehler werden neue Beitrittsversuche für mindestens 30 Sekunden zurückgehalten. Bei erneuten Problemen sind `startup_error`, `volume_level`, `is_volume_muted` und `group_members` des betroffenen Lautsprechers hilfreich.
 

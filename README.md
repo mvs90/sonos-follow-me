@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.6` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.7` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
@@ -160,7 +160,7 @@ Entry now waits up to 10 seconds for Home Assistant to report both the expected 
 
 After fading, volume/mute feedback gets up to 2 seconds to arrive. A still-zero or muted destination receives at most two additional unmute/fade attempts. An audible lower volume is respected. This is bounded startup recovery, not a continuous unmute watchdog; an intentional zero target is preserved. Disable, unload and occupancy expiry cancel the running start.
 
-Reports matching our own volume commands from the previous 5 seconds are excluded from volume memory, preventing late fade-to-zero feedback from becoming the next target. A manual change to exactly one of those values within the window may also be excluded from memory, but the device volume is not undone. Metadata-only state events no longer rewrite volume memory.
+Follow Me waits up to five seconds for volume reports that confirm its own commands. Once a level is confirmed, a later adjustment to that same level can take manual priority. Sonos reports the level without identifying who changed it, so a manual adjustment that matches a still pending command can be mistaken for its confirmation.
 
 Recovery attempts are logged under `custom_components.sonos_follow_me`; a failed start is also exposed as `startup_error` on the room's Follow Me switch and cleared at the next start. After a failure, new join attempts are held off for at least 30 seconds. For recurring problems, capture that error and the destination's `volume_level`, `is_volume_muted` and `group_members`.
 
