@@ -125,6 +125,7 @@ async def test_follow_setup_skips_room_volume_step(mode):
     result = await flow.async_step_user({**CONFIG, "volume_mode": mode})
     assert result["type"] == "create_entry"
     assert result["data"]["volume_mode"] == mode
+    assert result["data"]["tv_offset_follow"] is True
 
 
 async def test_follow_options_preserve_hidden_room_volume_values():

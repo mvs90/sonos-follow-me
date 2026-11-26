@@ -14,12 +14,14 @@
           "off_delay": "Vertraging bij afwezigheid",
           "fade_seconds": "Duur van de volumeovergang",
           "tv_volume_offset": "TV-volumeaanpassing",
-          "volume_mode": "Volumebron"
+          "volume_mode": "Volumebron",
+          "tv_offset_follow": "TV-aanpassing toepassen bij volgen"
         },
         "data_description": {
-          "tv_volume_offset": "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+          "tv_volume_offset": "Wordt bij TV-geluid bij het gekozen doelvolume opgeteld. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Schakel voor groeps- of mastervolume «TV-aanpassing toepassen bij volgen» in.",
           "secondary": "Laat leeg om alleen de primaire sensor te gebruiken. Bestaande extra sensoren kunnen hier worden verwijderd.",
-          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd."
+          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd.",
+          "tv_offset_follow": "Indien ingeschakeld geldt de TV-aanpassing ook bij het volgen van het groeps- of mastervolume. Schakel dit uit om het referentievolume rechtstreeks over te nemen. Het eigen kamervolume gebruikt altijd de TV-aanpassing."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Vertraging bij afwezigheid",
           "fade_seconds": "Duur van de volumeovergang",
           "tv_volume_offset": "TV-volumeaanpassing",
-          "volume_mode": "Volumebron"
+          "volume_mode": "Volumebron",
+          "tv_offset_follow": "TV-aanpassing toepassen bij volgen"
         },
         "data_description": {
-          "tv_volume_offset": "Opgeteld bij het gekozen doelvolume, ook bij het volgen van de groep of coördinator. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Muziek en AirPlay blijven ongewijzigd.",
+          "tv_volume_offset": "Wordt bij TV-geluid bij het gekozen doelvolume opgeteld. 30 % − 10 % = 20 %. 0 = uitgeschakeld. Schakel voor groeps- of mastervolume «TV-aanpassing toepassen bij volgen» in.",
           "secondary": "Laat leeg om alleen de primaire sensor te gebruiken. Bestaande extra sensoren kunnen hier worden verwijderd.",
-          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd."
+          "volume_mode": "Groep: gemiddeld volume van de bronluidsprekers, zonder actieve Follow Me-doelluidsprekers. Coördinator: huidige groepscoördinator. Wijzigingen worden gevolgd tijdens bezetting. Eigen ruimtevolume: laatste volume of standaardvolume na de herstelwachttijd.",
+          "tv_offset_follow": "Indien ingeschakeld geldt de TV-aanpassing ook bij het volgen van het groeps- of mastervolume. Schakel dit uit om het referentievolume rechtstreeks over te nemen. Het eigen kamervolume gebruikt altijd de TV-aanpassing."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Standaardvolume gebruiken"
+      },
+      "tv_offset_follow": {
+        "name": "TV-aanpassing toepassen bij volgen"
       }
     },
     "binary_sensor": {

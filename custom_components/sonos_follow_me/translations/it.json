@@ -14,12 +14,14 @@
           "off_delay": "Ritardo di assenza",
           "fade_seconds": "Durata della dissolvenza",
           "tv_volume_offset": "Offset del volume TV",
-          "volume_mode": "Sorgente del volume"
+          "volume_mode": "Sorgente del volume",
+          "tv_offset_follow": "Applica offset TV al volume seguito"
         },
         "data_description": {
-          "tv_volume_offset": "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+          "tv_volume_offset": "Aggiunto al volume di destinazione selezionato per l’audio TV. 30 % − 10 % = 20 %. 0 = disattivato. Per il volume del gruppo o del master, attiva «Applica offset TV al volume seguito».",
           "secondary": "Lascia vuoto per usare solo il sensore primario. Qui puoi rimuovere i sensori aggiuntivi esistenti.",
-          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino."
+          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino.",
+          "tv_offset_follow": "Se attivo, l’offset TV si applica anche seguendo il volume del gruppo o del master. Disattivalo per usare direttamente il volume di riferimento. Il volume della stanza usa sempre l’offset TV."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Ritardo di assenza",
           "fade_seconds": "Durata della dissolvenza",
           "tv_volume_offset": "Offset del volume TV",
-          "volume_mode": "Sorgente del volume"
+          "volume_mode": "Sorgente del volume",
+          "tv_offset_follow": "Applica offset TV al volume seguito"
         },
         "data_description": {
-          "tv_volume_offset": "Sommato al volume di destinazione selezionato, anche seguendo il gruppo o il coordinatore. 30 % − 10 % = 20 %. 0 = disattivato. Musica e AirPlay restano invariati.",
+          "tv_volume_offset": "Aggiunto al volume di destinazione selezionato per l’audio TV. 30 % − 10 % = 20 %. 0 = disattivato. Per il volume del gruppo o del master, attiva «Applica offset TV al volume seguito».",
           "secondary": "Lascia vuoto per usare solo il sensore primario. Qui puoi rimuovere i sensori aggiuntivi esistenti.",
-          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino."
+          "volume_mode": "Gruppo: volume medio degli altoparlanti sorgente, escluse le destinazioni Follow Me attive. Coordinatore: coordinatore attuale del gruppo. Le variazioni vengono seguite durante la presenza. Volume della stanza: ultimo volume o valore predefinito dopo il tempo di ripristino.",
+          "tv_offset_follow": "Se attivo, l’offset TV si applica anche seguendo il volume del gruppo o del master. Disattivalo per usare direttamente il volume di riferimento. Il volume della stanza usa sempre l’offset TV."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Usa il volume predefinito"
+      },
+      "tv_offset_follow": {
+        "name": "Applica offset TV al volume seguito"
       }
     },
     "binary_sensor": {

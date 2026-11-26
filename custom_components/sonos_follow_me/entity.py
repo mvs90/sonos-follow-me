@@ -35,13 +35,18 @@ class RoomEntity(Entity):
 
     def _sync_visibility(self):
         """Hide unused settings, preserving the user's own visibility choices."""
-        if self.key not in ROOM_VOLUME_FIELDS:
+        if self.key not in ROOM_VOLUME_FIELDS and self.key != "tv_offset_follow":
             return
         registry = er.async_get(self.hass)
         entry = registry.async_get(self.entity_id)
         if not entry or entry.hidden_by == er.RegistryEntryHider.USER:
             return
-        hidden = er.RegistryEntryHider.INTEGRATION if self.room.following_volume else None
+        unused = (
+            not self.room.following_volume
+            if self.key == "tv_offset_follow"
+            else self.room.following_volume
+        )
+        hidden = er.RegistryEntryHider.INTEGRATION if unused else None
         if entry.hidden_by != hidden:
             registry.async_update_entity(self.entity_id, hidden_by=hidden)
 

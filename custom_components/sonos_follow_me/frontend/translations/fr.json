@@ -32,5 +32,6 @@
     "few": "{count} pièces",
     "many": "{count} pièces",
     "other": "{count} pièces"
-  }
+  },
+  "manual_volume_active": "Le volume manuel est prioritaire"
 }

@@ -32,5 +32,6 @@
     "many": "{count} rooms",
     "other": "{count} rooms"
   },
-  "invalid_entities": "entities must be a list of Follow Me switch entity IDs"
+  "invalid_entities": "entities must be a list of Follow Me switch entity IDs",
+  "manual_volume_active": "Manual volume has priority"
 }

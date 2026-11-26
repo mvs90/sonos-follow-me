@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.5` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.6` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.
@@ -89,11 +89,21 @@ Each room has a **Volume source** selector in its card, device and configuration
 - **Follow group:** average of valid volume levels in the source group, excluding this destination and other active Follow Me destinations to avoid fade feedback.
 - **Follow master:** the current group coordinator's volume, even if a different group member was selected as a source.
 
-Following applies on entry and tracks changes throughout occupancy and the clear delay. Only the destination is adjusted; source volume levels are never set. Group membership and coordinator changes are tracked. Following ends on departure or disable; mute state is not mirrored.
+Following applies on entry and tracks changes throughout occupancy and the clear delay, until manual volume control takes priority as described below. Only the destination is adjusted; source volume levels are never set. Group membership and coordinator changes are tracked. Following ends on departure or disable; mute state is not mirrored.
 
-Default volume, reset and cooldown controls are hidden in the card and device view while following and have no effect. The configuration's separate initial/default-volume step appears only for own room volume. Saved settings and remembered room volume survive mode changes. The TV offset remains available and is added once to the followed level; fade duration and clear delay still apply.
+Default volume, reset and cooldown controls are hidden in the card and device view while following and have no effect. The configuration's separate initial/default-volume step appears only for own room volume. Saved settings and remembered room volume survive mode changes. The **Apply TV offset when following** switch controls whether the TV offset is added to group/master volume. It is enabled by default to preserve existing behavior. The switch appears in the card and on the room device when following. Changing it immediately fades to the new target. Own room volume always applies its TV offset. Fade duration and clear delay still apply.
 
 With no valid reference volume on entry, the room waits before joining instead of using a hidden default. If reference levels become unavailable during playback, it holds the last followed target until a valid reference returns.
+
+## Manual volume and AirPlay (v0.6.6+)
+
+A manual volume change on a managed room speaker takes priority for the rest of that visit, including changes during fade-in. The card shows **Manual volume has priority**. For an AirPlay source, a volume change on the group coordinator also pauses automatic volume following immediately, because iPhone group updates can reach Home Assistant at different times. The iPhone can then control the group without Follow Me writing competing volume commands.
+
+Automatic volume following resumes on the next room visit, or when you explicitly change the volume source, TV offset or TV-follow switch. Presence-controlled departure still works. Normal music and TV reference changes continue to be followed until manual control takes priority. Delayed echoes of the integration’s own volume commands are filtered. This behavior is covered by simulated state/service tests, including delayed AirPlay reports. A physical iPhone session has not been verified for this release.
+
+## Download count (v0.6.6+)
+
+Releases include `sonos_follow_me.zip`, which HACS and Marketplace install directly. Their download indicator uses GitHub’s counter for this release asset. It counts downloads of that version, including updates and repeat downloads. It is not a count of active installations, and earlier file-based installations cannot be reconstructed. GitHub and catalog refreshes can delay the displayed count.
 
 ## Room settings
 
@@ -142,7 +152,7 @@ On joining, the integration checks the selected group's **coordinator** for `sou
 
 When TV is detected and the offset is nonzero, the target is **selected visit volume + offset**, clamped to 0–100%. With volume reset disabled, or when returning before cooldown expiry, the remembered volume is the base. Only after an enabled cooldown expires does the default volume become the base. Example: remembered 40%, default 25%, offset -10% gives 30% before expiry or with reset disabled, and 15% after expiry. AirPlay, music and unrecognized sources receive no TV offset. Manual volume changes during an adjusted TV visit affect that visit but do not overwrite music volume memory. Subsequent TV joins apply the offset once to the newly selected base; it does not accumulate across visits. The card indicates when TV volume is active.
 
-Detection and offset changes apply on the next join. Switching from TV to music or back within an already-joined group does not automatically change its volume. Restart/playback-ownership limitations below still apply. TV behavior was tested using simulated Sonos states/services, not a connected soundbar.
+In own-room mode, source detection is applied on joining. Changing the TV offset explicitly updates the active target. Group/master modes follow source changes until manual volume control takes priority. Restart/playback-ownership limitations below still apply. TV behavior was tested using simulated Sonos states/services, not a connected soundbar.
 
 ## Silent startup / Sonos Move (v0.4.1+)
 

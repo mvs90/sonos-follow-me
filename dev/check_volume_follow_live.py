@@ -88,6 +88,7 @@ async def run(args):
                         "fade_seconds": 0.1,
                         "off_delay": 0,
                         "tv_volume_offset": 0,
+                        "tv_offset_follow": True,
                     }
                 )
                 await lab(reset=True, member_joined=True)
@@ -115,6 +116,21 @@ async def run(args):
                 passed(
                     f"{mode}: entry, live reference changes, TV offset, hidden preserved settings, no source volume writes"
                 )
+                await ha.service("switch", "turn_off", room_entities["tv_offset_follow"])
+                await target(0.44 if mode == "master" else 0.64)
+                assert not (await ha.state(enabled))["attributes"]["tv_volume_active"]
+                await ha.service("switch", "turn_on", room_entities["tv_offset_follow"])
+                await target(0.34 if mode == "master" else 0.54)
+                assert (await ha.state(enabled))["attributes"]["tv_volume_active"]
+                passed(f"{mode}: TV offset switch applies immediately on the room device")
+
+                # Real service dispatch simulates a physical/iPhone volume change.
+                await level(PLAYER, 0.77)
+                await ha.wait(enabled, lambda s: s["attributes"]["manual_volume_active"])
+                await level(SOURCE, 0.5)
+                await asyncio.sleep(0.7)
+                assert (await ha.state(PLAYER))["attributes"]["volume_level"] == 0.77
+                passed(f"{mode}: manual volume is preserved after source changes")
                 await lab(pir=False)
                 await ha.wait(PLAYER, lambda s: s["state"] == "paused")
                 before = (await ha.state(PLAYER))["attributes"]["volume_level"]
@@ -123,6 +139,37 @@ async def run(args):
                 assert (await ha.state(PLAYER))["attributes"]["volume_level"] == before
                 await ha.service("switch", "turn_off", enabled)
                 passed(f"{mode}: following stops after departure")
+
+                await lab(reset=True, member_joined=True)
+                await ha.service("switch", "turn_on", enabled)
+                await lab(pir=True)
+                await target(0.2)
+                # Only the verified in-memory lab source receives synthetic
+                # AirPlay metadata, matching Sonos state events from an iPhone.
+                state = await ha.state(SOURCE)
+                await ha.post(
+                    "/api/states/" + SOURCE,
+                    {
+                        "state": state["state"],
+                        "attributes": {
+                            **state["attributes"],
+                            "source": "AirPlay",
+                            "volume_level": 0.3,
+                        },
+                    },
+                )
+                await ha.wait(enabled, lambda s: s["attributes"]["manual_volume_active"])
+                await asyncio.sleep(0.7)
+                assert (await ha.state(PLAYER))["attributes"]["volume_level"] == 0.2
+                await level(PLAYER, 0.43)
+                await asyncio.sleep(0.7)
+                assert (await ha.state(PLAYER))["attributes"]["volume_level"] == 0.43
+                passed(
+                    f"{mode}: AirPlay coordinator change yields before delayed destination report"
+                )
+                await lab(pir=False)
+                await ha.wait(PLAYER, lambda s: s["state"] == "paused")
+                await ha.service("switch", "turn_off", enabled)
 
             await options({**original, "volume_mode": "room"})
             await visibility(False)

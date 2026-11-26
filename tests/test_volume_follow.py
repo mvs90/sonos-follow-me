@@ -163,3 +163,193 @@ async def test_follow_stops_when_room_leaves(room):
     source(room, volume=0.8)
     await room.hass.async_block_till_done()
     assert room.service.call_count == before
+
+
+@pytest.mark.parametrize("mode,base", [("master", 0.4), ("group", 0.6)])
+@pytest.mark.parametrize("offset", [-100, -10, 10, 100])
+async def test_tv_follow_switch_applies_live_and_after_reference_changes(room, mode, base, offset):
+    members = ["media_player.living", "media_player.office"]
+    source(room, volume=0.4, members=members, source="TV")
+    source(room, "media_player.office", 0.8, members)
+    room.config.update(tv_volume_offset=offset, tv_offset_follow=False)
+    await enter(room, mode)
+    assert room.playback_volume == base
+    assert not room.tv_volume_active
+    room.apply_settings({**room.config, "tv_offset_follow": True})
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == round(max(0, min(1, base + offset / 100)), 2)
+    assert room.tv_volume_active
+    room.apply_settings({**room.config, "tv_offset_follow": False})
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == base
+    assert not room.tv_volume_active
+    source(room, volume=0.2, members=members, source="TV")
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == (0.2 if mode == "master" else 0.5)
+    assert room.volume == 0.3
+    assert sum(c.args[0] == "join" for c in room.service.call_args_list) == 1
+    assert all(
+        c.args[0] == "join" or not c.kwargs.get("entity") for c in room.service.call_args_list
+    )
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("mode", ["room", "master", "group"])
+async def test_tv_follow_switch_leaves_music_and_room_offset_behavior(room, enabled, mode):
+    source(room, volume=0.4, source="AirPlay")
+    room.config.update(tv_volume_offset=-10, tv_offset_follow=enabled)
+    await enter(room, mode)
+    assert room.playback_volume == (0.3 if mode == "room" else 0.4)
+    assert not room.tv_volume_active
+    # A new TV visit must apply the offset in room mode even with the switch off.
+    room.config["off_delay"] = 0
+    room.hass.states.async_set("binary_sensor.pir", "off")
+    await asyncio.sleep(0.02)
+    await room.hass.async_block_till_done()
+    assert not room.managed
+    source(room, volume=0.4, source="TV")
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == (0.2 if mode == "room" else 0.3 if enabled else 0.4)
+    assert room.tv_volume_active == (mode == "room" or enabled)
+
+
+@pytest.mark.parametrize("mode", ["master", "group"])
+async def test_tv_follow_switch_during_fade_resynchronizes(room, mode):
+    source(room, volume=0.4, source="TV")
+    room.config.update(volume_mode=mode, tv_volume_offset=-10, fade_seconds=0.06)
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await asyncio.sleep(0.02)
+    room.apply_settings({**room.config, "tv_offset_follow": False})
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == 0.4
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0.4
+    assert not room.tv_volume_active
+
+
+def manual_volume(room, volume):
+    state = room.hass.states.get(room.player)
+    room.hass.states.async_set(room.player, "playing", {**state.attributes, "volume_level": volume})
+
+
+@pytest.mark.parametrize("mode", ["master", "group"])
+@pytest.mark.parametrize("destination_first", [False, True])
+async def test_airplay_group_adjustment_is_not_lowered_to_stale_reference(
+    room, mode, destination_first
+):
+    members = ["media_player.living", "media_player.office"]
+    source(room, volume=0.2, members=members, source="AirPlay")
+    source(room, "media_player.office", 0.4, members)
+    await enter(room, mode)
+    before = room.service.call_count
+    # iPhone raises all levels; HA gets separate reports, with an old member
+    # value briefly lowering the average relative to the new destination level.
+    if destination_first:
+        manual_volume(room, 0.45)
+    source(room, volume=0.3, members=members, source="AirPlay")
+    await asyncio.sleep(0.02)
+    if not destination_first:
+        manual_volume(room, 0.45)
+    source(room, "media_player.office", 0.5, members)
+    await room.hass.async_block_till_done()
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0.45
+    assert room.service.call_count == before
+    source(room, volume=0.35, members=members, source="AirPlay")
+    manual_volume(room, 0.55)
+    await room.hass.async_block_till_done()
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0.55
+    assert room.service.call_count == before
+    assert room.manual_volume_active
+    assert room.playback_volume == 0.55
+    assert room.volume == 0.3
+
+
+@pytest.mark.parametrize("mode", ["room", "master", "group"])
+async def test_manual_volume_during_fade_stops_automatic_writes(room, mode):
+    source(room, volume=0.4, source="AirPlay")
+    room.config.update(volume_mode=mode, fade_seconds=0.12)
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await asyncio.sleep(0.03)
+    manual_volume(room, 0.73)
+    before = room.service.call_count
+    await room.hass.async_block_till_done()
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0.73
+    assert room.service.call_count == before
+    assert room.playback_volume == 0.73
+    assert room.startup_error is None
+
+
+async def test_manual_override_ends_on_next_visit_and_explicit_setting_change(room):
+    source(room, volume=0.4, source="TV")
+    await enter(room, "master")
+    manual_volume(room, 0.65)
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
+    room.apply_settings({**room.config, "tv_volume_offset": -10})
+    await room.hass.async_block_till_done()
+    assert not room.manual_volume_active
+    assert room.playback_volume == 0.3
+    manual_volume(room, 0.75)
+    await room.hass.async_block_till_done()
+    room.config["off_delay"] = 0
+    room.hass.states.async_set("binary_sensor.pir", "off")
+    await asyncio.sleep(0.02)
+    await room.hass.async_block_till_done()
+    assert not room.managed
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert not room.manual_volume_active
+    assert room.playback_volume == 0.3
+
+
+async def test_manual_zero_stays_silent_while_source_changes(room):
+    source(room, volume=0.4)
+    await enter(room, "master")
+    # Startup's delayed zero echo has expired by the time the user turns down.
+    room._volume_echoes.clear()
+    manual_volume(room, 0)
+    await room.hass.async_block_till_done()
+    before = room.service.call_count
+    source(room, volume=0.6)
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == 0
+    assert room.service.call_count == before
+
+
+async def test_tv_follow_switch_persists_on_room_device(room):
+    from custom_components.sonos_follow_me.room import Room
+    from custom_components.sonos_follow_me.switch import TVOffsetFollowSwitch
+
+    def save(entry, *, options):
+        entry.options = options
+        room.apply_settings(options)
+
+    room.hass.config_entries.async_update_entry = Mock(side_effect=save)
+    switch = TVOffsetFollowSwitch(room)
+    assert switch.is_on
+    assert switch.device_info["identifiers"] == {("sonos_follow_me", room.entry.entry_id)}
+    await switch.async_turn_off()
+    restored = Room(room.hass, room.entry)
+    assert restored.config["tv_offset_follow"] is False
+    assert room.entry.options["player"] == room.player
+    await switch.async_turn_on()
+    assert room.entry.options["tv_offset_follow"] is True
+
+
+@pytest.mark.parametrize("mode", ["master", "group"])
+async def test_airplay_coordinator_change_suspends_following_before_destination_report(room, mode):
+    source(room, volume=0.2, source="AirPlay")
+    await enter(room, mode)
+    before = room.service.call_count
+    source(room, volume=0.3, source="AirPlay")
+    await room.hass.async_block_till_done()
+    # Even if the destination takes longer than the settle time to report,
+    # no competing volume command is sent to AirPlay.
+    assert room.service.call_count == before
+    assert room.manual_volume_active
+    manual_volume(room, 0.35)
+    await room.hass.async_block_till_done()
+    assert room.playback_volume == 0.35
+    assert room.service.call_count == before

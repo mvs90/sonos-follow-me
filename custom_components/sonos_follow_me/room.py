@@ -24,6 +24,7 @@ VOLUME_CONFIRM_TIMEOUT = 2
 STATE_POLL_INTERVAL = 0.1
 STARTUP_RECOVERY_ATTEMPTS = 2
 VOLUME_ECHO_WINDOW = 5
+VOLUME_SYNC_SETTLE = 0.35
 
 
 class Room:
@@ -55,6 +56,8 @@ class Room:
         self._follow_volume = None
         self._last_volume_target = None
         self._volume_sync_needed = False
+        self._manual_volume = None
+        self._volume_control_ready = False
 
     async def async_start(self):
         saved = await self._store.async_load() or {}
@@ -82,10 +85,14 @@ class Room:
         self.config = config
         self.presence.mode = config["mode"]
         if previous["volume_mode"] != config["volume_mode"]:
+            self._manual_volume = None
             self._follow_volume = None
             self._tv_volume = None
             self._volume_sync_needed = True
-        if previous["tv_volume_offset"] != config["tv_volume_offset"]:
+        if previous["tv_volume_offset"] != config["tv_volume_offset"] or (
+            self.following_volume and previous["tv_offset_follow"] != config["tv_offset_follow"]
+        ):
+            self._manual_volume = None
             self._volume_sync_needed = True
         if previous["off_delay"] != config["off_delay"]:
             self._cancel_timer()
@@ -132,29 +139,60 @@ class Room:
     def _changed(self, event):
         entity = event.data["entity_id"]
         watched = [*self.sensors, self.player, *self.config["sources"]]
-        if self.following_volume:
+        if self.following_volume or self.managed:
             source = self._current_coordinator() if self.managed else self.source()
             watched.extend(self._group_members(source))
         if entity not in watched:
             return
-        if entity == self.player and not self._fading and not self.following_volume:
+        if (
+            entity != self.player
+            and self.managed
+            and self._volume_control_ready
+            and self.presence.occupied
+            and entity == self._current_coordinator()
+            and (state := event.data["new_state"])
+            and str(state.attributes.get("source", "")).casefold() == "airplay"
+            and (old := event.data.get("old_state"))
+            and old.attributes.get("volume_level") != state.attributes.get("volume_level")
+            and isinstance(reference := state.attributes.get("volume_level"), (int, float))
+            and isfinite(reference)
+            and 0 <= reference <= 1
+            and (player := self.hass.states.get(self.player))
+            and isinstance(volume := player.attributes.get("volume_level"), (int, float))
+            and isfinite(volume)
+            and 0 <= volume <= 1
+        ):
+            # AirPlay's controller owns group volume. The coordinator can report
+            # first, long before the destination reports the same phone gesture.
+            self._manual_volume = volume
+            self._volume_sync_needed = False
+        if entity == self.player:
             state = event.data["new_state"]
             if (
                 state
                 and state.state == "playing"
                 and state.attributes.get("is_volume_muted") is not True
                 and isinstance(volume := state.attributes.get("volume_level"), (float, int))
+                and isfinite(volume)
+                and 0 <= volume <= 1
                 and not self._is_volume_echo(volume)
                 and (
                     (old := event.data.get("old_state")) is None
                     or old.attributes.get("volume_level") != volume
                 )
             ):
-                if self._tv_volume is not None:
-                    self._tv_volume = max(0, min(1, volume))
-                else:
-                    self.volume = max(0, min(1, volume))
-                    self._save()
+                if self.managed and self._volume_control_ready and self.presence.occupied:
+                    # AirPlay/Sonos/device controls own the rest of this visit. Their
+                    # group updates can arrive separately and must not be averaged back.
+                    self._manual_volume = volume
+                    self._volume_sync_needed = False
+                    self.startup_error = None
+                if not self.following_volume and (not self._fading or self.manual_volume_active):
+                    if self._tv_volume is not None:
+                        self._tv_volume = volume
+                    else:
+                        self.volume = volume
+                        self._save()
         self.evaluate()
 
     @callback
@@ -271,7 +309,8 @@ class Room:
         """Recover only a silent start, with a bounded number of attempts."""
         for attempt in range(STARTUP_RECOVERY_ATTEMPTS + 1):
             if await self._wait_until(
-                lambda: self._volume_confirmed(target), VOLUME_CONFIRM_TIMEOUT
+                lambda: self.manual_volume_active or self._volume_confirmed(target),
+                VOLUME_CONFIRM_TIMEOUT,
             ):
                 return
             if not self._group_ready(source):
@@ -359,11 +398,17 @@ class Room:
                 values.append(value)
         return sum(values) / len(values) if values else None
 
+    def _tv_offset(self, source):
+        """Apply the TV correction according to the selected volume source."""
+        if self.following_volume and not self.config["tv_offset_follow"]:
+            return 0
+        return self.config["tv_volume_offset"] if self.source_is_tv(source) else 0
+
     def _volume_target(self, source):
         base = self._reference_volume(source) if self.following_volume else self.volume
         if base is None:
             return None
-        offset = self.config["tv_volume_offset"] if self.source_is_tv(source) else 0
+        offset = self._tv_offset(source)
         return round(max(0, min(1, base + offset / 100)), 2)
 
     @callback
@@ -373,6 +418,7 @@ class Room:
             or not self.enabled
             or not self.managed
             or not self.presence.occupied
+            or self.manual_volume_active
             or (self._task is not None and not self._task.done())
             or (not self.following_volume and not self._volume_sync_needed)
         ):
@@ -392,6 +438,11 @@ class Room:
         self._launch(self._sync_volume)
 
     async def _sync_volume(self):
+        # iPhone group-volume events arrive per speaker. Let the group settle,
+        # giving a manual destination change priority over automatic following.
+        await asyncio.sleep(VOLUME_SYNC_SETTLE)
+        if self.manual_volume_active or not self.enabled or not self.presence.occupied:
+            return
         source = self._current_coordinator()
         target = self._volume_target(source)
         if target is None or not source or not self._group_ready(source):
@@ -408,17 +459,21 @@ class Room:
         self._last_volume_target = target
         self._volume_sync_needed = False
         self._follow_volume = target if self.following_volume else None
-        self._tv_volume = (
-            target if self.config["tv_volume_offset"] and self.source_is_tv(source) else None
-        )
+        self._tv_volume = target if self._tv_offset(source) else None
 
     @property
     def tv_volume_active(self):
         return self._tv_volume is not None
 
     @property
+    def manual_volume_active(self):
+        return self._manual_volume is not None
+
+    @property
     def playback_volume(self):
         """TV volume is visit-local; music memory never includes the TV correction."""
+        if self.manual_volume_active:
+            return self._manual_volume
         if self.following_volume and self._follow_volume is not None:
             return self._follow_volume
         return self.volume if self._tv_volume is None else self._tv_volume
@@ -429,6 +484,8 @@ class Room:
         try:
             steps = 12 if self.config["fade_seconds"] else 1
             for step in range(1, steps + 1):
+                if not leaving and self.manual_volume_active:
+                    return False
                 if leaving and (not self.enabled or self.status() != "idle"):
                     await self._set_volume(self.playback_volume)
                     return False
@@ -448,6 +505,8 @@ class Room:
         if target is None:
             self.startup_error = "Source volume unavailable; waiting for a valid volume"
             return
+        self._manual_volume = None
+        self._volume_control_ready = False
         self._remember_target(source, target)
         self.startup_error = None
         self._fading = True
@@ -457,6 +516,7 @@ class Room:
             self.managed = True
             if not await self._wait_until(lambda: self._group_ready(source), JOIN_TIMEOUT):
                 raise HomeAssistantError("Sonos group join was not confirmed within 10 seconds")
+            self._volume_control_ready = True
             if target > 0:
                 await self.service("volume_mute", is_volume_muted=False)
             await self._fade(0, target)
@@ -471,7 +531,8 @@ class Room:
             if not self.managed:
                 self._tv_volume = None
                 self._follow_volume = None
-            await self._set_volume(self.playback_volume)
+            if not self.manual_volume_active:
+                await self._set_volume(self.playback_volume)
             raise
         finally:
             self._fading = False
@@ -488,6 +549,8 @@ class Room:
             self.managed = False
             self._tv_volume = None
             self._follow_volume = None
+            self._manual_volume = None
+            self._volume_control_ready = False
             return
         try:
             if not await self._fade(
@@ -502,6 +565,8 @@ class Room:
             self.managed = False
             self._tv_volume = None
             self._follow_volume = None
+            self._manual_volume = None
+            self._volume_control_ready = False
         finally:
             await self._set_volume(self.playback_volume)
 

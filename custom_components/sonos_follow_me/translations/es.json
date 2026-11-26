@@ -14,12 +14,14 @@
           "off_delay": "Retardo de ausencia",
           "fade_seconds": "Duración del fundido",
           "tv_volume_offset": "Ajuste de volumen de TV",
-          "volume_mode": "Fuente del volumen"
+          "volume_mode": "Fuente del volumen",
+          "tv_offset_follow": "Aplicar ajuste de TV al seguir"
         },
         "data_description": {
-          "tv_volume_offset": "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+          "tv_volume_offset": "Se suma al volumen objetivo seleccionado para el audio de TV. 30 % − 10 % = 20 %. 0 = desactivado. Para el volumen del grupo o del maestro, activa «Aplicar ajuste de TV al seguir».",
           "secondary": "Dejar vacío para usar solo el sensor principal. Aquí se pueden quitar los sensores adicionales existentes.",
-          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento."
+          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento.",
+          "tv_offset_follow": "Si está activado, el ajuste de TV también se aplica al seguir el volumen del grupo o del maestro. Desactívalo para usar directamente el volumen de referencia. El volumen propio de la habitación siempre utiliza el ajuste de TV."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Retardo de ausencia",
           "fade_seconds": "Duración del fundido",
           "tv_volume_offset": "Ajuste de volumen de TV",
-          "volume_mode": "Fuente del volumen"
+          "volume_mode": "Fuente del volumen",
+          "tv_offset_follow": "Aplicar ajuste de TV al seguir"
         },
         "data_description": {
-          "tv_volume_offset": "Se suma al volumen objetivo seleccionado, incluso al seguir al grupo o al coordinador. 30 % − 10 % = 20 %. 0 = desactivado. La música y AirPlay no cambian.",
+          "tv_volume_offset": "Se suma al volumen objetivo seleccionado para el audio de TV. 30 % − 10 % = 20 %. 0 = desactivado. Para el volumen del grupo o del maestro, activa «Aplicar ajuste de TV al seguir».",
           "secondary": "Dejar vacío para usar solo el sensor principal. Aquí se pueden quitar los sensores adicionales existentes.",
-          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento."
+          "volume_mode": "Grupo: volumen medio de los altavoces de origen, sin los destinos Follow Me activos. Coordinador: coordinador actual del grupo. Se siguen los cambios mientras la habitación está ocupada. Volumen propio: último volumen o valor predeterminado tras el tiempo de restablecimiento.",
+          "tv_offset_follow": "Si está activado, el ajuste de TV también se aplica al seguir el volumen del grupo o del maestro. Desactívalo para usar directamente el volumen de referencia. El volumen propio de la habitación siempre utiliza el ajuste de TV."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Usar el volumen predeterminado"
+      },
+      "tv_offset_follow": {
+        "name": "Aplicar ajuste de TV al seguir"
       }
     },
     "binary_sensor": {

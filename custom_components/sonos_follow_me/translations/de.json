@@ -14,12 +14,14 @@
           "off_delay": "Ausschaltverzögerung",
           "fade_seconds": "Überblenddauer",
           "tv_volume_offset": "TV-Lautstärkeoffset",
-          "volume_mode": "Lautstärkequelle"
+          "volume_mode": "Lautstärkequelle",
+          "tv_offset_follow": "TV-Offset beim Folgen anwenden"
         },
         "data_description": {
-          "tv_volume_offset": "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+          "tv_volume_offset": "Wird bei TV-Ton zur gewählten Ziellautstärke addiert. 30 % − 10 % = 20 %. 0 = deaktiviert. Bei Gruppen- oder Masterlautstärke „TV-Offset beim Folgen anwenden“ aktivieren.",
           "secondary": "Leer lassen, um nur den primären Sensor zu verwenden. Vorhandene weitere Sensoren können hier entfernt werden.",
-          "volume_mode": "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit."
+          "volume_mode": "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit.",
+          "tv_offset_follow": "Wenn aktiviert, gilt der TV-Offset auch beim Folgen der Gruppen- oder Masterlautstärke. Ausgeschaltet wird die Referenzlautstärke direkt übernommen. Bei eigener Raumlautstärke gilt der TV-Offset immer."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Ausschaltverzögerung",
           "fade_seconds": "Überblenddauer",
           "tv_volume_offset": "TV-Lautstärkeoffset",
-          "volume_mode": "Lautstärkequelle"
+          "volume_mode": "Lautstärkequelle",
+          "tv_offset_follow": "TV-Offset beim Folgen anwenden"
         },
         "data_description": {
-          "tv_volume_offset": "Zur gewählten Ziel-Lautstärke addiert, auch beim Folgen von Gruppe oder Master. 30 % − 10 % = 20 %. 0 = deaktiviert. Musik/AirPlay bleiben unverändert.",
+          "tv_volume_offset": "Wird bei TV-Ton zur gewählten Ziellautstärke addiert. 30 % − 10 % = 20 %. 0 = deaktiviert. Bei Gruppen- oder Masterlautstärke „TV-Offset beim Folgen anwenden“ aktivieren.",
           "secondary": "Leer lassen, um nur den primären Sensor zu verwenden. Vorhandene weitere Sensoren können hier entfernt werden.",
-          "volume_mode": "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit."
+          "volume_mode": "Gruppe: Durchschnitt der Quelllautsprecher ohne aktive Follow-Me-Ziele. Master: aktueller Gruppenkoordinator. Änderungen werden während der Belegung übernommen. Eigene Raumlautstärke: letzte Lautstärke oder Standard nach Abkühlzeit.",
+          "tv_offset_follow": "Wenn aktiviert, gilt der TV-Offset auch beim Folgen der Gruppen- oder Masterlautstärke. Ausgeschaltet wird die Referenzlautstärke direkt übernommen. Bei eigener Raumlautstärke gilt der TV-Offset immer."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Standardlautstärke verwenden"
+      },
+      "tv_offset_follow": {
+        "name": "TV-Offset beim Folgen anwenden"
       }
     },
     "binary_sensor": {

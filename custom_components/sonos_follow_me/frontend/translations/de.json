@@ -32,5 +32,6 @@
     "many": "{count} Räume",
     "other": "{count} Räume"
   },
-  "invalid_entities": "entities muss eine Liste von Follow-Me-Schalter-Entitäts-IDs sein."
+  "invalid_entities": "entities muss eine Liste von Follow-Me-Schalter-Entitäts-IDs sein.",
+  "manual_volume_active": "Manuelle Lautstärke hat Vorrang"
 }

@@ -14,12 +14,14 @@
           "off_delay": "Opóźnienie nieobecności",
           "fade_seconds": "Czas płynnej zmiany głośności",
           "tv_volume_offset": "Korekta głośności TV",
-          "volume_mode": "Źródło głośności"
+          "volume_mode": "Źródło głośności",
+          "tv_offset_follow": "Stosuj korektę TV przy śledzeniu"
         },
         "data_description": {
-          "tv_volume_offset": "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+          "tv_volume_offset": "Dodawana do wybranej głośności docelowej dla dźwięku TV. 30 % − 10 % = 20 %. 0 = wyłączona. Dla głośności grupy lub koordynatora włącz „Stosuj korektę TV przy śledzeniu”.",
           "secondary": "Pozostaw puste, aby używać tylko czujnika głównego. Tutaj można usunąć wybrane wcześniej dodatkowe czujniki.",
-          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania."
+          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania.",
+          "tv_offset_follow": "Po włączeniu korekta TV jest stosowana również przy śledzeniu głośności grupy lub koordynatora. Wyłącz, aby używać bezpośrednio głośności odniesienia. Własna głośność pokoju zawsze uwzględnia korektę TV."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Opóźnienie nieobecności",
           "fade_seconds": "Czas płynnej zmiany głośności",
           "tv_volume_offset": "Korekta głośności TV",
-          "volume_mode": "Źródło głośności"
+          "volume_mode": "Źródło głośności",
+          "tv_offset_follow": "Stosuj korektę TV przy śledzeniu"
         },
         "data_description": {
-          "tv_volume_offset": "Dodawana do wybranej głośności docelowej, również przy śledzeniu grupy lub koordynatora. 30 % − 10 % = 20 %. 0 = wyłączona. Muzyka i AirPlay pozostają bez zmian.",
+          "tv_volume_offset": "Dodawana do wybranej głośności docelowej dla dźwięku TV. 30 % − 10 % = 20 %. 0 = wyłączona. Dla głośności grupy lub koordynatora włącz „Stosuj korektę TV przy śledzeniu”.",
           "secondary": "Pozostaw puste, aby używać tylko czujnika głównego. Tutaj można usunąć wybrane wcześniej dodatkowe czujniki.",
-          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania."
+          "volume_mode": "Grupa: średnia głośność głośników źródłowych, bez aktywnych głośników docelowych Follow Me. Koordynator: bieżący koordynator grupy. Zmiany są śledzone podczas obecności. Własna głośność pomieszczenia: ostatnia głośność lub domyślna po czasie przywracania.",
+          "tv_offset_follow": "Po włączeniu korekta TV jest stosowana również przy śledzeniu głośności grupy lub koordynatora. Wyłącz, aby używać bezpośrednio głośności odniesienia. Własna głośność pokoju zawsze uwzględnia korektę TV."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Używaj głośności domyślnej"
+      },
+      "tv_offset_follow": {
+        "name": "Stosuj korektę TV przy śledzeniu"
       }
     },
     "binary_sensor": {

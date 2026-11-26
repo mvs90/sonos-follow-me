@@ -48,6 +48,7 @@ def schema(values, volume_step=False):
                 min=-100, max=100, step=1, unit_of_measurement="pp", mode="box"
             )
         ),
+        "tv_offset_follow": selector.BooleanSelector(),
         "volume_reset": selector.BooleanSelector(),
         "default_volume": selector.NumberSelector(
             selector.NumberSelectorConfig(min=0, max=1, step=0.01, mode="box")

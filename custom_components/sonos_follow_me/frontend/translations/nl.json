@@ -32,5 +32,6 @@
     "few": "{count} ruimtes",
     "many": "{count} ruimtes",
     "other": "{count} ruimtes"
-  }
+  },
+  "manual_volume_active": "Handmatig volume heeft voorrang"
 }

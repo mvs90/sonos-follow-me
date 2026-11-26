@@ -14,4 +14,5 @@ DEFAULTS = {
     "default_volume": 0.3,
     "volume_cooldown": 30,
     "tv_volume_offset": 0,
+    "tv_offset_follow": True,
 }

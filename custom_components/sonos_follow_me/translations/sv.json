@@ -14,12 +14,14 @@
           "off_delay": "Frånvarofördröjning",
           "fade_seconds": "Toningstid",
           "tv_volume_offset": "TV-volymjustering",
-          "volume_mode": "Volymkälla"
+          "volume_mode": "Volymkälla",
+          "tv_offset_follow": "Använd TV-justering vid följning"
         },
         "data_description": {
-          "tv_volume_offset": "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+          "tv_volume_offset": "Läggs till den valda målvolymen för TV-ljud. 30 % − 10 % = 20 %. 0 = avaktiverat. Aktivera ”Använd TV-justering vid följning” för gruppens eller masterns volym.",
           "secondary": "Lämna tomt för att endast använda den primära sensorn. Befintliga extra sensorer kan tas bort här.",
-          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden."
+          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden.",
+          "tv_offset_follow": "När detta är aktiverat används TV-justeringen även när gruppens eller masterns volym följs. Stäng av för att använda referensvolymen direkt. Rummets egen volym använder alltid TV-justeringen."
         }
       },
       "volume": {
@@ -60,12 +62,14 @@
           "off_delay": "Frånvarofördröjning",
           "fade_seconds": "Toningstid",
           "tv_volume_offset": "TV-volymjustering",
-          "volume_mode": "Volymkälla"
+          "volume_mode": "Volymkälla",
+          "tv_offset_follow": "Använd TV-justering vid följning"
         },
         "data_description": {
-          "tv_volume_offset": "Läggs till den valda målvolymen, även när gruppen eller samordnaren följs. 30 % − 10 % = 20 %. 0 = inaktiverad. Musik och AirPlay påverkas inte.",
+          "tv_volume_offset": "Läggs till den valda målvolymen för TV-ljud. 30 % − 10 % = 20 %. 0 = avaktiverat. Aktivera ”Använd TV-justering vid följning” för gruppens eller masterns volym.",
           "secondary": "Lämna tomt för att endast använda den primära sensorn. Befintliga extra sensorer kan tas bort här.",
-          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden."
+          "volume_mode": "Grupp: medelvolymen för källhögtalarna, utan aktiva Follow Me-målhögtalare. Samordnare: gruppens nuvarande samordnare. Ändringar följs under närvaro. Egen rumsvolym: senaste volymen eller standardvolymen efter återställningstiden.",
+          "tv_offset_follow": "När detta är aktiverat används TV-justeringen även när gruppens eller masterns volym följs. Stäng av för att använda referensvolymen direkt. Rummets egen volym använder alltid TV-justeringen."
         }
       },
       "volume": {
@@ -113,6 +117,9 @@
       },
       "volume_reset": {
         "name": "Använd standardvolym"
+      },
+      "tv_offset_follow": {
+        "name": "Använd TV-justering vid följning"
       }
     },
     "binary_sensor": {
