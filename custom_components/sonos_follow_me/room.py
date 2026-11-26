@@ -265,32 +265,29 @@ class Room:
         """Consume matching pending commands so later user changes can reuse a level."""
         now = monotonic()
         level = round(volume * 100)
-        matched = False
-        for _ in range(len(self._volume_echoes)):
-            sent, pending = self._volume_echoes.popleft()
-            if now - sent >= VOLUME_ECHO_WINDOW:
-                continue
-            if pending == level and not matched:
-                matched = True
-            else:
-                self._volume_echoes.append((sent, pending))
-        return matched
+        self._expire_volume_echoes(now)
+        # A later ordered report supersedes any earlier skipped transitions.
+        for index, (_, pending) in enumerate(self._volume_echoes):
+            if pending == level:
+                for _ in range(index + 1):
+                    self._volume_echoes.popleft()
+                return True
+        return False
 
-    async def _set_volume(self, value, *, recovery=False):
+    def _expire_volume_echoes(self, now):
+        while self._volume_echoes and now - self._volume_echoes[0][0] >= VOLUME_ECHO_WINDOW:
+            self._volume_echoes.popleft()
+
+    async def _set_volume(self, value):
         level = round(value * 100)
         state = self.hass.states.get(self.player)
         current = state.attributes.get("volume_level") if state else None
         now = monotonic()
-        while self._volume_echoes and now - self._volume_echoes[0][0] >= VOLUME_ECHO_WINDOW:
-            self._volume_echoes.popleft()
-        # Recovery may explicitly write the already reported zero after an
-        # ignored positive command. That zero has no transition to confirm.
-        if not (recovery and current == level / 100):
-            if self._volume_echoes:
-                if self._volume_echoes[-1][1] != level:
-                    self._volume_echoes.append((now, level))
-            elif current != level / 100:
-                self._volume_echoes.append((now, level))
+        self._expire_volume_echoes(now)
+        if self._volume_echoes and self._volume_echoes[-1][1] == level:
+            self._volume_echoes[-1] = (now, level)
+        elif self._volume_echoes or current != level / 100:
+            self._volume_echoes.append((now, level))
         await self.service("volume_set", volume_level=value)
 
     async def _wait_until(self, predicate, timeout):
@@ -336,6 +333,10 @@ class Room:
                 lambda: self.manual_volume_active or self._volume_confirmed(target),
                 VOLUME_CONFIRM_TIMEOUT,
             ):
+                if attempt and not self.manual_volume_active:
+                    # Recovery reached its final target. Earlier retry steps
+                    # can have been skipped, including a redundant zero.
+                    self._volume_echoes.clear()
                 return
             if not self._group_ready(source):
                 raise HomeAssistantError("Sonos group changed during fade-in")
@@ -362,7 +363,7 @@ class Room:
                 muted,
                 target,
             )
-            await self._set_volume(0, recovery=True)
+            await self._set_volume(0)
             await self.service("volume_mute", is_volume_muted=False)
             await self._fade(0, target)
 

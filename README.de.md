@@ -61,7 +61,7 @@ Falls „Custom element doesn't exist: sonos-follow-me-card“ nach dem Update w
 
 1. In HACS **v0.6.1 oder neuer** installieren und **Home Assistant neu starten**. Warten, bis die Integration geladen ist.
 2. Die Dashboard-Seite vollständig neu laden; in der Companion-App ggf. den Frontend-Cache zurücksetzen.
-3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.8` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
+3. Unter **Einstellungen → Dashboards → Ressourcen** sollte `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.9` als **JavaScript-Modul** stehen. Bei selbst verwalteten YAML-Ressourcen wird dieser Eintrag nicht verändert; dort lädt die Integration die Karte automatisch über das Frontend. Dieselbe URL ist auch als manueller Fallback geeignet.
 4. Liefert diese URL im Browser **404**, ist die Integration nicht geladen oder die Datei fehlt in der Installation. Dann den Integrationsstatus und die Home-Assistant-Protokolle prüfen und das HACS-Paket ggf. erneut herunterladen.
 
 Die Integration muss eingerichtet und geladen sein. Deaktivierte Entitäten bei Bedarf wieder aktivieren. Ein deaktivierter Raum-Eintrag ist keine steuerbare Karte.

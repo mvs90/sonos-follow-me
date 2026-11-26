@@ -271,3 +271,25 @@ async def test_manual_zero_after_silent_start_recovery(room):
     room.hass.states.async_set(source, "playing", {**attrs, "volume_level": 0.6})
     await room.hass.async_block_till_done()
     assert move.volume == 0
+
+
+async def test_recovery_zero_acknowledges_delayed_positive_then_zero(room):
+    move = SimulatedMove(room, ignore_positive=1)
+    simulate = move.service
+
+    async def service(action, entity=None, **data):
+        if action == "volume_set" and data["volume_level"] == 0 and move.joined:
+            # The original positive write becomes visible only when recovery starts.
+            move.volume = 0.3
+            move.publish()
+            await asyncio.sleep(0)
+        await simulate(action, entity, **data)
+        await asyncio.sleep(0)
+
+    room.service.side_effect = service
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert move.volume == 0.3
+    assert not room.manual_volume_active
+    assert sum(action == "volume_mute" for action, _, _ in move.commands) == 2
