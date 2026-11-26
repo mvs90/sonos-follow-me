@@ -246,3 +246,28 @@ async def test_recovery_does_not_unmute_source_or_other_members(room):
     await room._enter()
     assert room.hass.states.get("media_player.living").attributes["is_volume_muted"] is True
     assert all(entity == room.player for action, entity, _ in move.commands if action != "join")
+
+
+async def test_manual_zero_after_silent_start_recovery(room):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    room.hass.config_entries = SimpleNamespace(async_entries=Mock(return_value=[]))
+    room.config["volume_mode"] = "master"
+    source = "media_player.living"
+    attrs = {"volume_level": 0.3, "group_members": [source]}
+    room.hass.states.async_set(source, "playing", attrs)
+    move = SimulatedMove(room, ignore_positive=1)
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert move.volume == 0.3
+    assert sum(action == "volume_mute" for action, _, _ in move.commands) == 2
+
+    move.volume = 0
+    move.publish()
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
+    room.hass.states.async_set(source, "playing", {**attrs, "volume_level": 0.6})
+    await room.hass.async_block_till_done()
+    assert move.volume == 0
