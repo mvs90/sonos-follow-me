@@ -333,10 +333,8 @@ class Room:
                 lambda: self.manual_volume_active or self._volume_confirmed(target),
                 VOLUME_CONFIRM_TIMEOUT,
             ):
-                if attempt and not self.manual_volume_active:
-                    # Recovery reached its final target. Earlier retry steps
-                    # can have been skipped, including a redundant zero.
-                    self._volume_echoes.clear()
+                # Audible playback can be confirmed by an earlier write.
+                # Only ordered volume feedback retires pending transitions.
                 return
             if not self._group_ready(source):
                 raise HomeAssistantError("Sonos group changed during fade-in")

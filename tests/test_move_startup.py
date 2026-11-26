@@ -1,7 +1,7 @@
 """Regression scenarios model Sonos timing/mute behavior, not physical Move hardware."""
 
 import asyncio
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -248,7 +248,7 @@ async def test_recovery_does_not_unmute_source_or_other_members(room):
     assert all(entity == room.player for action, entity, _ in move.commands if action != "join")
 
 
-async def test_manual_zero_after_silent_start_recovery(room):
+async def test_manual_zero_after_recovery_echo_window(room):
     from types import SimpleNamespace
     from unittest.mock import Mock
 
@@ -264,9 +264,13 @@ async def test_manual_zero_after_silent_start_recovery(room):
     assert move.volume == 0.3
     assert sum(action == "volume_mute" for action, _, _ in move.commands) == 2
 
-    move.volume = 0
-    move.publish()
-    await room.hass.async_block_till_done()
+    # The target report is ambiguous when the first write had no feedback.
+    # After the acknowledgement window, a zero report is manual again.
+    expired = room_module.monotonic() + room_module.VOLUME_ECHO_WINDOW + 1
+    with patch.object(room_module, "monotonic", return_value=expired):
+        move.volume = 0
+        move.publish()
+        await room.hass.async_block_till_done()
     assert room.manual_volume_active
     room.hass.states.async_set(source, "playing", {**attrs, "volume_level": 0.6})
     await room.hass.async_block_till_done()
@@ -293,3 +297,40 @@ async def test_recovery_zero_acknowledges_delayed_positive_then_zero(room):
     assert move.volume == 0.3
     assert not room.manual_volume_active
     assert sum(action == "volume_mute" for action, _, _ in move.commands) == 2
+
+
+async def test_retry_feedback_can_arrive_after_startup_confirmation(room):
+    move = SimulatedMove(room, ignore_positive=1)
+    simulate = move.service
+    recovering = False
+
+    async def service(action, entity=None, **data):
+        nonlocal recovering
+        if action == "volume_set" and move.joined:
+            if data["volume_level"] == 0:
+                recovering = True
+                # Publish the original target while both retry reports are delayed.
+                move.volume = 0.3
+                move.publish()
+                await asyncio.sleep(0)
+                return
+            if recovering:
+                return
+        await simulate(action, entity, **data)
+
+    room.service.side_effect = service
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    await room.hass.async_block_till_done()
+    assert recovering and room.managed and room.startup_error is None
+
+    for level in (0, 0.3):
+        move.volume = level
+        move.publish()
+        await room.hass.async_block_till_done()
+        assert not room.manual_volume_active
+
+    move.volume = 0
+    move.publish()
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
