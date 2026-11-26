@@ -288,7 +288,7 @@ class Room:
             self._volume_echoes[-1] = (now, level)
         elif self._volume_echoes or current != level / 100:
             self._volume_echoes.append((now, level))
-        await self.service("volume_set", volume_level=value)
+        await self.service("volume_set", volume_level=level / 100)
 
     async def _wait_until(self, predicate, timeout):
         try:

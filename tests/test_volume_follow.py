@@ -432,3 +432,25 @@ async def test_repeated_target_refreshes_echo_window(room):
         manual_volume(room, 0.1)
         await room.hass.async_block_till_done()
     assert not room.manual_volume_active
+
+
+async def test_fade_does_not_treat_exact_service_feedback_as_manual(room):
+    source(room, volume=0.24)
+    room.config["fade_seconds"] = 0.12
+    simulate = room.service.side_effect
+
+    async def service(action, entity=None, **data):
+        if action == "volume_set":
+            state = room.hass.states.get(room.player)
+            room.hass.states.async_set(
+                room.player,
+                state.state,
+                {**state.attributes, "volume_level": data["volume_level"]},
+            )
+        else:
+            await simulate(action, entity=entity, **data)
+
+    room.service.side_effect = service
+    await enter(room, "master")
+    assert not room.manual_volume_active
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0.24
