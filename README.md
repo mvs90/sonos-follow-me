@@ -62,7 +62,7 @@ If **Custom element doesn't exist: sonos-follow-me-card** persists:
 
 1. Install **v0.6.1 or later** in HACS, **restart Home Assistant**, and wait for integration startup to finish.
 2. Fully reload the dashboard. In the Companion App, reset the frontend cache if necessary.
-3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.8` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
+3. **Settings → Dashboards → Resources** should contain `/sonos_follow_me/sonos-follow-me-card.js?v=0.6.9` with type **JavaScript module**. Read-only YAML resources are left intact and use the automatic frontend fallback. The same URL can also be added manually.
 4. If that URL returns **404** in the browser, check integration setup and Home Assistant logs, and re-download the HACS package if its files are missing.
 
 The integration must be configured and loaded. Disabled entities need enabling if their controls are desired.

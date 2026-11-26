@@ -399,3 +399,36 @@ async def test_ordered_feedback_preserves_repeated_level_transitions(room):
     manual_volume(room, 0.2)
     await room.hass.async_block_till_done()
     assert room.manual_volume_active
+
+
+async def test_skipped_feedback_does_not_mask_later_manual_change(room):
+    source(room, volume=0.4)
+    await enter(room, "master")
+    room.service.side_effect = None
+    for level in (0.1, 0.2, 0.1):
+        await room._set_volume(level)
+    for level in (0.2, 0.1):
+        manual_volume(room, level)
+        await room.hass.async_block_till_done()
+        assert not room.manual_volume_active
+    await room._set_volume(0.2)
+    manual_volume(room, 0.2)
+    await room.hass.async_block_till_done()
+    manual_volume(room, 0.1)
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
+
+
+async def test_repeated_target_refreshes_echo_window(room):
+    source(room, volume=0.4)
+    await enter(room, "master")
+    room.service.side_effect = None
+    with patch("custom_components.sonos_follow_me.room.monotonic") as clock:
+        clock.return_value = 100
+        await room._set_volume(0.1)
+        clock.return_value = 104
+        await room._set_volume(0.1)
+        clock.return_value = 105.1
+        manual_volume(room, 0.1)
+        await room.hass.async_block_till_done()
+    assert not room.manual_volume_active
