@@ -480,10 +480,15 @@ async def test_manual_tv_volume_and_repeat_join_do_not_accumulate_offset(room):
     room.hass.states.async_set("media_player.living", "playing", {"source": "TV"})
     await room._enter()
     assert room.playback_volume == pytest.approx(0.5)
+    old = room.hass.states.get(room.player)
     room.hass.states.async_set(room.player, "playing", {"volume_level": 0.15})
     room._changed(
         SimpleNamespace(
-            data={"entity_id": room.player, "new_state": room.hass.states.get(room.player)}
+            data={
+                "entity_id": room.player,
+                "old_state": old,
+                "new_state": room.hass.states.get(room.player),
+            }
         )
     )
     assert room.volume == 0.6

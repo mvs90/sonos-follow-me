@@ -135,6 +135,15 @@ class Room:
             self.state(self.sensors[0]), [self.state(s) for s in self.sensors[1:]]
         )
 
+    @staticmethod
+    def _playing_volume(state):
+        if state is None or state.state != "playing":
+            return None
+        volume = state.attributes.get("volume_level")
+        if isinstance(volume, (int, float)) and isfinite(volume) and 0 <= volume <= 1:
+            return volume
+        return None
+
     @callback
     def _changed(self, event):
         entity = event.data["entity_id"]
@@ -144,43 +153,38 @@ class Room:
             watched.extend(self._group_members(source))
         if entity not in watched:
             return
+        state = event.data.get("new_state")
+        volume = self._playing_volume(state)
+        old_volume = self._playing_volume(event.data.get("old_state"))
+        volume_changed = old_volume is not None and volume is not None and old_volume != volume
         if (
             entity != self.player
             and self.managed
             and self._volume_control_ready
             and self.presence.occupied
             and entity == self._current_coordinator()
-            and (state := event.data["new_state"])
+            and volume_changed
             and str(state.attributes.get("source", "")).casefold() == "airplay"
-            and (old := event.data.get("old_state"))
-            and old.attributes.get("volume_level") != state.attributes.get("volume_level")
-            and isinstance(reference := state.attributes.get("volume_level"), (int, float))
-            and isfinite(reference)
-            and 0 <= reference <= 1
-            and (player := self.hass.states.get(self.player))
-            and isinstance(volume := player.attributes.get("volume_level"), (int, float))
-            and isfinite(volume)
-            and 0 <= volume <= 1
+            and (destination_volume := self._playing_volume(self.hass.states.get(self.player)))
+            is not None
         ):
             # AirPlay's controller owns group volume. The coordinator can report
             # first, long before the destination reports the same phone gesture.
-            self._manual_volume = volume
+            self._manual_volume = destination_volume
             self._volume_sync_needed = False
         if entity == self.player:
-            state = event.data["new_state"]
-            if (
-                state
-                and state.state == "playing"
-                and state.attributes.get("is_volume_muted") is not True
-                and isinstance(volume := state.attributes.get("volume_level"), (float, int))
-                and isfinite(volume)
-                and 0 <= volume <= 1
-                and not self._is_volume_echo(volume)
-                and (
-                    (old := event.data.get("old_state")) is None
-                    or old.attributes.get("volume_level") != volume
-                )
-            ):
+            # Acknowledge volume feedback even on the first playing or muted report.
+            reported = state.attributes.get("volume_level") if state else None
+            previous = event.data.get("old_state")
+            previous_level = previous.attributes.get("volume_level") if previous else None
+            echo = (
+                isinstance(reported, (float, int))
+                and isfinite(reported)
+                and 0 <= reported <= 1
+                and (reported != previous_level or (volume is not None and old_volume is None))
+                and self._ack_volume(reported)
+            )
+            if volume_changed and not echo and state.attributes.get("is_volume_muted") is not True:
                 if self.managed and self._volume_control_ready and self.presence.occupied:
                     # AirPlay/Sonos/device controls own the rest of this visit. Their
                     # group updates can arrive separately and must not be averaged back.
@@ -257,16 +261,27 @@ class Room:
             "media_player", action, {"entity_id": entity or self.player, **data}, blocking=True
         )
 
-    def _is_volume_echo(self, volume):
-        """Do not store delayed reports of our own fade steps as manual volume."""
+    def _ack_volume(self, volume):
+        """Consume matching pending commands so later user changes can reuse a level."""
         now = monotonic()
-        return any(
-            now - sent < VOLUME_ECHO_WINDOW and round(volume * 100) == value
-            for sent, value in self._volume_echoes
-        )
+        level = round(volume * 100)
+        matched = False
+        for _ in range(len(self._volume_echoes)):
+            sent, pending = self._volume_echoes.popleft()
+            if now - sent >= VOLUME_ECHO_WINDOW:
+                continue
+            if pending == level:
+                matched = True
+            else:
+                self._volume_echoes.append((sent, pending))
+        return matched
 
     async def _set_volume(self, value):
-        self._volume_echoes.append((monotonic(), round(value * 100)))
+        level = round(value * 100)
+        state = self.hass.states.get(self.player)
+        current = state.attributes.get("volume_level") if state else None
+        if current != level / 100 or self._volume_echoes:
+            self._volume_echoes.append((monotonic(), level))
         await self.service("volume_set", volume_level=value)
 
     async def _wait_until(self, predicate, timeout):

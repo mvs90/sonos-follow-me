@@ -307,8 +307,6 @@ async def test_manual_override_ends_on_next_visit_and_explicit_setting_change(ro
 async def test_manual_zero_stays_silent_while_source_changes(room):
     source(room, volume=0.4)
     await enter(room, "master")
-    # Startup's delayed zero echo has expired by the time the user turns down.
-    room._volume_echoes.clear()
     manual_volume(room, 0)
     await room.hass.async_block_till_done()
     before = room.service.call_count
@@ -353,3 +351,35 @@ async def test_airplay_coordinator_change_suspends_following_before_destination_
     await room.hass.async_block_till_done()
     assert room.playback_volume == 0.35
     assert room.service.call_count == before
+
+
+async def test_manual_zero_during_fade_stops_remaining_steps(room):
+    source(room, volume=0.4)
+    room.config.update(volume_mode="master", fade_seconds=0.2)
+    await room.async_start()
+    room.hass.states.async_set("binary_sensor.pir", "on")
+    async with asyncio.timeout(1):
+        while room.hass.states.get(room.player).attributes["volume_level"] <= 0:
+            await asyncio.sleep(0.001)
+        await asyncio.sleep(0)
+        manual_volume(room, 0)
+    await room.hass.async_block_till_done()
+    assert room.manual_volume_active
+    assert room.hass.states.get(room.player).attributes["volume_level"] == 0
+
+
+@pytest.mark.parametrize("endpoint", ["source", "destination"])
+@pytest.mark.parametrize("invalid_state", ["unavailable", "playing"])
+async def test_recovered_volume_does_not_latch_manual_priority(room, endpoint, invalid_state):
+    source(room, volume=0.4, source="AirPlay")
+    await enter(room, "master")
+    entity = "media_player.living" if endpoint == "source" else room.player
+    attrs = dict(room.hass.states.get(entity).attributes)
+    attrs.pop("volume_level")
+    room.hass.states.async_set(entity, invalid_state, attrs)
+    await room.hass.async_block_till_done()
+    room.hass.states.async_set(entity, "playing", {**attrs, "volume_level": 0.6})
+    await room.hass.async_block_till_done()
+    assert not room.manual_volume_active
+    if endpoint == "source":
+        assert room.playback_volume == 0.6
